@@ -581,7 +581,7 @@ class BudsConnectionManager(private val context: Context) {
     }
 
     /** Shadow mode: 2 s after the last bytes, the Rust core's state is compared with this one ([RustShadow]). */
-    private val shadowCheck = Runnable { com.spizganed.quickbuds.protocol.RustShadow.check(context, ::log) }
+    private val shadowCheck = Runnable { com.spizganed.quickbuds.protocol.RustShadow.check(context, equalizer.state, ::log) }
 
     @SuppressLint("MissingPermission")
     private fun deviceName(d: BluetoothDevice?): String? = try { d?.name } catch (_: SecurityException) { null }

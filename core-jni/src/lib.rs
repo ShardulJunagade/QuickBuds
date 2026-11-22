@@ -61,7 +61,9 @@ pub extern "system" fn Java_com_spizganed_quickbuds_protocol_RustShadow_nativeDi
 }
 
 /// The shared state as JSON: `connected`, `battery` (left, right, case; -1 unknown), `wear` (`ear`, `out`,
-/// `case`, `?`), `noise`, `lowLatency`, `features`. Null when the core failed.
+/// `case`, `?`), `noise`, `lowLatency`, `features`. Also the OPPO state the Kotlin layer keeps: `eq` (the current
+/// preset), `eqCustom` (`id:name:gains`), `bass` (the BassWave level) and `switches` (the `0x810D` values by id).
+/// Null when the core failed.
 #[no_mangle]
 pub extern "system" fn Java_com_spizganed_quickbuds_protocol_RustShadow_nativeCommon(
     mut env: JNIEnv, _this: JObject, h: jlong, now: jlong,
@@ -69,6 +71,10 @@ pub extern "system" fn Java_com_spizganed_quickbuds_protocol_RustShadow_nativeCo
     let state = with(h, |d| {
         d.tick(now as u64);
         let c = d.common();
+        let s = d.snapshot();
+        let custom: Vec<String> = s.eq_custom.iter().map(|p| format!("{}:{}:{}", p.id, p.name,
+            p.gains.iter().map(|g| g.to_string()).collect::<Vec<_>>().join(","))).collect();
+        let switches: serde_json::Map<String, serde_json::Value> = s.features.iter().map(|&(id, v)| (id.to_string(), v.into())).collect();
         let wear = |w: Wear| match w { Wear::InEar => "ear", Wear::Out => "out", Wear::InCase => "case", Wear::Unknown => "?" };
         json!({
             "connected": c.connected,
@@ -77,6 +83,10 @@ pub extern "system" fn Java_com_spizganed_quickbuds_protocol_RustShadow_nativeCo
             "noise": c.noise,
             "lowLatency": c.low_latency,
             "features": c.features,
+            "eq": s.eq_current,
+            "eqCustom": custom,
+            "bass": s.bass_level,
+            "switches": switches,
         }).to_string()
     });
     match state.and_then(|s| env.new_string(s).ok()) {

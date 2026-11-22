@@ -43,10 +43,11 @@ object RustShadow {
 
     /** Compares the states and logs a new difference, or the end of one. */
     @Synchronized
-    fun check(c: Context, log: (String) -> Unit) {
+    fun check(c: Context, eq: EqState, log: (String) -> Unit) {
         if (handle == 0L) return
         val rust = nativeCommon(handle, SystemClock.elapsedRealtime())?.let { JSONObject(it) }
-        val diff = if (rust == null) "core failed" else diff(WidgetStateStore.read(c), Rows.of(c), rust).joinToString("; ")
+        val diff = if (rust == null) "core failed"
+            else diff(WidgetStateStore.read(c), Rows.of(c), rust, eq, Capabilities.reply(c)).joinToString("; ")
         if (diff == (lastDiff ?: "")) return
         lastDiff = diff
         log(if (diff.isEmpty()) "RUST DIFF: none" else "RUST DIFF: $diff")
@@ -60,8 +61,12 @@ object RustShadow {
         else -> "?"
     }
 
-    /** Each field where the core's state differs from Kotlin's, as `field kotlin=… rust=…`. */
-    fun diff(k: WidgetStateStore.State, rows: Set<String>, rust: JSONObject): List<String> {
+    /**
+     * Each field where the core's state differs from Kotlin's, as `field kotlin=… rust=…`. [eq] and [switches]
+     * (the saved `0x810D` values) are compared when given.
+     */
+    fun diff(k: WidgetStateStore.State, rows: Set<String>, rust: JSONObject, eq: EqState? = null,
+             switches: Map<Int, Int>? = null): List<String> {
         val out = mutableListOf<String>()
         fun same(field: String, kotlin: Any?, core: Any?) { if (kotlin != core) out += "$field kotlin=$kotlin rust=$core" }
         if (!k.connected || !rust.optBoolean("connected")) {
@@ -80,6 +85,18 @@ object RustShadow {
         val features = rust.optJSONArray("features")?.let { a -> (0 until a.length()).map { a.getString(it) }.toSet() } ?: emptySet()
         (rows - features).takeIf { it.isNotEmpty() }?.let { out += "features only kotlin=${it.sorted()}" }
         (features - rows).takeIf { it.isNotEmpty() }?.let { out += "features only rust=${it.sorted()}" }
+        if (eq != null) {
+            same("eq", eq.current, if (rust.isNull("eq")) null else rust.optInt("eq"))
+            same("bass", eq.bassWave, if (rust.isNull("bass")) null else rust.optInt("bass"))
+            val custom = rust.optJSONArray("eqCustom")?.let { a -> (0 until a.length()).map { a.getString(it) } } ?: emptyList()
+            same("eqCustom", eq.custom.map { p -> "${p.id}:${p.name}:${p.gains.joinToString(",")}" }, custom)
+        }
+        if (switches != null) {
+            val core = rust.optJSONObject("switches")?.let { o -> o.keys().asSequence().associate { it.toInt() to o.getInt(it) } } ?: emptyMap()
+            for (id in (switches.keys + core.keys).sorted()) {
+                same("switch 0x%02X".format(id), switches[id], core[id])
+            }
+        }
         return out
     }
 
