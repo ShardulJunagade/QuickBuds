@@ -466,6 +466,7 @@ class BudsConnectionManager(private val context: Context) {
                 }
                 if (socket != null) {
                     bluetoothSocket = socket
+                    shadowLinkUp(device)
                     connectedThread = ConnectedThread(socket.inputStream, socket.outputStream) { socket.close() }
                     connectedThread?.start()
                     onLinkUp(device)
@@ -574,11 +575,6 @@ class BudsConnectionManager(private val context: Context) {
         syncPrimed = false
         syncHandler.post { execute(sync.reconnect(SystemClock.elapsedRealtime())) }
         log("Ready for commands. Running init sequence...")
-        addListener(com.spizganed.quickbuds.protocol.RustShadow.recorder)
-        com.spizganed.quickbuds.protocol.RustShadow.connected(context, deviceName(audioDevice ?: lastDevice) ?: "",
-            caseKey()?.let { featurePrefs().getInt(it, -1) }?.takeIf { it > 0 }, equalizer.state)
-        handler.removeCallbacks(shadowInitCheck)
-        handler.postDelayed(shadowInitCheck, 10_000)
         runInitSequence()
         handler.removeCallbacks(batteryPoll)
         handler.postDelayed(batteryPoll, BATTERY_POLL_MS)
@@ -588,6 +584,19 @@ class BudsConnectionManager(private val context: Context) {
     private val shadowCheck = Runnable { com.spizganed.quickbuds.protocol.RustShadow.check(context, this, ::log) }
     /** Shadow mode: 10 s after the link came up, the init commands are compared ([RustShadow.checkInit]). */
     private val shadowInitCheck = Runnable { com.spizganed.quickbuds.protocol.RustShadow.checkInit(::log) }
+
+    /**
+     * Shadow mode: the core's link starts before the read thread, so the core sees the first bytes too (the buds
+     * push their device list at once). The EQ and the case level are the ones this link starts from.
+     */
+    private fun shadowLinkUp(device: BluetoothDevice?) {
+        addListener(com.spizganed.quickbuds.protocol.RustShadow.recorder)
+        val case = caseKey(device?.address ?: lastDevice?.address)?.let { featurePrefs().getInt(it, -1) }?.takeIf { it > 0 }
+        com.spizganed.quickbuds.protocol.RustShadow.connected(context, deviceName(device ?: lastDevice) ?: "", case,
+            equalizer.stateFor(device?.address))
+        handler.removeCallbacks(shadowInitCheck)
+        handler.postDelayed(shadowInitCheck, 10_000)
+    }
 
     @SuppressLint("MissingPermission")
     private fun deviceName(d: BluetoothDevice?): String? = try { d?.name } catch (_: SecurityException) { null }
@@ -2072,7 +2081,8 @@ class BudsConnectionManager(private val context: Context) {
         featurePrefs().edit().putInt(key, level).apply()
     }
 
-    private fun caseKey() = lastDevice?.address?.let { "lastCaseLevel_$it" }
+    private fun caseKey() = caseKey(lastDevice?.address)
+    private fun caseKey(address: String?) = address?.let { "lastCaseLevel_$it" }
 
     private fun emitBattery() {
         handler.post {

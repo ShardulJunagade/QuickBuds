@@ -45,6 +45,9 @@ class Equalizer(
     /** Counts picks: a queued pick that a newer one replaced is not sent. */
     @Volatile private var pickSeq = 0
 
+    /** The state a link to [mac] starts from, as [onLinkUp] sets it. */
+    fun stateFor(mac: String?): EqState = if (mac != null) EqState.forLink(snapshot, mac) else state
+
     fun onLinkUp(mac: String?) {
         this.mac = mac
         if (mac != null) state = EqState.forLink(snapshot, mac)
