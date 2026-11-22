@@ -85,15 +85,12 @@ or the vendor apps, studied for interoperability only. The PC app uses [Tauri](h
 
 Copyright (C) 2026 spizganed
 
-QuickBuds has two licences:
+QuickBuds is under the GNU General Public License v3.0 or later. Everyone can use, study, change and share
+QuickBuds under this licence. It has no warranty. See [LICENSE](./LICENSE).
 
-- **Open source:** the GNU General Public License v3.0 or later. Everyone can use, study, change and share
-  QuickBuds under this licence. It has no warranty. See [LICENSE](./LICENSE).
-- **Commercial:** the copyright holder can license QuickBuds under other terms, for example for a company
-  that wants to build it into a closed-source product. To ask, open an issue on GitHub.
-
-Contributors keep the copyright of their work. They license it under both terms in the
-[Contributor License Agreement](./docs/CLA.md). The public source stays under the GPL.
+Code copied from another open source project keeps its copyright note and its licence. The credits list
+each of these projects. Contributors keep the copyright of their work and license it under the GPL in the
+[Contributor License Agreement](./docs/CLA.md).
 
 QuickBuds is an independent project. It is not affiliated with OnePlus, OPPO, realme, HeyTap or their
 affiliates. Those companies do not endorse or sponsor it. OnePlus, OPPO, realme, HeyMelody and the earbud

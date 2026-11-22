@@ -8,13 +8,10 @@ or text that you send and ask the project to use. "The owner" is spizganed, the 
 2. You keep the copyright of your contribution.
 3. You license your contribution to everyone who receives QuickBuds under the GNU General Public License v3.0
    or later (GPL-3.0-or-later).
-4. You also give the owner a licence to use, copy, change, distribute and sublicense your contribution under
-   any other terms, including commercial and closed-source terms. The licence is worldwide, perpetual,
-   irrevocable, non-exclusive and free of royalties.
-5. If you own patents that your contribution uses, you give the owner and every recipient a licence to those
-   patents for your contribution. The scope is the same as in points 3 and 4.
-6. You send the contribution as it is. You give no warranty.
-7. The public source of QuickBuds stays under GPL-3.0-or-later.
+4. If you own patents that your contribution uses, you give every recipient a licence to those patents for
+   your contribution. The scope is the same as in point 3.
+5. You send the contribution as it is. You give no warranty.
+6. QuickBuds stays under GPL-3.0-or-later.
 
 ## How to agree
 

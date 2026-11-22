@@ -38,7 +38,6 @@ app. It is a second source to check each fact against.
 ## Rules
 
 - A fact from a source gets a link to that source in the driver and in PROTOCOL.md.
-- Code is written new from the documented facts, unless the source's licence and its owner allow a copy.
-  QuickBuds has a commercial licence too (README, License). GPL code copied from another project
-  cannot go under that licence.
+- Code copied from a source keeps its copyright note and its licence in the file header.
+- Do not copy Gadgetbridge code. It is AGPL-3.0, and its terms then apply to the whole app. Read it for facts only.
 - An owner of the earbuds confirms each model with the model test before it counts as confirmed.
