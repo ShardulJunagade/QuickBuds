@@ -290,6 +290,8 @@
     <string name="settings_live_chip_sub">在状态栏显示您佩戴的耳机电量。需要 Android 16。关闭：通知中显示电池环</string>
     <string name="settings_lock_notif_title">锁定通知</string>
     <string name="settings_lock_notif_sub">无法滑动清除通知。关闭：可以滑动清除</string>
+    <string name="settings_short_buttons_title">简短按钮标签</string>
+    <string name="settings_short_buttons_sub">按钮只显示名称。圆点标出已开启的按钮。关闭：完整标签</string>
     <string name="settings_background_title">后台服务</string>
     <string name="settings_background_sub">关闭应用后保持连接</string>
     <string name="settings_background_warn_title">关闭后台服务？</string>

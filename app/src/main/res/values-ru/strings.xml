@@ -290,6 +290,8 @@
     <string name="settings_live_chip_sub">Показывает в строке состояния заряд надетых наушников. Нужен Android 16. Выкл.: кольца батареи в уведомлении</string>
     <string name="settings_lock_notif_title">Закрепить уведомление</string>
     <string name="settings_lock_notif_sub">Уведомление нельзя смахнуть. Выкл.: его можно смахнуть</string>
+    <string name="settings_short_buttons_title">Короткие подписи кнопок</string>
+    <string name="settings_short_buttons_sub">Кнопки показывают только название. Точка отмечает включённую. Выкл.: полные подписи</string>
     <string name="settings_background_title">Фоновая служба</string>
     <string name="settings_background_sub">Оставаться подключённым при закрытом приложении</string>
     <string name="settings_background_warn_title">Выключить фоновую службу?</string>

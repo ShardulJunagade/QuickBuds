@@ -290,6 +290,8 @@
     <string name="settings_live_chip_sub">Afișează în bara de stare nivelurile căștilor pe care le porți. Necesită Android 16. Dezactivat: inele de baterie în notificare</string>
     <string name="settings_lock_notif_title">Blochează notificarea</string>
     <string name="settings_lock_notif_sub">Notificarea nu poate fi ștearsă prin glisare. Oprit: poate fi ștearsă</string>
+    <string name="settings_short_buttons_title">Etichete scurte pentru butoane</string>
+    <string name="settings_short_buttons_sub">Butoanele arată doar numele. Un punct marchează butonul activ. Oprit: etichete complete</string>
     <string name="settings_background_title">Serviciu în fundal</string>
     <string name="settings_background_sub">Rămâi conectat cu aplicația închisă</string>
     <string name="settings_background_warn_title">Dezactivezi serviciul în fundal?</string>

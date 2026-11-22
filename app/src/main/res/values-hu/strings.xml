@@ -290,6 +290,8 @@
     <string name="settings_live_chip_sub">Az állapotsoron mutatja a viselt fülhallgatók töltöttségét. Android 16 kell hozzá. Kikapcsolva: akkumulátorgyűrűk az értesítésben</string>
     <string name="settings_lock_notif_title">Értesítés zárolása</string>
     <string name="settings_lock_notif_sub">Az értesítés nem söpörhető le. Kikapcsolva: lesöpörhető</string>
+    <string name="settings_short_buttons_title">Rövid gombfeliratok</string>
+    <string name="settings_short_buttons_sub">A gombok csak a nevet mutatják. Pont jelöli a bekapcsoltat. Kikapcsolva: teljes feliratok</string>
     <string name="settings_background_title">Háttérszolgáltatás</string>
     <string name="settings_background_sub">Kapcsolat fenntartása bezárt alkalmazásnál is</string>
     <string name="settings_background_warn_title">Kikapcsolja a háttérszolgáltatást?</string>

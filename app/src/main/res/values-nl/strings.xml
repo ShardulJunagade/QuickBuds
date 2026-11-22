@@ -290,6 +290,8 @@
     <string name="settings_live_chip_sub">Toont de niveaus van de oordopjes die je draagt in de statusbalk. Vereist Android 16. Uit: batterijringen in de melding</string>
     <string name="settings_lock_notif_title">Melding vergrendelen</string>
     <string name="settings_lock_notif_sub">De melding kan niet worden weggeveegd. Uit: hij kan worden weggeveegd</string>
+    <string name="settings_short_buttons_title">Korte knoplabels</string>
+    <string name="settings_short_buttons_sub">Knoppen tonen alleen de naam. Een punt markeert de actieve. Uit: volledige labels</string>
     <string name="settings_background_title">Achtergrondservice</string>
     <string name="settings_background_sub">Verbonden blijven als de app gesloten is</string>
     <string name="settings_background_warn_title">Achtergrondservice uitzetten?</string>

@@ -290,6 +290,8 @@
     <string name="settings_live_chip_sub">আপনার পরা বাডসের চার্জ স্ট্যাটাস বারে দেখায়। Android 16 দরকার। বন্ধ: নোটিফিকেশনে ব্যাটারি রিং</string>
     <string name="settings_lock_notif_title">বিজ্ঞপ্তি লক করুন</string>
     <string name="settings_lock_notif_sub">বিজ্ঞপ্তিটি সোয়াইপ করে সরানো যায় না। বন্ধ: সোয়াইপ করলে সরে যায়</string>
+    <string name="settings_short_buttons_title">ছোট বোতাম লেবেল</string>
+    <string name="settings_short_buttons_sub">বোতামে শুধু নাম দেখায়। চালু বোতামে একটি বিন্দু থাকে। বন্ধ: পূর্ণ লেবেল</string>
     <string name="settings_background_title">ব্যাকগ্রাউন্ড সার্ভিস</string>
     <string name="settings_background_sub">অ্যাপ বন্ধ থাকলেও সংযুক্ত থাকুন</string>
     <string name="settings_background_warn_title">ব্যাকগ্রাউন্ড সার্ভিস বন্ধ করবেন?</string>

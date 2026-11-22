@@ -290,6 +290,8 @@
     <string name="settings_live_chip_sub">स्टेटस बार में पहने हुए ईयरबड्स का चार्ज दिखाता है। Android 16 चाहिए। बंद: सूचना में बैटरी रिंग</string>
     <string name="settings_lock_notif_title">सूचना को लॉक करें</string>
     <string name="settings_lock_notif_sub">सूचना को स्वाइप करके हटाया नहीं जा सकता। बंद: स्वाइप करके हटाई जा सकती है</string>
+    <string name="settings_short_buttons_title">छोटे बटन लेबल</string>
+    <string name="settings_short_buttons_sub">बटन सिर्फ़ नाम दिखाते हैं। चालू बटन पर एक बिंदु होता है। बंद: पूरे लेबल</string>
     <string name="settings_background_title">बैकग्राउंड सेवा</string>
     <string name="settings_background_sub">ऐप बंद होने पर भी कनेक्टेड रहें</string>
     <string name="settings_background_warn_title">बैकग्राउंड सेवा बंद करें?</string>

@@ -425,15 +425,18 @@ class BudsService : Service(), BudsConnectionManager.Listener {
      * Settings › Notifications › Notification buttons: up to 3 actions, the widget's buttons ([WidgetSettings.NOTIFICATION_BUTTONS])
      * the buds have. A tap goes to [WidgetActionReceiver] as a widget tap with [WidgetSettings.NOTIFICATION_ID], so the
      * Noise cycle uses the notification's own list. A lit button ends with "· On".
+     * Settings › Short button labels (report #226): the cycle shows only the current mode, and a lit button starts with "●".
      */
     private fun actions(st: WidgetStateStore.State): List<Notification.Action> {
         val rows = com.spizganed.quickbuds.ui.Rows.of(this)
         val current = WidgetSettings.modeOf(st.ancMode)
         val on = getString(R.string.tile_on)
+        val short = getSharedPreferences(ThemeRes.PREFS_NAME, MODE_PRIVATE).getBoolean(PREF_SHORT_BUTTONS, false)
         return WidgetSettings.notificationButtons(this).filter { WidgetSettings.available(this, it, rows) }.map { key ->
             val feature = WidgetSettings.FEATURE_BUTTONS[key] ?: -1
             val (action, label, lit) = when (key) {
-                "cycle" -> Triple(WidgetActions.ACTION_QUICK, getString(R.string.widget_cycle) + ": " + getString(current.name), false)
+                "cycle" -> Triple(WidgetActions.ACTION_QUICK,
+                    if (short) getString(current.name) else getString(R.string.widget_cycle) + ": " + getString(current.name), false)
                 "ll" -> Triple(WidgetActions.ACTION_GAME_TOGGLE, getString(R.string.row_game_title), st.gameMode)
                 "trans", "adapt", "off" -> WidgetSettings.MODES.first { it.key == key }.let {
                     Triple(WidgetActions.ACTION_QUICK, getString(it.name), current.key == key) }
@@ -450,7 +453,7 @@ class BudsService : Service(), BudsConnectionManager.Listener {
             val pi = android.app.PendingIntent.getBroadcast(this, 0, intent,
                 android.app.PendingIntent.FLAG_UPDATE_CURRENT or android.app.PendingIntent.FLAG_IMMUTABLE)
             Notification.Action.Builder(android.graphics.drawable.Icon.createWithResource(this, R.drawable.ic_stat_buds),
-                if (lit) "$label · $on" else label, pi).build()
+                if (!lit) label else if (short) "● $label" else "$label · $on", pi).build()
         }
     }
 
@@ -516,7 +519,7 @@ class BudsService : Service(), BudsConnectionManager.Listener {
     private val prefListener = android.content.SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
         if (key == PREF_FULL_NOTIFICATION || key == PREF_LIVE_CHIP || key == PREF_LOCK_NOTIFICATION) { shownLevels = null; updateNotification() }
         // The notification's buttons changed (Settings › Notifications › Notification buttons).
-        else if (key == "notificationButtons") updateNotification()
+        else if (key == "notificationButtons" || key == PREF_SHORT_BUTTONS) updateNotification()
     }
 
     /** Settings › Lock the notification: the user cannot swipe the service notification away (issue 36). */
@@ -721,6 +724,8 @@ class BudsService : Service(), BudsConnectionManager.Listener {
         const val PREF_FULL_NOTIFICATION = "fullNotification"
         const val PREF_LIVE_CHIP = "liveChip"
         const val PREF_LOCK_NOTIFICATION = "lockNotification"
+        /** Settings › Short button labels. Off by default. */
+        const val PREF_SHORT_BUTTONS = "shortButtons"
         const val ACTION_FORCE_CONNECT = "com.spizganed.quickbuds.FORCE_CONNECT"
         /** On FORCE_CONNECT: true when the user asked (pill), so phone audio is brought up too. */
         const val EXTRA_WITH_AUDIO = "with_audio"
