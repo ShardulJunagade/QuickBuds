@@ -39,5 +39,7 @@ app. It is a second source to check each fact against.
 
 - A fact from a source gets a link to that source in the driver and in PROTOCOL.md.
 - Code copied from a source keeps its copyright note and its licence in the file header.
-- Do not copy Gadgetbridge code. It is AGPL-3.0, and its terms then apply to the whole app. Read it for facts only.
+- Gadgetbridge code is AGPL-3.0. GPL-3.0 section 13 allows a combination with it. A file copied from it keeps
+  its AGPL note, and the README credits name it. The AGPL's network clause adds nothing here: no copied code runs
+  on a server.
 - An owner of the earbuds confirms each model with the model test before it counts as confirmed.
