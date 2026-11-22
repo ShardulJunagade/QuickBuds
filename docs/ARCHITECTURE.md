@@ -29,7 +29,9 @@ The Android app runs its own Kotlin copy of the rules (`app/.../protocol/`: `Wir
 The app also carries the core as a native library (`core-jni/`, `libbuds_core_jni.so`) in shadow mode
 (`protocol/RustShadow.kt`). The read thread gives the core the same bytes as the Kotlin layer. The core's frames go
 nowhere. 2 s after the last bytes, the app compares the core's shared state (`core/src/model.rs`) with its own:
-battery, wear, noise mode, low latency and the rows. A new difference goes to the log as one `RUST DIFF:` line.
+the shared state, the EQ, the switch values, the gestures, the devices and every other value the Kotlin layer keeps.
+A new difference goes to the log as one `RUST DIFF:` line. 10 s after the link comes up, the app also compares the
+commands of the init sequence: the core's would-be frames against its own (`RUST TX DIFF:`).
 Why: 90 % of the users are on Android, and the Kotlin layer knows more than the core. The report logs show each gap
 on real buds before the core takes over, and users see no change. A panic in the core is caught in the bridge.
 The desktop app calls the core directly (`desktop-tauri/src/main.rs` re-exports `cmd`, `msg`, `wire` and the OPPO model data in `core/src/oppo/`).

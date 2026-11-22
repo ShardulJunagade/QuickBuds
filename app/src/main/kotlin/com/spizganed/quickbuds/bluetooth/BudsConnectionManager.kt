@@ -574,14 +574,19 @@ class BudsConnectionManager(private val context: Context) {
         syncPrimed = false
         syncHandler.post { execute(sync.reconnect(SystemClock.elapsedRealtime())) }
         log("Ready for commands. Running init sequence...")
+        addListener(com.spizganed.quickbuds.protocol.RustShadow.recorder)
         com.spizganed.quickbuds.protocol.RustShadow.connected(context, deviceName(audioDevice ?: lastDevice) ?: "")
+        handler.removeCallbacks(shadowInitCheck)
+        handler.postDelayed(shadowInitCheck, 10_000)
         runInitSequence()
         handler.removeCallbacks(batteryPoll)
         handler.postDelayed(batteryPoll, BATTERY_POLL_MS)
     }
 
     /** Shadow mode: 2 s after the last bytes, the Rust core's state is compared with this one ([RustShadow]). */
-    private val shadowCheck = Runnable { com.spizganed.quickbuds.protocol.RustShadow.check(context, equalizer.state, ::log) }
+    private val shadowCheck = Runnable { com.spizganed.quickbuds.protocol.RustShadow.check(context, this, ::log) }
+    /** Shadow mode: 10 s after the link came up, the init commands are compared ([RustShadow.checkInit]). */
+    private val shadowInitCheck = Runnable { com.spizganed.quickbuds.protocol.RustShadow.checkInit(::log) }
 
     @SuppressLint("MissingPermission")
     private fun deviceName(d: BluetoothDevice?): String? = try { d?.name } catch (_: SecurityException) { null }
@@ -710,6 +715,7 @@ class BudsConnectionManager(private val context: Context) {
         isConnecting = false
         handler.removeCallbacks(batteryPoll)
         handler.removeCallbacks(shadowCheck)
+        handler.removeCallbacks(shadowInitCheck)
         com.spizganed.quickbuds.protocol.RustShadow.disconnected()
         equalizer.onLinkDown()
         connectedThread?.cancel()
@@ -1284,6 +1290,8 @@ class BudsConnectionManager(private val context: Context) {
      */
     @Volatile
     private var lastKeyFnTable: KeyFunctionParser.Table? = null
+    /** The last gesture table the buds reported (shadow mode compares it). */
+    val keyFunctions: List<KeyFunctionParser.Entry>? get() = lastKeyFnTable?.entries
 
     /**
      * The hold's ANC-cycle masks, as last read from `0x010C` `02 <type>` (`[CAPTURE]`,
@@ -1509,6 +1517,7 @@ class BudsConnectionManager(private val context: Context) {
         }
 
         fun write(bytes: ByteArray) {
+            com.spizganed.quickbuds.protocol.RustShadow.sent(bytes)
             try {
                 outputStream.write(bytes)
                 outputStream.flush()
