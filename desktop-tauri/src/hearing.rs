@@ -89,7 +89,7 @@ fn show(title: &str, message: Option<&str>, button: Button, slider: bool) {
 fn start() {
     let s = snapshot();
     let blind = !crate::wear_sensor_seen(&s);
-    if ![s.wear[0], s.wear[1]].iter().all(|x| matches!(x, 3 | 7) || blind && matches!(x, 1 | 5)) {
+    if ![s.wear[0], s.wear[1]].iter().all(|x| matches!(x, Some(3 | 7)) || blind && matches!(x, Some(1 | 5))) {
         st(|t| t.title = tr("fit_insert"));
         return changed();
     }

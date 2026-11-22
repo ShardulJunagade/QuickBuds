@@ -63,7 +63,7 @@ fn wear_sensor_seen(s: &session::Snapshot) -> bool {
     let Some(id) = s.model.and_then(|m| m["id"].as_str()) else { return true };
     let mut seen = load_settings()["wear_seen"].clone();
     if seen[id] == true { return true; }
-    if !s.wear.iter().any(|w| matches!(w, 3 | 7)) { return false; }
+    if !s.wear.iter().any(|w| matches!(w, Some(3 | 7))) { return false; }
     seen[id] = true.into();
     save_setting("wear_seen", seen);
     true

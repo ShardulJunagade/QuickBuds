@@ -221,7 +221,7 @@ fn commands(s: &Snapshot, cmd: &Value) -> Vec<Cmd> {
 fn fake() -> Snapshot {
     let model = find_model(Some("065414"), None);
     Snapshot {
-        status: Status::On, name: "OnePlus Buds 4".into(), battery: [Some((82, false)), Some((79, false)), Some((60, true))], wear: [3, 3, 4],
+        status: Status::On, name: "OnePlus Buds 4".into(), battery: [Some((82, false)), Some((79, false)), Some((60, true))], wear: [Some(3), Some(3), Some(4)],
         model, detected: model,
         caps: Caps(Some(vec![CMD_SET_EQ, CMD_SET_ALERT_VOLUME, CMD_SET_KEY_FUNCTION, CMD_FIND_BUDS, CMD_FIT_TEST, CMD_QUERY_FIRMWARE, CMD_SET_TAP_LEVEL,
             CMD_GOLDEN_DETECT, CMD_PERSONAL_NOISE, CMD_SET_HEAD_MOTION, CMD_GAME_SOUND, CMD_MULTI_CONNECT, CMD_QUERY_SPATIAL_TYPE])),

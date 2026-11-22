@@ -107,8 +107,9 @@ pub struct Snapshot {
     pub name: String,
     /// Left, right, case: (level, charging).
     pub battery: [Option<(u8, bool)>; 3],
-    /// Left, right, case: raw wear status (PROTOCOL.md section 13), 0 = unknown.
-    pub wear: [u8; 3],
+    /// Left, right, case: raw wear status (PROTOCOL.md section 13); None until the buds report it. Raw 0 is a bud
+    /// asleep in the closed case, not an unknown state.
+    pub wear: [Option<u8>; 3],
     /// The events the buds offer (`0x8200`), once read.
     pub offered: Option<Vec<u8>>,
     pub anc: Option<String>,
@@ -170,11 +171,11 @@ pub fn game_id(s: &Snapshot) -> u8 {
 }
 
 /// A raw wear status (PROTOCOL.md section 13): 3 and 7 in the ear, 4 in the case, 0 in the closed case, 1 and 5 out.
-fn wear(raw: u8) -> Wear {
+fn wear(raw: Option<u8>) -> Wear {
     match raw {
-        3 | 7 => Wear::InEar,
-        0 | 4 => Wear::InCase,
-        1 | 5 => Wear::Out,
+        Some(3 | 7) => Wear::InEar,
+        Some(0 | 4) => Wear::InCase,
+        Some(1 | 5) => Wear::Out,
         _ => Wear::Unknown,
     }
 }
@@ -731,7 +732,7 @@ impl Driver {
                 }
             }
             Event::Wear(v) => for (i, st) in v {
-                if (1..=3).contains(&i) { s.wear[i as usize - 1] = st; }
+                if (1..=3).contains(&i) { s.wear[i as usize - 1] = Some(st); }
             },
             Event::AncRaw(raw) => match s.modes.mode_for_raw(raw, self.level.as_deref()) {
                 Some(m) => s.anc = Some(m),

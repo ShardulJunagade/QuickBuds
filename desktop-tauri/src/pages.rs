@@ -42,7 +42,7 @@ fn spatial_label(v: u8) -> String { tr(match v { 1 => "spatial_fixed", 2 => "spa
 /// (both buds in the ears, any bud in an ear). Without an "in ear" seen, "out" may only mean the model has no sensor: counted as in.
 fn worn(s: &Snapshot) -> (bool, bool) {
     let blind = !crate::wear_sensor_seen(s);
-    let f = |w: u8| matches!(w, 3 | 7) || blind && matches!(w, 1 | 5);
+    let f = |w: Option<u8>| matches!(w, Some(3 | 7)) || blind && matches!(w, Some(1 | 5));
     (f(s.wear[0]) && f(s.wear[1]), f(s.wear[0]) || f(s.wear[1]))
 }
 
