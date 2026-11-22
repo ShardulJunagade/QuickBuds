@@ -245,9 +245,9 @@ mod tests {
     fn rx(cmd: u16, payload: &[u8]) -> Option<Event> { decode(&build_packet(cmd, 1, payload)) }
 
     #[test]
-    fn battery_level_zero_is_left_out() {
+    fn battery_level_zero_stays_in_the_report() {
         let Some(Event::Battery(v)) = rx(0x8106, &[0, 3, 1, 0x46, 2, 0xC6, 3, 0]) else { panic!("no battery") };
-        assert_eq!(v, [(1, 0x46, false), (2, 0x46, true)]);
+        assert_eq!(v, [(1, 0x46, false), (2, 0x46, true), (3, 0, false)]);
         assert!(rx(0x8106, &[0, 1, 0x46]).is_none());
         assert!(rx(0x8106, &[0, 3, 1, 0x46, 2]).is_none());
     }

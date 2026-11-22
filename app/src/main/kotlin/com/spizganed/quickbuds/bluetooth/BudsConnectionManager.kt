@@ -575,7 +575,8 @@ class BudsConnectionManager(private val context: Context) {
         syncHandler.post { execute(sync.reconnect(SystemClock.elapsedRealtime())) }
         log("Ready for commands. Running init sequence...")
         addListener(com.spizganed.quickbuds.protocol.RustShadow.recorder)
-        com.spizganed.quickbuds.protocol.RustShadow.connected(context, deviceName(audioDevice ?: lastDevice) ?: "")
+        com.spizganed.quickbuds.protocol.RustShadow.connected(context, deviceName(audioDevice ?: lastDevice) ?: "",
+            caseKey()?.let { featurePrefs().getInt(it, -1) }?.takeIf { it > 0 }, equalizer.state)
         handler.removeCallbacks(shadowInitCheck)
         handler.postDelayed(shadowInitCheck, 10_000)
         runInitSequence()

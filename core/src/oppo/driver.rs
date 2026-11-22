@@ -215,6 +215,20 @@ pub struct Settings {
     pub clear_battery: bool,
     /// The phone makes 3D audio itself (OPPO and OnePlus phones on Android): buds without `0xEF03` then show the row.
     pub phone_spatial: bool,
+    /// The last real case level of these buds. A case level 0 (a closed case) shows it (issue #47).
+    pub case_level: Option<u8>,
+    /// The init sequence reads the EQ. Android reads it when the EQ screen opens (one read set per link).
+    pub eq_on_connect: bool,
+    /// The EQ saved for these buds: the state shows it until the buds answer.
+    pub eq_saved: Option<EqSaved>,
+}
+
+/// A saved EQ state of one pair of buds.
+#[derive(Clone, Default)]
+pub struct EqSaved {
+    pub current: Option<u8>,
+    pub bass_level: Option<i8>,
+    pub custom: Vec<Preset>,
 }
 
 /// What the shell does for the driver, in order.
@@ -357,6 +371,11 @@ impl Driver {
         self.pending.clear();
         let detected = find_model(None, Some(&name));
         self.s = Snapshot { status: Status::On, name, detected, ..Default::default() };
+        if let Some(eq) = &self.settings.eq_saved {
+            self.s.eq_current = eq.current;
+            self.s.bass_level = eq.bass_level;
+            self.s.eq_custom = eq.custom.clone();
+        }
         self.pick_model();
         // A new link: forget the last link's sequence bytes, let the engine continue a restart wait,
         // and show again what it is still applying.
@@ -567,49 +586,49 @@ impl Driver {
     /// A status read with the generic sequence byte `00`.
     fn status_read(&self) -> Step { Step::Tx(CMD_QUERY_STATUS, Some(0x00), status_query(self.s.model)) }
 
-    /// Init, after the handshake, the product id and the broadcast codes have had their answers.
+    /// Init, after the handshake, the product id and the broadcast codes have had their answers. The reads and their
+    /// order are the Android app's (`BudsConnectionManager.runInitSequence`); each goes out only if the buds list it.
     fn init_reads(&mut self) -> Vec<Step> {
         let mut st = Vec::new();
-        let ids = notify_ids(&self.s.caps, self.s.offered.as_deref());
-        if !self.s.caps.supports(CMD_REGISTER_NOTIFY) {
-            for &id in &ids { let f = cmd::register_one(id); st.push(Step::Tx(f.0, None, f.1)); }
-            st.push(Step::Wait(200));
+        let caps = self.s.caps.clone();
+        let ids = notify_ids(&caps, self.s.offered.as_deref());
+        if !ids.is_empty() {
+            if caps.supports(CMD_REGISTER_NOTIFY) { let f = cmd::register(&ids); st.push(Step::Tx(f.0, None, f.1)); }
+            else { for &id in &ids { let f = cmd::register_one(id); st.push(Step::Tx(f.0, None, f.1)); } }
         }
-        let smart = self.s.modes.supports("ANC-Smart");
-        let queries: [(u16, Option<u8>, Vec<u8>); 7] = [
-            (CMD_REGISTER_NOTIFY, None, cmd::register(&ids).1),
+        let mut queries: Vec<(u16, Option<u8>, Vec<u8>)> = vec![
             (CMD_QUERY_STATUS, Some(0x00), status_query(self.s.model)),
             (CMD_QUERY_ANC, None, cmd::anc_read(1, 1).1),
-            // The level Smart chose, PROTOCOL.md section 14.
-            (CMD_QUERY_ANC, None, if smart { cmd::anc_read(4, 1).1 } else { vec![] }),
+        ];
+        // The level Smart chose, PROTOCOL.md section 14.
+        if self.s.modes.supports("ANC-Smart") { queries.push((CMD_QUERY_ANC, None, cmd::anc_read(4, 1).1)); }
+        queries.extend([
+            (CMD_QUERY_ALERT_VOLUME, None, vec![]),
             (CMD_QUERY_BATTERY, Some(0xF0), vec![]),
             (CMD_QUERY_WEARING, Some(0xF2), vec![]),
-            (CMD_QUERY_FIRMWARE, None, vec![]),
-        ];
+            // The gesture table every gesture write is built from.
+            (CMD_QUERY_KEY_FUNCTION, None, vec![]),
+        ]);
+        // The hold's noise cycles.
+        for t in Profile(self.s.model).hold_types() { queries.push((CMD_QUERY_ANC, None, cmd::anc_read(2, t).1)); }
+        for c in [CMD_QUERY_FIRMWARE, CMD_QUERY_SPATIAL_TYPE, CMD_QUERY_CODEC_LIST, CMD_QUERY_CODEC, CMD_QUERY_GAME_SOUND, CMD_QUERY_HEAD_MOTION] {
+            queries.push((c, None, vec![]));
+        }
+        if self.settings.eq_on_connect {
+            for c in [CMD_QUERY_EQ, CMD_QUERY_EQ_ALL, CMD_QUERY_BASSWAVE, CMD_QUERY_BASS_BANDS] { queries.push((c, None, vec![])); }
+        }
         // Buds with the `0x012F` batch get the reads in one frame, as HeyMelody sends them.
-        let batch = self.s.caps.supports(CMD_BATCH);
+        let batch = caps.supports(CMD_BATCH);
         let mut reads = Vec::new();
         for (cmd, seq, payload) in queries {
-            if !self.s.caps.supports(cmd) || cmd == CMD_REGISTER_NOTIFY && ids.is_empty() || cmd == CMD_QUERY_ANC && payload.is_empty() { continue; }
-            if batch && cmd != CMD_REGISTER_NOTIFY { reads.push((cmd, payload)); continue; }
-            st.extend([Step::Tx(cmd, seq, payload), Step::Wait(200)]);
+            if !caps.supports(cmd) { continue; }
+            if batch { reads.push((cmd, payload)); } else { st.extend([Step::Wait(200), Step::Tx(cmd, seq, payload)]); }
         }
-        if batch {
-            reads.extend([CMD_QUERY_EQ, CMD_QUERY_EQ_ALL, CMD_QUERY_BASSWAVE, CMD_QUERY_BASS_BANDS].into_iter()
-                .filter(|&c| self.s.caps.supports(c)).map(|c| (c, vec![])));
-            if !reads.is_empty() { let f = cmd::batch(&reads); st.extend([Step::Tx(f.0, None, f.1), Step::Wait(200)]); }
-        } else {
-            st.extend(self.eq_reads());
-        }
-        // The Overview's 3D audio type and codec picker, as the phone reads them.
-        for cmd in [CMD_QUERY_SPATIAL_TYPE, CMD_QUERY_CODEC_LIST, CMD_QUERY_CODEC] {
-            if !self.s.caps.supports(cmd) { continue; }
-            st.extend([Step::Tx(cmd, None, vec![]), Step::Wait(120)]);
-        }
+        if !reads.is_empty() { let f = cmd::batch(&reads); st.extend([Step::Wait(200), Step::Tx(f.0, None, f.1)]); }
         // realme Link hands 3D audio to the buds on every connect; else the `1B` switch can do nothing (issue #9).
-        if Profile(self.s.model).spatial_toggle() && self.s.caps.supports(CMD_SPATIAL_SOURCE) {
+        if Profile(self.s.model).spatial_toggle() && caps.supports(CMD_SPATIAL_SOURCE) {
             let f = cmd::spatial_source(0);
-            st.extend([Step::Tx(f.0, None, f.1), Step::Wait(120)]);
+            st.extend([Step::Wait(200), Step::Tx(f.0, None, f.1)]);
         }
         st.push(Step::Ready);
         st
@@ -728,7 +747,17 @@ impl Driver {
                 // Settings › Hide old battery levels: a part the report leaves out is cleared, not kept.
                 if self.settings.clear_battery { s.battery = [None; 3]; }
                 for (i, level, charging) in v {
-                    if (1..=3).contains(&i) { s.battery[i as usize - 1] = Some((level, charging)); }
+                    if !(1..=3).contains(&i) { continue; }
+                    // Level 0 is "not known" (a closed case). The case then shows its last real level.
+                    if level == 0 {
+                        if i == 3 { if let Some(saved) = self.settings.case_level { s.battery[2] = Some((saved, charging)); } }
+                        continue;
+                    }
+                    s.battery[i as usize - 1] = Some((level, charging));
+                    if i == 3 && self.settings.case_level != Some(level) {
+                        self.settings.case_level = Some(level);
+                        self.out.push(Effect::Save("case_level", level.into()));
+                    }
                 }
             }
             Event::Wear(v) => for (i, st) in v {

@@ -7,10 +7,11 @@ use std::panic::{catch_unwind, AssertUnwindSafe};
 use std::sync::Mutex;
 
 use buds_core::model::Wear;
-use buds_core::oppo::driver::{Driver, Effect, Settings};
+use buds_core::oppo::driver::{Driver, Effect, EqSaved, Settings};
+use buds_core::types::Preset;
 use buds_core::types::{cmd_of, payload_of};
 use jni::objects::{JByteArray, JObject, JString};
-use jni::sys::{jboolean, jlong, jstring};
+use jni::sys::{jboolean, jint, jlong, jstring};
 use jni::JNIEnv;
 use serde_json::{json, Map, Value};
 
@@ -66,6 +67,24 @@ fn out(env: &mut JNIEnv, s: Option<String>) -> jstring {
     }
 }
 
+/// The app's EQ state as JSON: `current`, `bass`, `custom` (`id`, `name`, `freqs`, `gains`, `selected`, `tag`).
+fn eq_saved(text: &str) -> Option<EqSaved> {
+    let v: Value = serde_json::from_str(text).ok()?;
+    let nums = |x: &Value| x.as_array().map(|a| a.iter().filter_map(Value::as_i64).collect::<Vec<_>>()).unwrap_or_default();
+    let custom = v["custom"].as_array()?.iter().map(|p| {
+        let tag = nums(&p["tag"]);
+        Preset {
+            id: p["id"].as_u64().unwrap_or(0) as u8,
+            name: p["name"].as_str().unwrap_or("").into(),
+            freqs: nums(&p["freqs"]).into_iter().map(|f| f as u16).collect(),
+            gains: nums(&p["gains"]).into_iter().map(|g| g as i8).collect(),
+            selected: p["selected"].as_bool().unwrap_or(false),
+            tag: [tag.first().copied().unwrap_or(0) as u8, tag.get(1).copied().unwrap_or(0) as u8],
+        }
+    }).collect();
+    Some(EqSaved { current: v["current"].as_u64().map(|c| c as u8), bass_level: v["bass"].as_i64().map(|b| b as i8), custom })
+}
+
 fn mac(m: &[u8; 6]) -> String { m.iter().map(|b| format!("{b:02X}")).collect::<Vec<_>>().join(":") }
 
 #[no_mangle]
@@ -78,13 +97,17 @@ pub extern "system" fn Java_com_spizganed_quickbuds_protocol_RustShadow_nativeNe
 #[allow(clippy::too_many_arguments)]
 pub extern "system" fn Java_com_spizganed_quickbuds_protocol_RustShadow_nativeConnected(
     mut env: JNIEnv, _this: JObject, h: jlong, now: jlong, name: JString, product: JString, manual: JString,
-    clear_battery: jboolean, phone_spatial: jboolean,
+    clear_battery: jboolean, phone_spatial: jboolean, case_level: jint, eq: JString,
 ) {
     let settings = Settings {
         product_id: text(&mut env, &product),
         model_manual: text(&mut env, &manual),
         clear_battery: clear_battery != 0,
         phone_spatial: phone_spatial != 0,
+        case_level: u8::try_from(case_level).ok().filter(|&l| l > 0),
+        // The app reads the EQ when its screen opens.
+        eq_on_connect: false,
+        eq_saved: text(&mut env, &eq).and_then(|t| eq_saved(&t)),
     };
     let name = text(&mut env, &name).unwrap_or_default();
     with(h, |s| {

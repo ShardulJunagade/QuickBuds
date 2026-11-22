@@ -407,9 +407,8 @@ fn bass_bands(p: &[u8]) -> Option<Vec<(u8, i8)>> {
 }
 
 fn battery(p: &[u8]) -> Option<Vec<Cell>> {
-    // Level 0 means "not known" (a closed case): left out.
+    // Level 0 means "not known" (a closed case). The cell stays, so the driver can show the last real case level.
     Some(pairs(p)?.into_iter()
-        .filter(|c| c.1 & 0x7F != 0)
         .map(|(part, raw)| Cell { part, level: raw & 0x7F, charging: raw & 0x80 != 0 })
         .collect())
 }

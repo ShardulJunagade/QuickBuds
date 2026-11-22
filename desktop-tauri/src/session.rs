@@ -19,8 +19,8 @@ fn now_ms() -> u64 {
 
 fn unix_s() -> u32 { SystemTime::now().duration_since(UNIX_EPOCH).map_or(0, |d| d.as_secs() as u32) }
 
-/// The driver's settings from `settings.json`.
-fn settings() -> Settings {
+/// The driver's settings from `settings.json`, for the buds at `addr` (0: none yet).
+fn settings(addr: u64) -> Settings {
     let all = crate::load_settings();
     Settings {
         product_id: all["product_id"].as_str().map(Into::into),
@@ -28,7 +28,18 @@ fn settings() -> Settings {
         clear_battery: all["clear_battery"].as_bool() == Some(true),
         // Only OPPO and OnePlus phones make 3D audio themselves.
         phone_spatial: false,
+        case_level: all["case_levels"][format!("{addr:012X}")].as_u64().map(|l| l as u8),
+        // The desktop pages show the EQ at once: the init sequence reads it.
+        eq_on_connect: true,
+        eq_saved: None,
     }
+}
+
+/// The last real case level of the buds at `addr`, kept per address (`settings.json` "case_levels").
+fn save_case_level(addr: u64, level: serde_json::Value) {
+    let mut all = crate::load_settings()["case_levels"].as_object().cloned().unwrap_or_default();
+    all.insert(format!("{addr:012X}"), level);
+    crate::save_setting("case_levels", all.into());
 }
 
 type Emit = Box<dyn Fn(Snapshot) + Send>;
@@ -81,7 +92,7 @@ fn remember(addr: u64) {
 fn run(rx: Receiver<Cmd>, emit: Emit) {
     let mut paused = false;
     let mut manual = false;
-    let mut driver = Driver::new(settings());
+    let mut driver = Driver::new(settings(0));
     let mut last_err = String::new();
     loop {
         if !paused {
@@ -156,6 +167,7 @@ impl Conn<'_> {
                 Effect::Log { dir, bytes, human } => log(dir, bytes, human),
                 Effect::State => changed = true,
                 Effect::Hearing(h) => HEARING.lock().unwrap().push(h),
+                Effect::Save("case_level", value) => save_case_level(addr, value),
                 Effect::Save(key, value) => crate::save_setting(key, value),
                 // Buds that named their model are remembered, renamed or not.
                 Effect::Ready => if driver.snapshot().model.is_some() { remember(addr) },
@@ -178,6 +190,7 @@ impl Conn<'_> {
     }
 
     fn serve(&mut self, rx: &Receiver<Cmd>, name: String) -> End {
+        self.driver.set_settings(settings(self.addr));
         let outs = self.driver.connected(now_ms(), name);
         match self.pump(rx, outs) {
             Ok(end) => end,
@@ -196,7 +209,7 @@ impl Conn<'_> {
                     Ok(Cmd::Connect) => {}
                     Ok(c) => {
                         // A command can follow a settings change (the model pick).
-                        self.driver.set_settings(settings());
+                        self.driver.set_settings(settings(self.addr));
                         let outs = self.driver.command(now_ms(), c);
                         self.run_effects(outs)?;
                     }

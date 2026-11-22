@@ -69,7 +69,7 @@ object RustShadow {
     }
 
     @Synchronized
-    fun connected(c: Context, name: String) {
+    fun connected(c: Context, name: String, caseLevel: Int?, eq: EqState) {
         if (!loaded) return
         if (handle == 0L) handle = nativeNew()
         val clear = c.getSharedPreferences(ThemeRes.PREFS_NAME, Context.MODE_PRIVATE).getBoolean(BudsService.PREF_CLEAR_BATTERY, false)
@@ -79,7 +79,7 @@ object RustShadow {
         initSent.clear()
         recordInit = true
         nativeConnected(handle, SystemClock.elapsedRealtime(), name, Capabilities.productId(c), ModelCatalog.manual(c),
-            clear, PhoneSpatial.supported(c))
+            clear, PhoneSpatial.supported(c), caseLevel ?: -1, eqJson(eq))
         lastDiff = null
         tick()
     }
@@ -142,6 +142,16 @@ object RustShadow {
         (rust - kotlin).takeIf { it.isNotEmpty() }?.let { parts += "only rust=[${hex(it)}]" }
         log("RUST TX DIFF: " + if (parts.isEmpty()) "none" else parts.joinToString("; "))
     }
+
+    /** The EQ state as the bridge reads it. */
+    private fun eqJson(eq: EqState): String = JSONObject().apply {
+        put("current", eq.current ?: JSONObject.NULL)
+        put("bass", eq.bassWave ?: JSONObject.NULL)
+        put("custom", JSONArray(eq.custom.map { p ->
+            JSONObject().put("id", p.id).put("name", p.name).put("freqs", JSONArray(p.freqs)).put("gains", JSONArray(p.gains))
+                .put("selected", p.selected).put("tag", JSONArray(p.tag.map { it.toInt() and 0xFF }))
+        }))
+    }.toString()
 
     /** A raw wear status as the core names it (PROTOCOL.md section 13). */
     private fun wear(raw: Int) = when (raw) {
@@ -225,7 +235,8 @@ object RustShadow {
     }
 
     private external fun nativeNew(): Long
-    private external fun nativeConnected(h: Long, now: Long, name: String, product: String?, manual: String?, clearBattery: Boolean, phoneSpatial: Boolean)
+    private external fun nativeConnected(h: Long, now: Long, name: String, product: String?, manual: String?, clearBattery: Boolean,
+        phoneSpatial: Boolean, caseLevel: Int, eq: String)
     private external fun nativeBytes(h: Long, now: Long, unix: Long, data: ByteArray)
     private external fun nativeDisconnected(h: Long, now: Long)
     private external fun nativeCommon(h: Long, now: Long): String?

@@ -67,3 +67,24 @@ fn common_state_carries_battery_and_connection() {
     // Nothing read yet: only the rows that need no reply.
     assert!(c.features.contains("earbuds"));
 }
+
+#[test]
+fn a_case_level_0_shows_the_last_real_one_and_a_real_one_is_saved() {
+    use buds_core::model::Level;
+    let mut d = Driver::new(Settings { case_level: Some(80), ..Default::default() });
+    d.connected(0, "X".into());
+    d.on_bytes(5, 0, &build_packet(0x8106, 1, &[0, 1, 3, 0]));
+    assert_eq!(d.common().battery[2], Some(Level { value: 80, max: 100, charging: false }));
+    let e = d.on_bytes(6, 0, &build_packet(0x8106, 1, &[0, 1, 3, 0x41]));
+    assert!(e.iter().any(|e| matches!(e, Effect::Save("case_level", v) if v == 0x41)));
+    assert_eq!(d.common().battery[2].map(|l| l.value), Some(0x41));
+}
+
+#[test]
+fn the_saved_eq_shows_until_the_buds_answer() {
+    use buds_core::oppo::driver::EqSaved;
+    let mut d = Driver::new(Settings { eq_saved: Some(EqSaved { current: Some(4), bass_level: Some(2), custom: vec![] }), ..Default::default() });
+    d.connected(0, "X".into());
+    assert_eq!(d.snapshot().eq_current, Some(4));
+    assert_eq!(d.snapshot().bass_level, Some(2));
+}

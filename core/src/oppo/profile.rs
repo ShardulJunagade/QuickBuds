@@ -69,6 +69,12 @@ impl<'a> Profile<'a> {
     /// `longPressType`: each bud has its own hold; the bits are its choices. 0: one shared hold.
     pub fn hold_mask(&self) -> i64 { self.int("holdMask") }
     pub fn shared_hold(&self) -> bool { self.flag("sharedHold") }
+    /// The hold noise cycles to read (`0x010C 02 <type>`): one per bud when the hold is per bud and not shared,
+    /// else the shared one (`GestureModel.holdTypes`).
+    pub fn hold_types(&self) -> Vec<u8> {
+        if self.hold_mask() != 0 && !self.shared_hold() { vec![crate::oppo::types::HOLD_TYPE_LEFT, crate::oppo::types::HOLD_TYPE_RIGHT] }
+        else { vec![crate::oppo::types::HOLD_TYPE_SHARED] }
+    }
     pub fn one_button(&self) -> bool { self.flag("oneButton") }
     pub fn both_hold(&self) -> bool { self.flag("bothHold") }
     /// OnePlus Buds, Buds Z: previous and next track are `fn` 4 and 5.
