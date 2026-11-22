@@ -35,12 +35,7 @@ The parked and unverified work. Finished work leaves this file. Protocol finding
 
 ## Parked
 
-- **Other brands**, in this order. Start after about 100 models (80% of the list) are confirmed. Each brand is a
-  separate protocol and needs snoop logs and the earbuds in hand.
-  1. Nothing.
-  2. Google.
-  3. Xiaomi, Samsung, Sony, Huawei and other brands. They need research first.
-  4. Anker (Soundcore, issue #32).
+- **Other brands:** the order and the sources are in [BRANDS.md](./BRANDS.md). Soundcore (issue #32) is first.
 - **Generic fallback (issue #22):** battery and connection state from Fast Pair and the standard battery service, for
   earbuds that QuickBuds does not know. Experimental, after the other brands.
   The Fast Pair Message Stream reader exists: it gives the battery when another app holds the earbuds (issue #18).
