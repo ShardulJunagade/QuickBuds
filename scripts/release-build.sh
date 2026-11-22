@@ -21,6 +21,7 @@ check() {
 }
 
 check "locales" python3 scripts/check-locales.py
+check "core library for Android" sh -c 'cd core-jni && cargo ndk -t arm64-v8a -t armeabi-v7a -t x86_64 -o ../app/src/main/jniLibs build --release'
 check "Android unit tests and lint" ./gradlew :app:testDebugUnitTest :app:lintDebug
 check "core tests" sh -c 'cd core && cargo test'
 check "desktop tests" sh -c 'cd desktop-tauri && CARGO_TARGET_DIR=target/test cargo test -q'

@@ -15,6 +15,10 @@ adb install -r app/build/outputs/apk/debug/app-debug.apk
 - **A debug build cannot install over the release app.** The signing keys differ. Uninstall the
   release first, and uninstall the debug build before you go back.
 - `./gradlew assembleRelease` without the release key builds an unsigned APK. That is expected.
+- The Rust core is a native library in the APK (`core-jni/`). Build it before Gradle. You need Rust, the Android
+  NDK and `cargo install cargo-ndk`:
+  `cd core-jni && cargo ndk -t arm64-v8a -t armeabi-v7a -t x86_64 -o ../app/src/main/jniLibs build --release`.
+  Without it the app runs, and only the shadow mode is off.
 
 Versions: Gradle 9.6.0, AGP 9.4.0, Kotlin 2.4.0, `compileSdk` / `targetSdk` 37, `minSdk` 26. AGP 9
 compiles Kotlin itself. Do not add the `org.jetbrains.kotlin.android` plugin.

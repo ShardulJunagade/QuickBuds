@@ -181,13 +181,13 @@ fn wear(raw: u8) -> Wear {
 
 /// The brand-neutral state of an OPPO snapshot. The features are the rows `row_rules` gives; the model's gesture list
 /// decides the controls row.
-pub fn common(s: &Snapshot) -> Common {
+pub fn common(s: &Snapshot, phone_spatial: bool) -> Common {
     use std::collections::HashMap;
     let reply: HashMap<u8, u8> = s.features.iter().copied().collect();
     let features = if s.status == Status::On {
         crate::oppo::row_rules::rows(&crate::oppo::row_rules::Input {
             model: s.model, reply: (!s.features.is_empty()).then_some(&reply), bitmap: s.caps.0.as_deref(),
-            product_anc: !s.modes.is_empty(), phone_spatial_ok: false, manual: s.manual, gestures: None,
+            product_anc: !s.modes.is_empty(), phone_spatial_ok: phone_spatial, manual: s.manual, gestures: None,
         })
     } else { Default::default() };
     Common {
@@ -212,6 +212,8 @@ pub struct Settings {
     pub model_manual: Option<String>,
     /// Settings › Hide old battery levels.
     pub clear_battery: bool,
+    /// The phone makes 3D audio itself (OPPO and OnePlus phones on Android): buds without `0xEF03` then show the row.
+    pub phone_spatial: bool,
 }
 
 /// What the shell does for the driver, in order.
@@ -324,7 +326,7 @@ impl Driver {
     pub fn snapshot(&self) -> &Snapshot { &self.s }
 
     /// The brand-neutral state (`crate::model`).
-    pub fn common(&self) -> Common { common(&self.s) }
+    pub fn common(&self) -> Common { common(&self.s, self.settings.phone_spatial) }
 
     /// The shell loaded the settings again (a command can follow a change).
     pub fn set_settings(&mut self, settings: Settings) { self.settings = settings; }

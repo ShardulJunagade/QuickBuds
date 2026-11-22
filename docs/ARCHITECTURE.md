@@ -24,8 +24,14 @@ behind a JNI call on Android, and every brand gets a driver of this shape (docs/
 The driver runs one UI command at a time. Commands that arrive during a command's waits go in one batch, and only
 the last of several quick EQ picks is sent (`core/src/oppo/eq_logic.rs`).
 
-The Android app does not call the core. `app/.../protocol/` holds a Kotlin copy of the same rules
-(`Wire.kt`, `Commands.kt`, `Messages.kt`, `FeatureSync.kt`). A protocol change updates both copies and PROTOCOL.md.
+The Android app runs its own Kotlin copy of the rules (`app/.../protocol/`: `Wire.kt`, `Commands.kt`, `Messages.kt`,
+`FeatureSync.kt`). A protocol change updates both copies and PROTOCOL.md.
+The app also carries the core as a native library (`core-jni/`, `libbuds_core_jni.so`) in shadow mode
+(`protocol/RustShadow.kt`). The read thread gives the core the same bytes as the Kotlin layer. The core's frames go
+nowhere. 2 s after the last bytes, the app compares the core's shared state (`core/src/model.rs`) with its own:
+battery, wear, noise mode, low latency and the rows. A new difference goes to the log as one `RUST DIFF:` line.
+Why: 90 % of the users are on Android, and the Kotlin layer knows more than the core. The report logs show each gap
+on real buds before the core takes over, and users see no change. A panic in the core is caught in the bridge.
 The desktop app calls the core directly (`desktop-tauri/src/main.rs` re-exports `cmd`, `msg`, `wire` and the OPPO model data in `core/src/oppo/`).
 
 Both apps decode a frame in one place. Android: `Decode.decode`, then `BudsConnectionManager.apply`. Desktop: `buds_core::msg::decode`, mapped to the session's `Event` in `core/src/oppo/protocol.rs`.

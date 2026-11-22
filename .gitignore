@@ -24,6 +24,10 @@ local/
 # Desktop (Rust)
 desktop-tauri/dist/
 
+# The core's native library for Android: built by core-jni (CI, scripts/release-build.sh)
+app/src/main/jniLibs/
+core-jni/target/
+
 # Screenshots are taken by hand; the script and its output stay local
 scripts/readme-screenshots.sh
 docs/screenshots/

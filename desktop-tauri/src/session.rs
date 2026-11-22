@@ -26,6 +26,8 @@ fn settings() -> Settings {
         product_id: all["product_id"].as_str().map(Into::into),
         model_manual: all["model_manual"].as_str().map(Into::into),
         clear_battery: all["clear_battery"].as_bool() == Some(true),
+        // Only OPPO and OnePlus phones make 3D audio themselves.
+        phone_spatial: false,
     }
 }
 

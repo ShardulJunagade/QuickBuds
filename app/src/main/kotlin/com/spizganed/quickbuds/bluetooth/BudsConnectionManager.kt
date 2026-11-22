@@ -574,10 +574,17 @@ class BudsConnectionManager(private val context: Context) {
         syncPrimed = false
         syncHandler.post { execute(sync.reconnect(SystemClock.elapsedRealtime())) }
         log("Ready for commands. Running init sequence...")
+        com.spizganed.quickbuds.protocol.RustShadow.connected(context, deviceName(audioDevice ?: lastDevice) ?: "")
         runInitSequence()
         handler.removeCallbacks(batteryPoll)
         handler.postDelayed(batteryPoll, BATTERY_POLL_MS)
     }
+
+    /** Shadow mode: 2 s after the last bytes, the Rust core's state is compared with this one ([RustShadow]). */
+    private val shadowCheck = Runnable { com.spizganed.quickbuds.protocol.RustShadow.check(context, ::log) }
+
+    @SuppressLint("MissingPermission")
+    private fun deviceName(d: BluetoothDevice?): String? = try { d?.name } catch (_: SecurityException) { null }
 
     private val batteryPoll: Runnable = Runnable {
         if (!isReady) return@Runnable
@@ -702,6 +709,8 @@ class BudsConnectionManager(private val context: Context) {
         isReady = false
         isConnecting = false
         handler.removeCallbacks(batteryPoll)
+        handler.removeCallbacks(shadowCheck)
+        com.spizganed.quickbuds.protocol.RustShadow.disconnected()
         equalizer.onLinkDown()
         connectedThread?.cancel()
         connectedThread = null
@@ -1475,8 +1484,11 @@ class BudsConnectionManager(private val context: Context) {
                     // Target 37+: a dropped RFCOMM link returns -1 instead of throwing.
                     if (bytes < 0) throw IOException("stream closed")
                     if (bytes > 0) {
+                        com.spizganed.quickbuds.protocol.RustShadow.bytes(buffer, bytes)
                         // The handlers read the fixed 9-byte header, so each packet comes out in that form.
                         for (frame in framer.append(buffer, bytes)) handlePacket(frame)
+                        handler.removeCallbacks(shadowCheck)
+                        handler.postDelayed(shadowCheck, 2_000)
                     }
                 } catch (e: IOException) {
                     // Our own disconnect() closed this socket, or a newer connection has already
