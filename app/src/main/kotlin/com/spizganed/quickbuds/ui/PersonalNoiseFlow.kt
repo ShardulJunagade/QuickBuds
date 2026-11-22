@@ -40,7 +40,18 @@ class PersonalNoiseFlow(
         }
         asking = true
         queryStored()
+        handler.removeCallbacks(noReply)
         handler.postDelayed(noReply, 5_000)   // HeyMelody waits 5 s for the answer
+    }
+
+    /**
+     * The screen stops: its listener goes, so no answer reaches the flow. Drop the waits and close the sheet
+     * (that cancels a running test). A late wait must not open a sheet on a closed screen.
+     */
+    fun stop() {
+        handler.removeCallbacksAndMessages(null)
+        asking = false
+        sheet?.close()
     }
 
     fun stored(stored: Boolean) {

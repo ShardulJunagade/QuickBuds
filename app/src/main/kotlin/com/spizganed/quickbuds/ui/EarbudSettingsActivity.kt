@@ -448,6 +448,7 @@ class EarbudSettingsActivity : Activity(), BudsConnectionManager.Listener {
     override fun onStop() {
         super.onStop()
         manager?.removeListener(this)
+        personalNoise.stop()
         if (bound) unbindService(connection)
         bound = false
         manager = null
