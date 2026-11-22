@@ -3,6 +3,7 @@
 pub mod cmd;
 pub mod feature_sync;
 mod json;
+pub mod model;
 pub mod msg;
 pub mod oppo;
 pub mod wire;

@@ -50,3 +50,20 @@ fn bytes_before_the_header_are_logged_as_discarded() {
     let e = d.on_bytes(5, 0, &data);
     assert!(e.iter().any(|e| matches!(e, Effect::Log { dir: "DISCARDED RX", .. })));
 }
+
+#[test]
+fn common_state_carries_battery_and_connection() {
+    use buds_core::model::{Level, Wear};
+    let mut d = Driver::new(Settings::default());
+    assert!(!d.common().connected);
+    d.connected(0, "X".into());
+    d.on_bytes(5, 0, &build_packet(0x8106, 1, &[0, 3, 1, 0x46, 2, 0xC6, 3, 0]));
+    let c = d.common();
+    assert!(c.connected);
+    assert_eq!(c.battery[0], Some(Level { value: 0x46, max: 100, charging: false }));
+    assert_eq!(c.battery[1], Some(Level { value: 0x46, max: 100, charging: true }));
+    assert_eq!(c.battery[2], None);
+    assert_eq!(c.wear, [Wear::Unknown; 2]);
+    // Nothing read yet: only the rows that need no reply.
+    assert!(c.features.contains("earbuds"));
+}

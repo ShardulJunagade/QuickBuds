@@ -26,6 +26,10 @@ The app has no generic settings page. Each feature has its own hand-made control
 A brand maps its protocol onto these features. A feature that no screen has yet gets a hand-made control once.
 After that, every brand that has the feature uses it.
 
+`core/src/model.rs` holds the shared state (`Common`): connection, name, model id, battery levels with their
+maximum, wear, noise control mode and modes, low latency, and the feature keys. The feature keys are the row keys
+of `oppo/row_rules.rs`, the same as the Android `RowRules.kt`. A driver gives it with `common()`.
+
 Rules:
 - The driver lists the features of the connected buds. A control shows only when its feature is on that list.
 - A feature has one id in one append-only list. A feature never changes its meaning.

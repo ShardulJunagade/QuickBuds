@@ -13,6 +13,7 @@ use serde_json::Value;
 
 use crate::cmd;
 use crate::feature_sync::{Confirm, FeatureSync, Operation, Out, ToastKind};
+use crate::model::{Common, Level, Wear};
 use crate::oppo::eq_logic;
 use crate::oppo::profile::Profile;
 use crate::oppo::protocol::{answer_for, decode, Framer};
@@ -168,6 +169,40 @@ pub fn game_id(s: &Snapshot) -> u8 {
     Profile(s.model).game_id().unwrap_or_else(|| s.caps.game_mode_id())
 }
 
+/// A raw wear status (PROTOCOL.md section 13): 3 and 7 in the ear, 4 in the case, 0 in the closed case, 1 and 5 out.
+fn wear(raw: u8) -> Wear {
+    match raw {
+        3 | 7 => Wear::InEar,
+        0 | 4 => Wear::InCase,
+        1 | 5 => Wear::Out,
+        _ => Wear::Unknown,
+    }
+}
+
+/// The brand-neutral state of an OPPO snapshot. The features are the rows `row_rules` gives; the model's gesture list
+/// decides the controls row.
+pub fn common(s: &Snapshot) -> Common {
+    use std::collections::HashMap;
+    let reply: HashMap<u8, u8> = s.features.iter().copied().collect();
+    let features = if s.status == Status::On {
+        crate::oppo::row_rules::rows(&crate::oppo::row_rules::Input {
+            model: s.model, reply: (!s.features.is_empty()).then_some(&reply), bitmap: s.caps.0.as_deref(),
+            product_anc: !s.modes.is_empty(), phone_spatial_ok: false, manual: s.manual, gestures: None,
+        })
+    } else { Default::default() };
+    Common {
+        connected: s.status == Status::On,
+        name: s.name.clone(),
+        model_id: s.model.and_then(|m| m["id"].as_str()).map(Into::into),
+        battery: s.battery.map(|b| b.map(|(value, charging)| Level { value, max: 100, charging })),
+        wear: [wear(s.wear[0]), wear(s.wear[1])],
+        noise: s.anc.clone(),
+        noise_modes: s.modes.names(),
+        low_latency: s.low_latency,
+        features,
+    }
+}
+
 /// The user's settings that the driver reads. The shell loads them and passes them in.
 #[derive(Clone, Default)]
 pub struct Settings {
@@ -287,6 +322,9 @@ impl Driver {
     }
 
     pub fn snapshot(&self) -> &Snapshot { &self.s }
+
+    /// The brand-neutral state (`crate::model`).
+    pub fn common(&self) -> Common { common(&self.s) }
 
     /// The shell loaded the settings again (a command can follow a change).
     pub fn set_settings(&mut self, settings: Settings) { self.settings = settings; }

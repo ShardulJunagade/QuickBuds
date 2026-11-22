@@ -309,6 +309,8 @@ impl AncModes {
 
     pub fn supports(&self, mode: &str) -> bool { self.set.iter().any(|(n, _)| n == mode) }
     pub fn is_empty(&self) -> bool { self.set.is_empty() }
+    /// The mode names, in the model's order.
+    pub fn names(&self) -> Vec<String> { self.set.iter().map(|(n, _)| n.clone()).collect() }
     pub fn bit(&self, mode: &str) -> Option<u8> { self.set.iter().find(|(n, _)| n == mode).map(|x| x.1) }
     pub fn levels(&self) -> Vec<&'static str> { LEVELS.into_iter().filter(|l| self.supports(l)).collect() }
     /// The level (not Smart) whose SET bit this is.
