@@ -8,7 +8,7 @@ use std::sync::Mutex;
 
 use buds_core::model::Wear;
 use buds_core::oppo::driver::{Driver, Effect, Settings};
-use buds_core::types::cmd_of;
+use buds_core::types::{cmd_of, payload_of};
 use jni::objects::{JByteArray, JObject, JString};
 use jni::sys::{jboolean, jlong, jstring};
 use jni::JNIEnv;
@@ -25,12 +25,26 @@ impl Shadow {
     fn take(&mut self, effects: Vec<Effect>) {
         for e in effects {
             match e {
-                Effect::Send(p) if !self.ready => self.init_sent.push(cmd_of(&p)),
+                Effect::Send(p) if !self.ready => self.init_sent.extend(commands(&p)),
                 Effect::Ready => self.ready = true,
                 _ => {}
             }
         }
     }
+}
+
+/// The command of a frame, or the commands inside a `0x012F` batch: `<count>`, then `<cmd LE> <len LE> <payload>`.
+fn commands(p: &[u8]) -> Vec<u16> {
+    let cmd = cmd_of(p);
+    if cmd != 0x012F { return vec![cmd]; }
+    let pl = payload_of(p);
+    let mut out = Vec::new();
+    let mut i = 1;
+    while i + 4 <= pl.len() {
+        out.push(u16::from_le_bytes([pl[i], pl[i + 1]]));
+        i += 4 + u16::from_le_bytes([pl[i + 2], pl[i + 3]]) as usize;
+    }
+    out
 }
 
 fn with<R>(h: jlong, f: impl FnOnce(&mut Shadow) -> R) -> Option<R> {
@@ -95,6 +109,18 @@ pub extern "system" fn Java_com_spizganed_quickbuds_protocol_RustShadow_nativeDi
     _env: JNIEnv, _this: JObject, h: jlong, now: jlong,
 ) {
     with(h, |s| { let e = s.driver.disconnected(now as u64); s.take(e); });
+}
+
+/// The clock: runs the steps that are due. Returns the time of the next call, or -1 for none.
+#[no_mangle]
+pub extern "system" fn Java_com_spizganed_quickbuds_protocol_RustShadow_nativeTick(
+    _env: JNIEnv, _this: JObject, h: jlong, now: jlong,
+) -> jlong {
+    with(h, |s| {
+        let e = s.driver.tick(now as u64);
+        s.take(e);
+        s.driver.next_wake().map_or(-1, |t| t as jlong)
+    }).unwrap_or(-1)
 }
 
 /// The commands of the driver's init sequence, as hex ids (`0100,0103,…`), and `+` at the end once it is done.

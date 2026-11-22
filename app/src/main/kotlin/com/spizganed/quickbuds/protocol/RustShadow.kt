@@ -39,6 +39,21 @@ object RustShadow {
 
     @Volatile private var seen = Seen()
 
+    /** The core's clock, as a shell gives it: a call at each `next_wake` (docs/CORE-API.md). */
+    private val ticker by lazy { android.os.Handler(android.os.Looper.getMainLooper()) }
+    private val tickRun = Runnable { tick() }
+
+    @Synchronized
+    private fun tick() {
+        if (handle == 0L) return
+        schedule(nativeTick(handle, SystemClock.elapsedRealtime()))
+    }
+
+    private fun schedule(next: Long) {
+        ticker.removeCallbacks(tickRun)
+        if (next >= 0) ticker.postDelayed(tickRun, maxOf(0L, next - SystemClock.elapsedRealtime()))
+    }
+
     /** Records what the Kotlin layer reports. [BudsConnectionManager] registers it. */
     val recorder = object : BudsConnectionManager.Listener {
         override fun onConnected(connected: Boolean) {}
@@ -66,25 +81,34 @@ object RustShadow {
         nativeConnected(handle, SystemClock.elapsedRealtime(), name, Capabilities.productId(c), ModelCatalog.manual(c),
             clear, PhoneSpatial.supported(c))
         lastDiff = null
+        tick()
     }
 
     @Synchronized
     fun bytes(buffer: ByteArray, count: Int) {
         if (handle == 0L) return
         nativeBytes(handle, SystemClock.elapsedRealtime(), System.currentTimeMillis() / 1000, buffer.copyOf(count))
+        tick()
     }
 
     /** A frame this layer wrote to the buds: kept for [checkInit]. */
     @Synchronized
     fun sent(frame: ByteArray) {
-        if (handle == 0L || !recordInit || frame.size < 6) return
-        initSent += OpoProtocol.u16(frame, 4)
+        if (handle == 0L || !recordInit || frame.size < 9) return
+        val cmd = OpoProtocol.u16(frame, 4)
+        if (cmd != 0x012F) { initSent += cmd; return }
+        // A batch: `<count>`, then `<cmd LE> <len LE> <payload>` from byte 10.
+        var i = 10
+        while (i + 4 <= frame.size) {
+            initSent += OpoProtocol.u16(frame, i)
+            i += 4 + OpoProtocol.u16(frame, i + 2)
+        }
     }
 
     @Synchronized
     fun disconnected() {
         recordInit = false
-        if (handle != 0L) nativeDisconnected(handle, SystemClock.elapsedRealtime())
+        if (handle != 0L) { nativeDisconnected(handle, SystemClock.elapsedRealtime()); ticker.removeCallbacks(tickRun) }
     }
 
     /** Compares the states and logs a new difference, or the end of one. */
@@ -206,4 +230,5 @@ object RustShadow {
     private external fun nativeDisconnected(h: Long, now: Long)
     private external fun nativeCommon(h: Long, now: Long): String?
     private external fun nativeInitSent(h: Long, now: Long): String?
+    private external fun nativeTick(h: Long, now: Long): Long
 }
