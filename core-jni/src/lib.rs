@@ -134,6 +134,15 @@ pub extern "system" fn Java_com_spizganed_quickbuds_protocol_RustShadow_nativeDi
     with(h, |s| { let e = s.driver.disconnected(now as u64); s.take(e); });
 }
 
+/// A case level the app read from the BLE advertisement.
+#[no_mangle]
+pub extern "system" fn Java_com_spizganed_quickbuds_protocol_RustShadow_nativeCaseStandIn(
+    _env: JNIEnv, _this: JObject, h: jlong, now: jlong, level: jint, charging: jboolean,
+) {
+    let Ok(level) = u8::try_from(level) else { return };
+    with(h, |s| { let e = s.driver.case_stand_in(now as u64, level, charging != 0); s.take(e); });
+}
+
 /// The clock: runs the steps that are due. Returns the time of the next call, or -1 for none.
 #[no_mangle]
 pub extern "system" fn Java_com_spizganed_quickbuds_protocol_RustShadow_nativeTick(

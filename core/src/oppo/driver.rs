@@ -292,6 +292,9 @@ fn toast_log(key: u8, kind: ToastKind, codec: Option<u8>) -> String {
 /// The engine's period while an operation is active.
 const ENGINE_TICK_MS: u64 = 500;
 
+/// A stand-in case level counts this long: the phone scans at most once in 5 min.
+const STAND_IN_MS: u64 = 5 * 60_000;
+
 pub struct Driver {
     settings: Settings,
     phase: Phase,
@@ -326,6 +329,12 @@ pub struct Driver {
     pending: Vec<Cmd>,
     /// The last time the shell gave.
     now: u64,
+    /// The case level of the last link report that had a case cell (0: the buds could not read it).
+    link_case: Option<u8>,
+    /// "Hide old battery levels" is on and the last report left the case out: no case level shows.
+    case_hidden: bool,
+    /// The last stand-in case level: (level, charging, when).
+    stand_in: Option<(u8, bool, u64)>,
 }
 
 impl Driver {
@@ -335,13 +344,33 @@ impl Driver {
             engine: FeatureSync::default(), wire: HashMap::new(), busy: Vec::new(), notice: None, last_tick: 0,
             framer: Framer::default(), seq: 0, level: None, holds: Vec::new(), feature_writes: HashMap::new(),
             eq_hold: Default::default(), steps: VecDeque::new(), wait_until: None, pending: Vec::new(), now: 0,
+            link_case: None, case_hidden: false, stand_in: None,
         }
     }
 
     pub fn snapshot(&self) -> &Snapshot { &self.s }
 
-    /// The brand-neutral state (`crate::model`).
-    pub fn common(&self) -> Common { common(&self.s, self.settings.phone_spatial) }
+    /// The brand-neutral state (`crate::model`). A fresh stand-in case level ([`case_stand_in`](Self::case_stand_in))
+    /// shows while the link gives no case level or 0.
+    pub fn common(&self) -> Common {
+        let mut c = common(&self.s, self.settings.phone_spatial);
+        if let Some((value, charging, at)) = self.stand_in {
+            let fresh = self.now.saturating_sub(at) < STAND_IN_MS;
+            if fresh && matches!(self.link_case, None | Some(0)) && !self.case_hidden {
+                c.battery[2] = Some(Level { value, max: 100, charging });
+            }
+        }
+        c
+    }
+
+    /// A case level the phone read outside the link: the BLE advertisement (`AdvertCaseScan`). The buds give none
+    /// while no bud sits in the open case (issue #47, report #184).
+    pub fn case_stand_in(&mut self, now: u64, level: u8, charging: bool) -> Vec<Effect> {
+        self.now = now;
+        self.stand_in = Some((level, charging, now));
+        self.out.push(Effect::State);
+        std::mem::take(&mut self.out)
+    }
 
     /// The shell loaded the settings again (a command can follow a change).
     pub fn set_settings(&mut self, settings: Settings) { self.settings = settings; }
@@ -369,6 +398,9 @@ impl Driver {
         self.steps.clear();
         self.wait_until = None;
         self.pending.clear();
+        self.link_case = None;
+        self.case_hidden = false;
+        self.stand_in = None;
         let detected = find_model(None, Some(&name));
         self.s = Snapshot { status: Status::On, name, detected, ..Default::default() };
         if let Some(eq) = &self.settings.eq_saved {
@@ -745,7 +777,11 @@ impl Driver {
             },
             Event::Battery(v) => {
                 // Settings › Hide old battery levels: a part the report leaves out is cleared, not kept.
-                if self.settings.clear_battery { s.battery = [None; 3]; }
+                let clear = self.settings.clear_battery;
+                if clear { s.battery = [None; 3]; }
+                let case_cell = v.iter().find(|c| c.0 == 3).map(|c| c.1);
+                if case_cell.is_some() || clear { self.link_case = case_cell; }
+                self.case_hidden = clear && case_cell.is_none();
                 for (i, level, charging) in v {
                     if !(1..=3).contains(&i) { continue; }
                     // Level 0 is "not known" (a closed case). The case then shows its last real level.

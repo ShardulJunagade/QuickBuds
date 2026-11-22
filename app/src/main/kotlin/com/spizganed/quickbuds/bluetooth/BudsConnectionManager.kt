@@ -2019,6 +2019,7 @@ class BudsConnectionManager(private val context: Context) {
             advertScan = null
             fpCase = level
             fpCaseAt = SystemClock.elapsedRealtime()
+            com.spizganed.quickbuds.protocol.RustShadow.caseStandIn(level)
             emitBattery()
         }
         advertScan = me

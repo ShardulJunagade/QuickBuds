@@ -88,3 +88,15 @@ fn the_saved_eq_shows_until_the_buds_answer() {
     assert_eq!(d.snapshot().eq_current, Some(4));
     assert_eq!(d.snapshot().bass_level, Some(2));
 }
+
+#[test]
+fn a_stand_in_case_level_shows_while_the_link_gives_none() {
+    let mut d = Driver::new(Settings::default());
+    d.connected(0, "X".into());
+    d.on_bytes(5, 0, &build_packet(0x8106, 1, &[0, 1, 1, 0x5A]));
+    d.case_stand_in(10, 80, false);
+    assert_eq!(d.common().battery[2].map(|l| l.value), Some(80));
+    // The link's own case level wins.
+    d.on_bytes(20, 0, &build_packet(0x8106, 1, &[0, 1, 3, 0x41]));
+    assert_eq!(d.common().battery[2].map(|l| l.value), Some(0x41));
+}

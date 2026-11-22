@@ -91,6 +91,13 @@ object RustShadow {
         tick()
     }
 
+    /** The case level the app read from the BLE advertisement ([com.spizganed.quickbuds.bluetooth.AdvertCaseScan]). */
+    @Synchronized
+    fun caseStandIn(level: FastPairStream.Level) {
+        if (handle == 0L) return
+        level.level?.let { nativeCaseStandIn(handle, SystemClock.elapsedRealtime(), it, level.charging) }
+    }
+
     /** A frame this layer wrote to the buds: kept for [checkInit]. */
     @Synchronized
     fun sent(frame: ByteArray) {
@@ -242,4 +249,5 @@ object RustShadow {
     private external fun nativeCommon(h: Long, now: Long): String?
     private external fun nativeInitSent(h: Long, now: Long): String?
     private external fun nativeTick(h: Long, now: Long): Long
+    private external fun nativeCaseStandIn(h: Long, now: Long, level: Int, charging: Boolean)
 }
