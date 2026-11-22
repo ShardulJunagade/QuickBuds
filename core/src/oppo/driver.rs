@@ -510,7 +510,7 @@ impl Driver {
             match step {
                 Step::Tx(cmd, seq, payload) => self.send(cmd, seq, &payload),
                 Step::Wait(ms) => if ms > 0 { self.wait_until = Some(self.now + ms) },
-                Step::Run(f) => self.front(f(self)),
+                Step::Run(f) => { let next = f(self); self.front(next) }
                 Step::Cmd(c) => { let next = self.run_cmd(c); self.front(next) }
                 Step::Emit => self.out.push(Effect::State),
                 Step::Ready => { self.phase = Phase::Run; self.out.push(Effect::Ready) }
