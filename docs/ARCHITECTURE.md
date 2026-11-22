@@ -7,13 +7,22 @@ QuickBuds has four parts. This file shows how they connect and why. The wire for
 
 | Part | Folder | Language | Role |
 |---|---|---|---|
-| Core | `core/` | Rust | Frames, typed messages, commands, the setting engine. No I/O, no dependencies. |
+| Core | `core/` | Rust | Frames, typed messages, commands, the setting engine, the model data and the OPPO driver. No I/O. One dependency: `serde_json`. |
 | Android app | `app/` | Kotlin | Phone UI, Bluetooth link, service, widgets, tiles, notification. |
-| Desktop app | `desktop-tauri/` | Rust, web UI | Windows and Linux. The link thread and protocol live in `desktop-tauri/src`. The Tauri window shows the UI from `desktop-tauri/ui/`. |
+| Desktop app | `desktop-tauri/` | Rust, web UI | Windows and Linux. The link thread (`desktop-tauri/src/session.rs`) runs the core's driver. The Tauri window shows the UI from `desktop-tauri/ui/`. |
 | Report Worker | `report-worker/` | JavaScript | Cloudflare Worker: problem reports, the daily count, the update check, the Discord digest. |
 
 The core has no Bluetooth code. Each platform shell owns the RFCOMM socket and passes bytes in and out.
 This keeps the core testable without a device.
+
+The OPPO driver (`core/src/oppo/driver.rs`) holds the whole protocol of one link: the init sequence, the replies and
+pushes, the UI's commands and the setting engine. The shell gives it three inputs: the bytes it reads
+(`on_bytes`), a UI command (`command`) and the clock (`tick`). The driver returns a list of `Effect`s: frames to
+write, log lines, a changed `Snapshot`, settings to store. A wait between two frames is a step in the driver's
+queue, so the driver never blocks. The shell calls `tick` at `next_wake` or sooner. Why: the same driver can run
+behind a JNI call on Android, and every brand gets a driver of this shape (docs/BRANDS.md).
+The driver runs one UI command at a time. Commands that arrive during a command's waits go in one batch, and only
+the last of several quick EQ picks is sent (`core/src/oppo/eq_logic.rs`).
 
 The Android app does not call the core. `app/.../protocol/` holds a Kotlin copy of the same rules
 (`Wire.kt`, `Commands.kt`, `Messages.kt`, `FeatureSync.kt`). A protocol change updates both copies and PROTOCOL.md.
@@ -87,7 +96,7 @@ The buds are the only source of truth. The app is a remote control.
    A locked screen puts the service to sleep: it closes the link and keeps the last levels. The unlock reconnects.
    Why: a held link costs battery. Smart pause keeps the link up. Sleep, wake and park go to the report log.
 
-The desktop link thread (`desktop-tauri/src/session.rs`) runs the same sequence and the same rules.
+The desktop link thread (`desktop-tauri/src/session.rs`) runs the core's driver, which has the same sequence and the same rules.
 
 ### A setting change
 

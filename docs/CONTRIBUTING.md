@@ -79,9 +79,9 @@ model data). The desktop calls these core files:
 | `core/src/oppo/types.rs` | Ids, `Event`, `Caps`, model data, log frames, the packet log's text |
 | `core/src/oppo/profile.rs`, `row_rules.rs` | One model entry as typed answers; which rows show and which ids `0x010D` asks |
 
-Other files: `src/session.rs` (the link), `src/bt.rs` (Bluetooth sockets), `ui/` (the web UI: `index.html`, `app.js`, `app.css`).
+Other files: `core/src/oppo/driver.rs` (the protocol of one link), `src/session.rs` (the link thread that runs it), `src/bt.rs` (Bluetooth sockets), `ui/` (the web UI: `index.html`, `app.js`, `app.css`).
 
-`session.rs` builds its frames with `buds_core::cmd` and reads and answers through `core/src/oppo/protocol.rs`. There is one protocol path and no switch.
+The driver builds its frames with `buds_core::cmd` and reads and answers through `core/src/oppo/protocol.rs`. There is one protocol path and no switch.
 
 Per-model data (features, noise control modes, EQ presets, gestures) is in
 `app/src/main/assets/models.json`. Our own key `confirmed` lists the features an owner confirmed

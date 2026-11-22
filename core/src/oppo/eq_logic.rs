@@ -2,8 +2,8 @@
 //!  - A reply that names another preset than the last pick is ignored while the pick is under [`PICK_HOLD_MS`] old.
 //!  - Quick picks queued behind a write: only the last one is sent. A save with changes is kept.
 
-use crate::session::Cmd;
-use crate::types::Preset;
+use crate::oppo::driver::Cmd;
+use crate::oppo::types::Preset;
 
 /// A pick holds the selection this long against replies of earlier picks.
 pub const PICK_HOLD_MS: u64 = 4000;

@@ -9,7 +9,6 @@ mod hearing_logic;
 mod instance;
 mod home_logic;
 mod row_rules;
-mod eq_logic;
 mod session;
 
 #[cfg(target_os = "linux")]

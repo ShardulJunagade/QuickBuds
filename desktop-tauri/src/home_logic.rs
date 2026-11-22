@@ -35,9 +35,7 @@ pub(crate) fn spatial_by_type(s: &Snapshot) -> bool { crate::row_rules::spatial_
 
 /// The game-mode id the buds write and read. A model's `gameId` wins, for a model whose capture proves another id
 /// (PROTOCOL.md section 16).
-pub(crate) fn game_id(s: &Snapshot) -> u8 {
-    crate::profile::Profile(s.model).game_id().unwrap_or_else(|| s.caps.game_mode_id())
-}
+pub(crate) fn game_id(s: &Snapshot) -> u8 { buds_core::oppo::driver::game_id(s) }
 
 /// A OnePlus or OPPO model whose bitmap lacks `0xEF03`: the phone makes the 3D effect, and only OPPO and OnePlus
 /// phones can (PROTOCOL.md section 18). The `1B` switch then does nothing audible, so the row is hidden.
