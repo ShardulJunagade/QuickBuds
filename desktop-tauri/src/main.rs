@@ -8,12 +8,9 @@ mod gesture_logic;
 mod hearing_logic;
 mod instance;
 mod home_logic;
-mod protocol;
 mod row_rules;
-mod profile;
 mod eq_logic;
 mod session;
-mod types;
 
 #[cfg(target_os = "linux")]
 mod blur;
@@ -29,7 +26,7 @@ mod update;
 #[cfg(target_os = "linux")]
 mod tray;
 
-pub use buds_core::{cmd, msg, wire};
+pub use buds_core::{cmd, msg, profile, protocol, types, wire};
 
 pub mod icons { include!(concat!(env!("OUT_DIR"), "/icons.rs")); }
 pub mod strings { include!(concat!(env!("OUT_DIR"), "/strings.rs")); }

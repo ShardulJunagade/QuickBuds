@@ -7,7 +7,7 @@ import org.json.JSONObject
  * One model's entry in `models.json`, as typed answers. It is the only reader of the entry's top-level keys: code asks
  * `profile.noFind`, not `json.optInt("noFind")`. A new key goes here once. Nested tables (gestures, noise modes, presets)
  * are handed to their own parsers. No entry (an unknown model) answers false, 0, null or an empty list.
- * The keys are in docs/ADD-A-MODEL.md and PROTOCOL.md section 21. The Rust twin is `Profile` in `desktop-tauri/src/types.rs`.
+ * The keys are in docs/ADD-A-MODEL.md and PROTOCOL.md section 21. The Rust twin is `Profile` in `core/src/oppo/profile.rs`.
  */
 class ModelProfile(val json: JSONObject?) {
     private fun flag(key: String) = json?.optInt(key) == 1

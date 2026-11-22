@@ -17,9 +17,9 @@ This keeps the core testable without a device.
 
 The Android app does not call the core. `app/.../protocol/` holds a Kotlin copy of the same rules
 (`Wire.kt`, `Commands.kt`, `Messages.kt`, `FeatureSync.kt`). A protocol change updates both copies and PROTOCOL.md.
-The desktop app calls the core directly (`desktop-tauri/src/main.rs` re-exports `cmd`, `msg` and `wire`).
+The desktop app calls the core directly (`desktop-tauri/src/main.rs` re-exports `cmd`, `msg`, `wire` and the OPPO model data in `core/src/oppo/`).
 
-Both apps decode a frame in one place. Android: `Decode.decode`, then `BudsConnectionManager.apply`. Desktop: `buds_core::msg::decode`, mapped to the session's `Event` in `desktop-tauri/src/protocol.rs`.
+Both apps decode a frame in one place. Android: `Decode.decode`, then `BudsConnectionManager.apply`. Desktop: `buds_core::msg::decode`, mapped to the session's `Event` in `core/src/oppo/protocol.rs`.
 
 One setting does not go to the buds. Buds whose bitmap lacks `0xEF03` cannot make 3D audio; the phone does.
 `app/.../bluetooth/PhoneSpatial.kt` reads the Android `Spatializer` and writes an OPLUS audio parameter. Only OPPO,
@@ -48,7 +48,7 @@ report `0` while no bud sits in the open case (issue #47).
 
 `app/src/main/assets/models.json` lists every model. Each entry has the id, the name, the commands the buds accept,
 and per-model flags (for example `seqless`, `gameConfirm`, `noFind`). Code reads an entry only through
-`protocol/ModelProfile.kt` and its Rust twin `desktop-tauri/src/profile.rs`. A new key goes there once. Code never
+`protocol/ModelProfile.kt` and its Rust twin `core/src/oppo/profile.rs`. A new key goes there once. Code never
 tests a model name. A new model needs only a new entry ([ADD-A-MODEL.md](./ADD-A-MODEL.md)). The Worker imports the
 same file to accept a report only for a known model.
 
@@ -139,6 +139,6 @@ The user can turn the count off in Settings.
 - A protocol change updates `core/`, the Kotlin copy and PROTOCOL.md together.
 - Docs change in the same commit as the code.
 - Which rows show, and which ids `0x010D` asks, is one rule set: `protocol/RowRules.kt` and its port
-  `desktop-tauri/src/row_rules.rs`. Every screen, widget and tile asks it. Both run `testdata/row_fixtures.json`.
+  `core/src/oppo/row_rules.rs`. Every screen, widget and tile asks it. Both run `testdata/row_fixtures.json`.
 - A new user-visible string needs all 26 locales. `scripts/check-locales.py` checks this.
 - A change to `models.json` needs `npx wrangler deploy` in `report-worker/`. Else the Worker rejects reports for the new model.

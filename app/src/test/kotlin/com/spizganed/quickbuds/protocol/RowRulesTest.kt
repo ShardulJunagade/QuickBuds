@@ -14,7 +14,7 @@ import java.io.File
 class RowRulesTest {
 
     private val fixtures: List<JSONObject> by lazy {
-        // Shared with the desktop test (desktop-tauri/src/row_rules.rs).
+        // Shared with the desktop test (core/src/oppo/row_rules.rs).
         val text = File("../testdata/row_fixtures.json").readText()
         val a = JSONObject(text).getJSONArray("fixtures")
         (0 until a.length()).map { a.getJSONObject(it) }

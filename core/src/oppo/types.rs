@@ -197,7 +197,7 @@ pub fn status_query(model: Option<&serde_json::Value>) -> Vec<u8> {
 
 /// What the buds said they accept. Before the handshake reply, everything is assumed (as the phone app does).
 #[derive(Default, Clone)]
-pub struct Caps(pub(crate) Option<Vec<u16>>);
+pub struct Caps(pub Option<Vec<u16>>);
 
 impl Caps {
     /// The `0x8100` table is `buds_core::msg::Bitmap`'s.
@@ -226,7 +226,7 @@ pub const LEVELS: [&str; 4] = ["ANC-Light", "ANC-Medium", "ANC-Deep", "ANC-Smart
 const NC: &str = "ANC";
 
 /// The phone app's own file, embedded at build time: one list for both apps.
-static MODELS_JSON: &str = include_str!("../../app/src/main/assets/models.json");
+static MODELS_JSON: &str = include_str!("../../../app/src/main/assets/models.json");
 
 pub fn models() -> &'static [Value] {
     use std::sync::OnceLock;
