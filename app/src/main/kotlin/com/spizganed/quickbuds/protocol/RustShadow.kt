@@ -31,6 +31,8 @@ object RustShadow {
         var tap: List<Int>? = null
         var preferred: String? = null
         var preferredRead = false
+        /** A device list came on this link. The manager keeps the list of an older link until then. */
+        var devicesRead = false
         var firmware: String? = null
         var fit: List<Int>? = null
         var pnc: List<Int>? = null
@@ -61,6 +63,7 @@ object RustShadow {
         override fun onTapLevel(level: Int, default: Int) { seen.tap = listOf(level, default) }
         override fun onPreferred(mac: String?) { seen.preferred = mac; seen.preferredRead = true }
         override fun onFirmware(version: String) { seen.firmware = version }
+        override fun onDevices(list: List<BudsConnectionManager.PairedDevice>) { seen.devicesRead = true }
         override fun onFitResult(left: Int, right: Int) { seen.fit = listOf(left, right) }
         override fun onPersonalNoiseStored(stored: Boolean) { seen.pnc = listOf(1, if (stored) 1 else 0) }
         override fun onPersonalNoiseAck(status: Int) { seen.pnc = listOf(2, status) }
@@ -220,7 +223,7 @@ object RustShadow {
         fun same(field: String, kotlin: Any?, core: Any?) { if (kotlin != core) out += "$field kotlin=$kotlin rust=$core" }
         val s = seen
         same("alertVolume", m.alertVolume, rust.intOrNull("alert"))
-        same("devices", m.devices.map { "${it.mac}|${it.name}|${it.connected}|${it.thisPhone}" },
+        if (s.devicesRead) same("devices", m.devices.map { "${it.mac}|${it.name}|${it.connected}|${it.thisPhone}" },
             rust.optJSONArray("devices").texts() ?: emptyList<String>())
         if (s.preferredRead) same("preferred", s.preferred, rust.textOrNull("preferred"))
         same("spatialType", m.spatialType, rust.intOrNull("spatialType"))
