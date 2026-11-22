@@ -350,25 +350,19 @@ impl Driver {
 
     pub fn snapshot(&self) -> &Snapshot { &self.s }
 
-    /// The brand-neutral state (`crate::model`). A fresh stand-in case level ([`case_stand_in`](Self::case_stand_in))
-    /// shows while the link gives no case level or 0.
-    pub fn common(&self) -> Common {
-        let mut c = common(&self.s, self.settings.phone_spatial);
-        if let Some((value, charging, at)) = self.stand_in {
-            let fresh = self.now.saturating_sub(at) < STAND_IN_MS;
-            if fresh && matches!(self.link_case, None | Some(0)) && !self.case_hidden {
-                c.battery[2] = Some(Level { value, max: 100, charging });
-            }
-        }
-        c
-    }
+    /// The brand-neutral state (`crate::model`).
+    pub fn common(&self) -> Common { common(&self.s, self.settings.phone_spatial) }
 
     /// A case level the phone read outside the link: the BLE advertisement (`AdvertCaseScan`). The buds give none
-    /// while no bud sits in the open case (issue #47, report #184).
+    /// while no bud sits in the open case (issue #47, report #184). It shows while the link gives no case level or
+    /// 0, and stays as any shown level does. A case 0 from the link takes it while it is under 5 min old.
     pub fn case_stand_in(&mut self, now: u64, level: u8, charging: bool) -> Vec<Effect> {
         self.now = now;
         self.stand_in = Some((level, charging, now));
-        self.out.push(Effect::State);
+        if matches!(self.link_case, None | Some(0)) && !self.case_hidden {
+            self.s.battery[2] = Some((level, charging));
+            self.out.push(Effect::State);
+        }
         std::mem::take(&mut self.out)
     }
 
@@ -786,7 +780,9 @@ impl Driver {
                     if !(1..=3).contains(&i) { continue; }
                     // Level 0 is "not known" (a closed case). The case then shows its last real level.
                     if level == 0 {
-                        if i == 3 { if let Some(saved) = self.settings.case_level { s.battery[2] = Some((saved, charging)); } }
+                        // A fresh stand-in first, then the last real level of these buds.
+                        let fresh = self.stand_in.filter(|t| now.saturating_sub(t.2) < STAND_IN_MS).map(|t| (t.0, t.1));
+                        if i == 3 { if let Some(l) = fresh.or(self.settings.case_level.map(|c| (c, charging))) { s.battery[2] = Some(l); } }
                         continue;
                     }
                     s.battery[i as usize - 1] = Some((level, charging));
