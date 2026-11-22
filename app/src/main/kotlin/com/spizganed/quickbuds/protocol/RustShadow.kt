@@ -125,7 +125,8 @@ object RustShadow {
         val rust = nativeCommon(handle, SystemClock.elapsedRealtime())?.let { JSONObject(it) }
         val diff = if (rust == null) "core failed"
             else (diff(WidgetStateStore.read(c), Rows.of(c), rust, m.eq, Capabilities.reply(c)) + more(m, rust)).joinToString("; ")
-        if (diff == (lastDiff ?: "")) return
+        // The first check of a link always logs, so a log shows that the shadow ran.
+        if (diff == lastDiff) return
         lastDiff = diff
         log(if (diff.isEmpty()) "RUST DIFF: none" else "RUST DIFF: $diff")
     }
