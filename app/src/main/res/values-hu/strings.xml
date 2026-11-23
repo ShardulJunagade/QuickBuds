@@ -271,6 +271,11 @@
     <string name="settings_general">Általános</string>
     <string name="settings_language_sub">Alkalmazás nyelve</string>
     <string name="settings_app">Alkalmazás</string>
+    <string name="hires_sheet_body">A telefonnak is le kell játszania a kodeket</string>
+    <string name="spatial_sheet_body">Rögzített: a hang a fejeddel együtt mozog. Fejkövetés: a hang a helyén marad, ha elfordítod a fejed</string>
+    <string name="head_motion_sheet_body">A másik mozdulat elutasítja a hívást</string>
+    <string name="game_sound_sheet_body">Ehhez a játéktípushoz hangolt hang</string>
+    <string name="glass_bg_sheet_body">Az üvegpanelek mögötti színek</string>
     <string name="about_privacy_reset_sub">A következő napi számlálás új telepítésnek számít. A régi jelentéseidre adott válaszok már nem érnek el hozzád</string>
     <string name="about_privacy_reset_done">Új telepítési azonosító beállítva</string>
     <string name="widget_placed_sub">A widget gombjai és megjelenése</string>

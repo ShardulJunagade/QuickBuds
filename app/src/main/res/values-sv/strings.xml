@@ -271,6 +271,11 @@
     <string name="settings_general">Allmänt</string>
     <string name="settings_language_sub">Appens språk</string>
     <string name="settings_app">App</string>
+    <string name="hires_sheet_body">Telefonen måste också spela upp kodeken</string>
+    <string name="spatial_sheet_body">Fast: ljudet följer huvudet. Huvudspårning: ljudet stannar på plats när du vrider huvudet</string>
+    <string name="head_motion_sheet_body">Den andra rörelsen avvisar samtalet</string>
+    <string name="game_sound_sheet_body">Ljud anpassat för den här typen av spel</string>
+    <string name="glass_bg_sheet_body">Färgerna bakom glaspanelerna</string>
     <string name="about_privacy_reset_sub">Nästa dagliga räkning räknas som en ny installation. Svar på dina gamla rapporter når dig inte längre</string>
     <string name="about_privacy_reset_done">Ett nytt installations-ID är satt</string>
     <string name="widget_placed_sub">Knappar och utseende för den här widgeten</string>

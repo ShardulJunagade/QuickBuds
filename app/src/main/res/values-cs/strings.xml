@@ -271,6 +271,11 @@
     <string name="settings_general">Obecné</string>
     <string name="settings_language_sub">Jazyk aplikace</string>
     <string name="settings_app">Aplikace</string>
+    <string name="hires_sheet_body">Telefon musí kodek také přehrávat</string>
+    <string name="spatial_sheet_body">Pevný: zvuk se pohybuje s hlavou. Sledování hlavy: zvuk zůstane na místě, když otočíte hlavu</string>
+    <string name="head_motion_sheet_body">Druhý pohyb hovor odmítne</string>
+    <string name="game_sound_sheet_body">Zvuk vyladěný pro tento typ her</string>
+    <string name="glass_bg_sheet_body">Barvy za skleněnými panely</string>
     <string name="about_privacy_reset_sub">Další denní počet se započítá jako nová instalace. Odpovědi na vaše starší hlášení už k vám nedorazí</string>
     <string name="about_privacy_reset_done">Nastaveno nové ID instalace</string>
     <string name="widget_placed_sub">Tlačítka a vzhled tohoto widgetu</string>

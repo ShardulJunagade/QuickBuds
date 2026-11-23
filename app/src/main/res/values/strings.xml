@@ -351,6 +351,11 @@
     <string name="settings_general">General</string>
     <string name="settings_language_sub">App language</string>
     <string name="settings_app">App</string>
+    <string name="hires_sheet_body">The phone must play the codec too</string>
+    <string name="spatial_sheet_body">Fixed: the sound moves with your head. Head tracking: the sound stays in place when you turn your head</string>
+    <string name="head_motion_sheet_body">The other movement declines the call</string>
+    <string name="game_sound_sheet_body">Sound tuned for this type of game</string>
+    <string name="glass_bg_sheet_body">The colors behind the glass panels</string>
     <string name="about_privacy_reset_sub">The next daily count counts as a new install. Replies to your old reports no longer reach you</string>
     <string name="about_privacy_reset_done">A new install ID is set</string>
     <string name="widget_placed_sub">Buttons and look of this widget</string>

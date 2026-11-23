@@ -271,6 +271,11 @@
     <string name="settings_general">Umum</string>
     <string name="settings_language_sub">Bahasa aplikasi</string>
     <string name="settings_app">Aplikasi</string>
+    <string name="hires_sheet_body">Telefon juga mesti memainkan codec itu</string>
+    <string name="spatial_sheet_body">Tetap: bunyi bergerak bersama kepala anda. Penjejakan kepala: bunyi kekal di tempatnya apabila anda menoleh</string>
+    <string name="head_motion_sheet_body">Gerakan yang satu lagi menolak panggilan</string>
+    <string name="game_sound_sheet_body">Bunyi yang dilaraskan untuk jenis permainan ini</string>
+    <string name="glass_bg_sheet_body">Warna di belakang panel kaca</string>
     <string name="about_privacy_reset_sub">Kiraan harian seterusnya dikira sebagai pemasangan baharu. Balasan kepada laporan lama anda tidak lagi sampai kepada anda</string>
     <string name="about_privacy_reset_done">ID pemasangan baharu telah ditetapkan</string>
     <string name="widget_placed_sub">Butang dan rupa widget ini</string>

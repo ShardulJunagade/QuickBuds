@@ -271,6 +271,11 @@
     <string name="settings_general">General</string>
     <string name="settings_language_sub">Limba aplicației</string>
     <string name="settings_app">Aplicație</string>
+    <string name="hires_sheet_body">Și telefonul trebuie să redea codecul</string>
+    <string name="spatial_sheet_body">Fix: sunetul se mișcă odată cu capul. Urmărirea capului: sunetul rămâne pe loc când întorci capul</string>
+    <string name="head_motion_sheet_body">Cealaltă mișcare respinge apelul</string>
+    <string name="game_sound_sheet_body">Sunet reglat pentru acest tip de joc</string>
+    <string name="glass_bg_sheet_body">Culorile din spatele panourilor de sticlă</string>
     <string name="about_privacy_reset_sub">Următoarea numărare zilnică contează ca o instalare nouă. Răspunsurile la rapoartele tale vechi nu mai ajung la tine</string>
     <string name="about_privacy_reset_done">Un nou ID de instalare este setat</string>
     <string name="widget_placed_sub">Butoanele și aspectul acestui widget</string>

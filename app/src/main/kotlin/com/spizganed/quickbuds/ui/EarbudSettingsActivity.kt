@@ -325,6 +325,7 @@ class EarbudSettingsActivity : Activity(), BudsConnectionManager.Listener {
         val m = manager ?: return
         BottomSheetDialog(this)
             .title(getString(R.string.head_motion_type_title))
+            .message(getString(R.string.head_motion_sheet_body))
             .items(listOf(0, 1).map { t ->
                 BottomSheetDialog.Item(headMotionLabel(t), t == m.headMotionType) {
                     m.setHeadMotionType(t)
@@ -352,6 +353,7 @@ class EarbudSettingsActivity : Activity(), BudsConnectionManager.Listener {
         val types = (listOf(0) + m.gameSoundTypes.ifEmpty { listOf(3) }).distinct().filter { gameSoundLabel(it) != null }
         BottomSheetDialog(this)
             .title(getString(R.string.game_sound_type_title))
+            .message(getString(R.string.game_sound_sheet_body))
             .items(types.map { t ->
                 BottomSheetDialog.Item(gameSoundLabel(t)!!, t == m.gameSoundType) {
                     m.setGameSoundType(t)

@@ -271,6 +271,11 @@
     <string name="settings_general">Allgemein</string>
     <string name="settings_language_sub">App-Sprache</string>
     <string name="settings_app">App</string>
+    <string name="hires_sheet_body">Das Handy muss den Codec auch abspielen</string>
+    <string name="spatial_sheet_body">Fest: Der Klang bewegt sich mit dem Kopf. Kopfverfolgung: Der Klang bleibt an seinem Platz, wenn du den Kopf drehst</string>
+    <string name="head_motion_sheet_body">Die andere Bewegung lehnt den Anruf ab</string>
+    <string name="game_sound_sheet_body">Klang abgestimmt auf diese Art von Spiel</string>
+    <string name="glass_bg_sheet_body">Die Farben hinter den Glasflächen</string>
     <string name="about_privacy_reset_sub">Die nächste tägliche Zählung zählt als neue Installation. Antworten auf deine alten Berichte erreichen dich nicht mehr</string>
     <string name="about_privacy_reset_done">Eine neue Installations-ID ist gesetzt</string>
     <string name="widget_placed_sub">Tasten und Aussehen dieses Widgets</string>

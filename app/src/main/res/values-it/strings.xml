@@ -271,6 +271,11 @@
     <string name="settings_general">Generali</string>
     <string name="settings_language_sub">Lingua dell\'app</string>
     <string name="settings_app">App</string>
+    <string name="hires_sheet_body">Anche il telefono deve riprodurre il codec</string>
+    <string name="spatial_sheet_body">Fisso: il suono si muove con la testa. Tracciamento della testa: il suono resta fermo quando giri la testa</string>
+    <string name="head_motion_sheet_body">L\'altro movimento rifiuta la chiamata</string>
+    <string name="game_sound_sheet_body">Suono regolato per questo tipo di gioco</string>
+    <string name="glass_bg_sheet_body">I colori dietro i pannelli di vetro</string>
     <string name="about_privacy_reset_sub">Il prossimo conteggio giornaliero conta come una nuova installazione. Le risposte ai tuoi vecchi rapporti non ti arrivano più</string>
     <string name="about_privacy_reset_done">È stato impostato un nuovo ID di installazione</string>
     <string name="widget_placed_sub">Pulsanti e aspetto di questo widget</string>

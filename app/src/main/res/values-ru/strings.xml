@@ -271,6 +271,11 @@
     <string name="settings_general">Общие</string>
     <string name="settings_language_sub">Язык приложения</string>
     <string name="settings_app">Приложение</string>
+    <string name="hires_sheet_body">Телефон тоже должен воспроизводить этот кодек</string>
+    <string name="spatial_sheet_body">Фиксированный: звук движется вместе с головой. Отслеживание головы: звук остаётся на месте, когда вы поворачиваете голову</string>
+    <string name="head_motion_sheet_body">Другое движение отклоняет вызов</string>
+    <string name="game_sound_sheet_body">Звук, настроенный для этого типа игр</string>
+    <string name="glass_bg_sheet_body">Цвета за стеклянными панелями</string>
     <string name="about_privacy_reset_sub">Следующий ежедневный подсчёт засчитается как новая установка. Ответы на ваши старые отчёты больше не придут</string>
     <string name="about_privacy_reset_done">Задан новый ID установки</string>
     <string name="widget_placed_sub">Кнопки и вид этого виджета</string>

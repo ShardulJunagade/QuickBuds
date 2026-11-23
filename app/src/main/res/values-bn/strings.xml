@@ -271,6 +271,11 @@
     <string name="settings_general">সাধারণ</string>
     <string name="settings_language_sub">অ্যাপের ভাষা</string>
     <string name="settings_app">অ্যাপ</string>
+    <string name="hires_sheet_body">ফোনকেও কোডেকটি চালাতে হবে</string>
+    <string name="spatial_sheet_body">স্থির: শব্দ আপনার মাথার সাথে নড়ে। হেড ট্র্যাকিং: মাথা ঘোরালেও শব্দ জায়গায় থাকে</string>
+    <string name="head_motion_sheet_body">অন্য নড়াচড়াটি কল প্রত্যাখ্যান করে</string>
+    <string name="game_sound_sheet_body">এই ধরনের গেমের জন্য সাজানো শব্দ</string>
+    <string name="glass_bg_sheet_body">কাচের প্যানেলের পেছনের রং</string>
     <string name="about_privacy_reset_sub">পরের দৈনিক গণনা একটি নতুন ইনস্টল হিসেবে গোনা হবে। আপনার পুরোনো রিপোর্টের উত্তর আর আপনার কাছে আসবে না</string>
     <string name="about_privacy_reset_done">একটি নতুন ইনস্টল আইডি সেট হয়েছে</string>
     <string name="widget_placed_sub">এই উইজেটের বোতাম ও চেহারা</string>

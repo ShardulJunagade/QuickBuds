@@ -271,6 +271,11 @@
     <string name="settings_general">일반</string>
     <string name="settings_language_sub">앱 언어</string>
     <string name="settings_app">앱</string>
+    <string name="hires_sheet_body">휴대폰도 해당 코덱을 재생할 수 있어야 합니다</string>
+    <string name="spatial_sheet_body">고정: 소리가 머리와 함께 움직입니다. 헤드 트래킹: 머리를 돌려도 소리가 제자리에 있습니다</string>
+    <string name="head_motion_sheet_body">다른 동작은 전화를 거절합니다</string>
+    <string name="game_sound_sheet_body">이 유형의 게임에 맞춘 사운드</string>
+    <string name="glass_bg_sheet_body">유리 패널 뒤의 색상</string>
     <string name="about_privacy_reset_sub">다음 일일 집계는 새 설치로 계산됩니다. 이전 보고서에 대한 답변은 더 이상 받을 수 없습니다</string>
     <string name="about_privacy_reset_done">새 설치 ID가 설정되었습니다</string>
     <string name="widget_placed_sub">이 위젯의 버튼과 모양</string>

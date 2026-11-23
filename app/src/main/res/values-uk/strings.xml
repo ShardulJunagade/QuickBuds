@@ -271,6 +271,11 @@
     <string name="settings_general">Загальні</string>
     <string name="settings_language_sub">Мова застосунку</string>
     <string name="settings_app">Застосунок</string>
+    <string name="hires_sheet_body">Телефон теж має відтворювати цей кодек</string>
+    <string name="spatial_sheet_body">Фіксований: звук рухається разом із головою. Відстеження голови: звук лишається на місці, коли ви повертаєте голову</string>
+    <string name="head_motion_sheet_body">Інший рух відхиляє виклик</string>
+    <string name="game_sound_sheet_body">Звук, налаштований для цього типу ігор</string>
+    <string name="glass_bg_sheet_body">Кольори за скляними панелями</string>
     <string name="about_privacy_reset_sub">Наступний щоденний підрахунок зарахується як нове встановлення. Відповіді на ваші старі звіти більше не надійдуть</string>
     <string name="about_privacy_reset_done">Задано новий ID встановлення</string>
     <string name="widget_placed_sub">Кнопки та вигляд цього віджета</string>

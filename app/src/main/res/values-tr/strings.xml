@@ -271,6 +271,11 @@
     <string name="settings_general">Genel</string>
     <string name="settings_language_sub">Uygulama dili</string>
     <string name="settings_app">Uygulama</string>
+    <string name="hires_sheet_body">Telefonun da bu kodeki çalabilmesi gerekir</string>
+    <string name="spatial_sheet_body">Sabit: ses başınızla birlikte hareket eder. Kafa takibi: başınızı çevirdiğinizde ses yerinde kalır</string>
+    <string name="head_motion_sheet_body">Diğer hareket aramayı reddeder</string>
+    <string name="game_sound_sheet_body">Bu tür oyunlar için ayarlanmış ses</string>
+    <string name="glass_bg_sheet_body">Cam panellerin arkasındaki renkler</string>
     <string name="about_privacy_reset_sub">Bir sonraki günlük sayım yeni bir kurulum olarak sayılır. Eski raporlarınıza verilen yanıtlar artık size ulaşmaz</string>
     <string name="about_privacy_reset_done">Yeni bir kurulum kimliği ayarlandı</string>
     <string name="widget_placed_sub">Bu widget\'ın düğmeleri ve görünümü</string>

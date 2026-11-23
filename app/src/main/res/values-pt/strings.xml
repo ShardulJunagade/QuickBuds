@@ -271,6 +271,11 @@
     <string name="settings_general">Geral</string>
     <string name="settings_language_sub">Idioma da app</string>
     <string name="settings_app">App</string>
+    <string name="hires_sheet_body">O telefone também precisa tocar o codec</string>
+    <string name="spatial_sheet_body">Fixo: o som se move com a sua cabeça. Rastreamento da cabeça: o som fica no lugar quando você vira a cabeça</string>
+    <string name="head_motion_sheet_body">O outro movimento recusa a chamada</string>
+    <string name="game_sound_sheet_body">Som ajustado para este tipo de jogo</string>
+    <string name="glass_bg_sheet_body">As cores atrás dos painéis de vidro</string>
     <string name="about_privacy_reset_sub">A próxima contagem diária conta como uma nova instalação. As respostas aos seus relatórios antigos não chegam mais até você</string>
     <string name="about_privacy_reset_done">Um novo ID de instalação foi definido</string>
     <string name="widget_placed_sub">Botões e aparência deste widget</string>

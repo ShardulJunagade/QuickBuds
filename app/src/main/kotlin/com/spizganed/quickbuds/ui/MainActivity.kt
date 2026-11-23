@@ -1147,6 +1147,7 @@ class MainActivity : Activity(), BudsConnectionManager.Listener {
         val codecs = listOf(8, 7, 3, 6, 5, 4, 2, 1).filter { it in manager.codecs }
         BottomSheetDialog(this)
             .title(getString(R.string.row_hires_title))
+            .message(getString(R.string.hires_sheet_body))
             .items(codecs.map { codec ->
                 BottomSheetDialog.Item(codecName(codec), codec == current) {
                     if (codec != current) confirmReconnect(R.string.codec_msg_reconnect) {
@@ -1167,6 +1168,7 @@ class MainActivity : Activity(), BudsConnectionManager.Listener {
         val current = manager.spatialType ?: 0
         BottomSheetDialog(this)
             .title(getString(R.string.row_spatial_title))
+            .message(getString(R.string.spatial_sheet_body))
             .items(listOf(0, 1, 2).map { type ->
                 BottomSheetDialog.Item(spatialLabel(type), type == current) { setSpatial(type) }
             })

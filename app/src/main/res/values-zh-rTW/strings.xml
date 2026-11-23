@@ -271,6 +271,11 @@
     <string name="settings_general">一般</string>
     <string name="settings_language_sub">應用程式語言</string>
     <string name="settings_app">應用程式</string>
+    <string name="hires_sheet_body">手機也必須支援播放該編解碼器</string>
+    <string name="spatial_sheet_body">固定：聲音隨頭部移動。頭部追蹤：轉頭時聲音保持原位</string>
+    <string name="head_motion_sheet_body">另一個動作會拒接來電</string>
+    <string name="game_sound_sheet_body">為此類遊戲調校的聲音</string>
+    <string name="glass_bg_sheet_body">玻璃面板後方的顏色</string>
     <string name="about_privacy_reset_sub">下一次每日計數將算作新的安裝。對你舊報告的回覆將不再送達</string>
     <string name="about_privacy_reset_done">已設定新的安裝 ID</string>
     <string name="widget_placed_sub">此小工具的按鈕和外觀</string>

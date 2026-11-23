@@ -271,6 +271,11 @@
     <string name="settings_general">Ogólne</string>
     <string name="settings_language_sub">Język aplikacji</string>
     <string name="settings_app">Aplikacja</string>
+    <string name="hires_sheet_body">Telefon też musi odtwarzać ten kodek</string>
+    <string name="spatial_sheet_body">Stały: dźwięk porusza się razem z głową. Śledzenie głowy: dźwięk zostaje w miejscu, gdy obracasz głowę</string>
+    <string name="head_motion_sheet_body">Drugi ruch odrzuca połączenie</string>
+    <string name="game_sound_sheet_body">Dźwięk dostrojony do tego typu gier</string>
+    <string name="glass_bg_sheet_body">Kolory za szklanymi panelami</string>
     <string name="about_privacy_reset_sub">Kolejne dzienne zliczenie będzie liczone jako nowa instalacja. Odpowiedzi na Twoje stare zgłoszenia już do Ciebie nie dotrą</string>
     <string name="about_privacy_reset_done">Ustawiono nowy identyfikator instalacji</string>
     <string name="widget_placed_sub">Przyciski i wygląd tego widżetu</string>

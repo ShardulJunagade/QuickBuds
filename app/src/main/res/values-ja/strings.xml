@@ -271,6 +271,11 @@
     <string name="settings_general">全般</string>
     <string name="settings_language_sub">アプリの言語</string>
     <string name="settings_app">アプリ</string>
+    <string name="hires_sheet_body">スマホもそのコーデックを再生できる必要があります</string>
+    <string name="spatial_sheet_body">固定：音が頭と一緒に動きます。ヘッドトラッキング：頭を回しても音はその場に留まります</string>
+    <string name="head_motion_sheet_body">もう一方の動作で着信を拒否します</string>
+    <string name="game_sound_sheet_body">このタイプのゲーム向けに調整されたサウンド</string>
+    <string name="glass_bg_sheet_body">ガラスパネルの背後の色</string>
     <string name="about_privacy_reset_sub">次の日次カウントは新しいインストールとして数えられます。以前のレポートへの返信は届かなくなります</string>
     <string name="about_privacy_reset_done">新しいインストールIDを設定しました</string>
     <string name="widget_placed_sub">このウィジェットのボタンと外観</string>

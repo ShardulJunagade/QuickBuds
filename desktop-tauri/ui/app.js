@@ -330,7 +330,7 @@ function buildWindow(){
     <div class="cols">
       <div class="col"><div class="lbl">${$t('earbuds_section_sounds')}</div><div class="group">${swRow('bolt',$t('row_game_title'),'','ll')}${swRow('hires',$t('row_hires_title'),'','hq')}${swRow('spatial',$t('row_spatial_title'),'','sp')}${swRow('anc',$t('row_wind_noise_title'),'','wind')}${swRow('hearing',$t('row_golden_title'),'','hp')}</div></div>
       <div class="col"><div class="lbl">${$t('earbuds_section_features')}</div><div class="group">${swRow('devices',$t('row_dual_title'),'','dual')}${swRow('earbud',$t('wear_firmware_title'),'','wear')}${swRow('eq',$t('eq_basswave'),'','bass')}
-        <button class="row press" data-act="page" data-v="eq">${ic('eq')}<div class="txt"><div class="t">${$t('row_eq_title')}</div></div><span class="v" data-eqname></span>${ic('chev','ch')}</button></div></div>
+        <button class="row press" data-act="page" data-v="eq">${ic('eq')}<div class="txt"><div class="t">${$t('row_eq_title')}</div><div class="s">${$t('row_eq_sub')}</div></div><span class="v" data-eqname></span>${ic('chev','ch')}</button></div></div>
     </div>
   </section>
 
@@ -346,7 +346,7 @@ function buildWindow(){
       <div class="col"><div class="lbl">${$t('eq_recommended')}</div><div class="group" id="eqRec"></div></div>
       <div class="col"><div class="lbl">${$t('eq_custom')}</div><div class="group" id="eqCus"></div></div>
     </div>
-    <div class="group"><div class="row">${ic('eq')}<div class="txt"><div class="t">${$t('eq_basswave')}</div></div><input class="range short" id="bassR" type="range" min="0" max="3" step="1" aria-label="${$t('eq_basswave')}"><span class="v" id="bassV" style="width:20px;text-align:right">+2</span>${sw('bass')}</div>
+    <div class="group"><div class="row">${ic('eq')}<div class="txt"><div class="t">${$t('eq_basswave')}</div><div class="s">${$t('eq_basswave_sub')}</div></div><input class="range short" id="bassR" type="range" min="0" max="3" step="1" aria-label="${$t('eq_basswave')}"><span class="v" id="bassV" style="width:20px;text-align:right">+2</span>${sw('bass')}</div>
       <div id="bassBands" hidden>${['eq_bass_low','eq_bass_mid','eq_bass_high'].map((k,i)=>`<div class="row"><div class="txt"><div class="t">${$t(k)}</div></div><input class="range short" id="bassB${i+1}" type="range" min="-5" max="5" step="1" value="0" aria-label="${$t(k)}"><span class="v" style="width:20px;text-align:right">0</span></div>`).join('')}</div></div>
   </section>
 
@@ -370,7 +370,7 @@ function buildWindow(){
     <div class="ph"><h2>${$t('earbuds_title')}</h2><span class="s" style="margin:0">${$t('model_title')}</span><button class="sel press pick" data-act="model" style="width:250px"><span data-modelfull>Automatic</span></button></div>
     <div class="tiles" id="earTiles">
       <div class="card tile" id="tileFind">${ic('find')}<div class="txt"><div class="t">${$t('row_find_title')}</div><div class="s">${$t('row_find_sub')}</div></div><button class="btn pri press" data-act="find">${$t('find_play')}</button></div>
-      <div class="card tile" id="tileFit">${ic('earbud')}<div class="txt"><div class="t">${$t('fit_title')}</div></div><button class="btn pri press" data-act="fit">${$t('test_start')}</button></div>
+      <div class="card tile" id="tileFit">${ic('earbud')}<div class="txt"><div class="t">${$t('fit_title')}</div><div class="s">${$t('fit_sub')}</div></div><button class="btn pri press" data-act="fit">${$t('test_start')}</button></div>
     </div>
     <div class="stack">
       <div id="earSnd"><div class="lbl">${$t('earbuds_section_sounds')}</div><div class="group">
@@ -1038,7 +1038,7 @@ if(window.__TAURI__){
     document.querySelectorAll('#win .sw[data-k="dual"]').forEach(e=>{const r=e.closest('.row');if(!r)return;const t=r.querySelector('.t'),u=r.querySelector('.s');
       if(t)t.textContent=$t(tri?'row_triple_title':r.closest('#dualW')?'dual_title':'row_dual_title');if(u)u.textContent=$t(tri?'triple_switch_sub':'dual_switch_sub');});
     box.innerHTML=(d.devices.length?'':`<div class="devempty">${ic('devices')}<div class="s">${esc($t('desktop_dual_empty'))}</div></div>`)+d.devices.map((v,i)=>`<${v.can?'button':'div'} class="dev${v.can?' press':''}" ${v.can?`data-act="devtoggle" data-i="${i}"`:''}><span class="dd" style="${v.connected?'':'background:var(--text2)'}"></span><div class="txt"><div class="t">${esc(v.name)}</div><div class="s">${esc(v.state)}</div></div>${v.can?`<span class="v">${esc(v.action)}</span>`:''}</${v.can?'button':'div'}>`).join('')
-      +(d.manages?`<button class="dev add press" data-act="devadd">${ic('plus')}<div class="txt"><div class="t">${esc($t('dual_add_title'))}</div></div>${ic('chev','ch')}</button>`:'')
+      +(d.manages?`<button class="dev add press" data-act="devadd">${ic('plus')}<div class="txt"><div class="t">${esc($t('dual_add_title'))}</div><div class="s">${esc($t('dual_add_sub'))}</div></div>${ic('chev','ch')}</button>`:'')
       +(d.hasPreferred?`<button class="dev press" data-act="devpref">${ic('devices')}<div class="txt"><div class="t">${esc($t('dual_preferred'))}</div><div class="s">${esc(d.preferred)}</div></div>${ic('chev','ch')}</button>`:'');
     pixelize(box);}
   QBLIVE.devAsk=function(i){const v=this.dual.devices[i];if(v)confirmDialog(v.name,v.ask,v.action,()=>send({t:'dev_toggle',i}));};

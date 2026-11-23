@@ -271,6 +271,11 @@
     <string name="settings_general">Algemeen</string>
     <string name="settings_language_sub">Taal van de app</string>
     <string name="settings_app">App</string>
+    <string name="hires_sheet_body">De telefoon moet de codec ook afspelen</string>
+    <string name="spatial_sheet_body">Vast: het geluid beweegt met je hoofd mee. Hoofdvolging: het geluid blijft op zijn plek als je je hoofd draait</string>
+    <string name="head_motion_sheet_body">De andere beweging weigert de oproep</string>
+    <string name="game_sound_sheet_body">Geluid afgestemd op dit soort games</string>
+    <string name="glass_bg_sheet_body">De kleuren achter de glazen panelen</string>
     <string name="about_privacy_reset_sub">De volgende dagelijkse telling telt als een nieuwe installatie. Antwoorden op je oude rapporten bereiken je niet meer</string>
     <string name="about_privacy_reset_done">Er is een nieuwe installatie-ID ingesteld</string>
     <string name="widget_placed_sub">Knoppen en uiterlijk van deze widget</string>

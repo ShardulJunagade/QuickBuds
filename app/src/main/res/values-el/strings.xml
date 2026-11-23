@@ -271,6 +271,11 @@
     <string name="settings_general">Γενικά</string>
     <string name="settings_language_sub">Γλώσσα εφαρμογής</string>
     <string name="settings_app">Εφαρμογή</string>
+    <string name="hires_sheet_body">Το τηλέφωνο πρέπει επίσης να παίζει τον κωδικοποιητή</string>
+    <string name="spatial_sheet_body">Σταθερό: ο ήχος κινείται με το κεφάλι σας. Παρακολούθηση κεφαλιού: ο ήχος μένει στη θέση του όταν γυρίζετε το κεφάλι</string>
+    <string name="head_motion_sheet_body">Η άλλη κίνηση απορρίπτει την κλήση</string>
+    <string name="game_sound_sheet_body">Ήχος ρυθμισμένος για αυτό το είδος παιχνιδιού</string>
+    <string name="glass_bg_sheet_body">Τα χρώματα πίσω από τα γυάλινα πάνελ</string>
     <string name="about_privacy_reset_sub">Η επόμενη ημερήσια καταμέτρηση μετρά ως νέα εγκατάσταση. Οι απαντήσεις στις παλιές αναφορές σας δεν σας φτάνουν πια</string>
     <string name="about_privacy_reset_done">Ορίστηκε νέο αναγνωριστικό εγκατάστασης</string>
     <string name="widget_placed_sub">Κουμπιά και εμφάνιση αυτού του widget</string>

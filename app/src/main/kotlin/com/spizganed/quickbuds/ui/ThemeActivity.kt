@@ -164,7 +164,7 @@ class ThemeActivity : Activity() {
                     fun refresh() { sheet.items(ThemeRes.GlassBg.values().map { bg ->
                         BottomSheetDialog.Item(getString(bg.nameRes), selected = bg == pick, onClick = { pick = bg; refresh() })
                     }) }
-                    sheet.title(getString(R.string.theme_glass_gradient)).dismissOnSelect(false)
+                    sheet.title(getString(R.string.theme_glass_gradient)).message(getString(R.string.glass_bg_sheet_body)).dismissOnSelect(false)
                         .confirm(getString(R.string.gesture_done)) {
                             sheet.close()
                             if (pick != ThemeRes.glassBg(this@ThemeActivity)) { ThemeRes.setGlassBg(this@ThemeActivity, pick); ThemeRes.recreateFaded(this@ThemeActivity) }

@@ -271,6 +271,11 @@
     <string name="settings_general">सामान्य</string>
     <string name="settings_language_sub">ऐप की भाषा</string>
     <string name="settings_app">ऐप</string>
+    <string name="hires_sheet_body">फ़ोन को भी कोडेक चलाना होगा</string>
+    <string name="spatial_sheet_body">फ़िक्स्ड: आवाज़ आपके सिर के साथ चलती है। हेड ट्रैकिंग: सिर घुमाने पर आवाज़ अपनी जगह रहती है</string>
+    <string name="head_motion_sheet_body">दूसरी हरकत कॉल अस्वीकार करती है</string>
+    <string name="game_sound_sheet_body">इस तरह के गेम के लिए ट्यून की गई आवाज़</string>
+    <string name="glass_bg_sheet_body">कांच के पैनल के पीछे के रंग</string>
     <string name="about_privacy_reset_sub">अगली दैनिक गिनती एक नए इंस्टॉल के रूप में गिनी जाएगी। आपकी पुरानी रिपोर्ट के जवाब अब आप तक नहीं पहुंचेंगे</string>
     <string name="about_privacy_reset_done">एक नया इंस्टॉल आईडी सेट है</string>
     <string name="widget_placed_sub">इस विजेट के बटन और रूप</string>

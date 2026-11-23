@@ -74,7 +74,7 @@ const STRINGS: &[&str] = &[
     "pnc_title", "pnc_sub", "pnc_wear", "pnc_stored_title", "pnc_stored_body", "pnc_use", "pnc_test_again", "pnc_test_title", "pnc_test_body", "pnc_start", "pnc_testing", "pnc_done", "pnc_failed", "pnc_retry", "pnc_fail_quiet", "pnc_fail_fit", "pnc_fail_wind", "pnc_fail_still", "pnc_fail_audio",
     "model_title", "model_auto", "model_detected", "model_not_detected",
     "dual_title", "dual_switch_sub", "dual_section_devices", "dual_section_all", "dual_connected", "dual_connected_this",
-    "dual_add_title", "dual_add_message", "dual_connect_q", "dual_disconnect_q", "dual_preferred", "dual_preferred_auto",
+    "dual_add_title", "dual_add_sub", "dual_add_message", "dual_connect_q", "dual_disconnect_q", "dual_preferred", "dual_preferred_auto",
     "dual_preferred_sub",
     "row_golden_title", "row_golden_sub", "golden_profiles", "golden_none", "golden_test_row", "golden_test_sub",
     "feature_applying", "feature_refused_missing", "feature_refused_now", "feature_not_changed", "feature_no_answer",

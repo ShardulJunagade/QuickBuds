@@ -271,6 +271,11 @@
     <string name="settings_general">Chung</string>
     <string name="settings_language_sub">Ngôn ngữ ứng dụng</string>
     <string name="settings_app">Ứng dụng</string>
+    <string name="hires_sheet_body">Điện thoại cũng phải phát được codec đó</string>
+    <string name="spatial_sheet_body">Cố định: âm thanh di chuyển theo đầu bạn. Theo dõi đầu: âm thanh giữ nguyên vị trí khi bạn quay đầu</string>
+    <string name="head_motion_sheet_body">Cử động còn lại sẽ từ chối cuộc gọi</string>
+    <string name="game_sound_sheet_body">Âm thanh được chỉnh cho loại trò chơi này</string>
+    <string name="glass_bg_sheet_body">Màu phía sau các tấm kính</string>
     <string name="about_privacy_reset_sub">Lần đếm hằng ngày tiếp theo được tính là một lượt cài mới. Phản hồi cho các báo cáo cũ sẽ không đến với bạn nữa</string>
     <string name="about_privacy_reset_done">Đã đặt ID cài đặt mới</string>
     <string name="widget_placed_sub">Nút và giao diện của tiện ích này</string>
