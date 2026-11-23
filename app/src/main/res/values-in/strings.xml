@@ -71,7 +71,7 @@
     <string name="earbuds_section_about">Tentang earbud</string>
     <string name="row_firmware_title">Versi firmware</string>
     <string name="firmware_dialog_title">Pembaruan firmware</string>
-    <string name="firmware_dialog_body">QuickBuds tidak memperbarui firmware earbud: pembaruan yang gagal dapat membuatnya tidak bisa digunakan. Perbarui dari HeyMelody.</string>
+    <string name="firmware_dialog_body">QuickBuds tidak memperbarui firmware earbud: pembaruan yang gagal dapat membuatnya tidak bisa digunakan. Perbarui dari aplikasi resmi earbud Anda.</string>
     <string name="settings_title">Pengaturan</string>
     <string name="row_wear_title">Deteksi pemakaian</string>
     <string name="row_wear_sub">Jeda saat earbud dilepas</string>
@@ -269,7 +269,14 @@
     <string name="theme_title">Tema, warna &amp; gaya</string>
     <string name="settings_appearance">Tampilan</string>
     <string name="settings_general">Umum</string>
+    <string name="settings_language_sub">Bahasa aplikasi</string>
     <string name="settings_app">Aplikasi</string>
+    <string name="settings_behavior">Perilaku</string>
+    <string name="settings_notif_widgets">Notifikasi dan widget</string>
+    <string name="settings_help">Bantuan dan masukan</string>
+    <string name="settings_notif_sub">Notifikasi baterai, chip status, dan tombol</string>
+    <string name="settings_widgets_sub">Widget layar utama dan ubin Setelan Cepat</string>
+    <string name="settings_setup_sub">Izin dan langkah pertama</string>
     <string name="settings_layout_title">Tata letak beranda</string>
     <string name="settings_layout_sub">Urutkan ulang dan sembunyikan baris</string>
     <string name="layout_title">Edit tata letak</string>
@@ -371,7 +378,6 @@
     <string name="widget_battery_name">QuickBuds baterai</string>
     <string name="widget_strip_name">Strip baterai QuickBuds</string>
     <string name="settings_language_title">Bahasa</string>
-    <string name="settings_language_sub">Bahasa aplikasi</string>
     <string name="language_system">Default sistem</string>
 
     <!-- Model list (ModelActivity) -->

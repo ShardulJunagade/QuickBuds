@@ -132,6 +132,36 @@ object SettingRowFactory {
     /** Tag for the subtitle TextView, so callers can find and update it. */
     const val SUBTITLE_TAG = "setting_row_subtitle"
 
+    /** A write shorter than this shows no "Applying…": most writes take about 0.4 s, and a swap would flash the row. */
+    private const val APPLYING_DELAY_MS = 800L
+
+    /** The subtitles that wait to show "Applying…", or show it: the pending swap and the text it replaced. */
+    private class Applying(var swap: Runnable?, var replaced: CharSequence?)
+    private val applying = java.util.WeakHashMap<TextView, Applying>()
+
+    /**
+     * A setting the buds apply ([on]) or have applied. The description stays. A write that takes longer than
+     * [APPLYING_DELAY_MS] shows "Applying…" at the height of the description, so the row does not jump. The end
+     * puts the description back; the caller then sets the text it wants.
+     */
+    fun applying(sub: TextView, on: Boolean) {
+        val state = applying.getOrPut(sub) { Applying(null, null) }
+        state.swap?.let { sub.removeCallbacks(it) }
+        state.swap = null
+        if (on) {
+            state.swap = Runnable {
+                state.swap = null
+                if (state.replaced == null) state.replaced = sub.text
+                sub.minHeight = sub.height
+                sub.setText(R.string.feature_applying)
+            }.also { sub.postDelayed(it, APPLYING_DELAY_MS) }
+            return
+        }
+        state.replaced?.let { sub.text = it }
+        state.replaced = null
+        sub.minHeight = 0
+    }
+
     /** Tag for the title TextView (rows whose title is not a resource, e.g. a preset name). */
     const val TITLE_TAG = "setting_row_title"
 

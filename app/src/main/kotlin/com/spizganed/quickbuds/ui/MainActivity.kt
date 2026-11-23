@@ -1222,7 +1222,7 @@ class MainActivity : Activity(), BudsConnectionManager.Listener {
     }
 
     /**
-     * The engine says a tapped setting is being applied: the row shows "Applying…" and its switch
+     * The engine says a tapped setting is being applied: a slow write shows "Applying…" and the switch
      * cannot be tapped again. On the way back, [onFeatureStates] repaints from the buds' own values.
      */
     override fun onSettingBusy(key: Int, on: Boolean) {
@@ -1239,9 +1239,10 @@ class MainActivity : Activity(), BudsConnectionManager.Listener {
         }
         if (on) {
             sw?.isEnabled = false
-            sub?.setText(R.string.feature_applying)
+            sub?.let { SettingRowFactory.applying(it, true) }
             return
         }
+        sub?.let { SettingRowFactory.applying(it, false) }
         onFeatureStates(manager.featureStates)
         // onFeatureStates returns early while disconnected: take "Applying…" away by hand.
         when (key) {

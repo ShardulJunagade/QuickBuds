@@ -212,15 +212,13 @@ class GoldenSoundActivity : Activity(), BudsConnectionManager.Listener {
         toggle.setFromBuds(v == 1)
     }
 
-    /** The engine applies a tap: the row says "Applying…" and its switch stays still. */
+    /** The engine applies a tap: its switch stays still, and a slow write says "Applying…" ([SettingRowFactory.applying]). */
     override fun onSettingBusy(key: Int, on: Boolean) {
         if (key != Feature.GOLDEN_SOUND) return
         toggle.isEnabled = !on
         val sub = SettingRowFactory.subtitle(this, toggleRow)
-        if (on) {
-            sub.setText(R.string.feature_applying)
-            return
-        }
+        SettingRowFactory.applying(sub, on)
+        if (on) return
         manager?.featureStates?.let { onFeatureStates(it) }
         sub.setText(R.string.row_golden_sub)
     }

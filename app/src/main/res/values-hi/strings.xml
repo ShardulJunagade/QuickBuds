@@ -71,7 +71,7 @@
     <string name="earbuds_section_about">ईयरबड्स के बारे में</string>
     <string name="row_firmware_title">फ़र्मवेयर संस्करण</string>
     <string name="firmware_dialog_title">फ़र्मवेयर अपडेट</string>
-    <string name="firmware_dialog_body">QuickBuds ईयरबड्स का फ़र्मवेयर अपडेट नहीं करता: विफल अपडेट उन्हें बेकार कर सकता है। उन्हें HeyMelody से अपडेट करें।</string>
+    <string name="firmware_dialog_body">QuickBuds ईयरबड्स का फ़र्मवेयर अपडेट नहीं करता: विफल अपडेट उन्हें बेकार कर सकता है। उन्हें अपने ईयरबड्स के आधिकारिक ऐप से अपडेट करें।</string>
     <string name="settings_title">सेटिंग्स</string>
     <string name="row_wear_title">वियर डिटेक्शन</string>
     <string name="row_wear_sub">ईयरबड्स निकालने पर रोकें</string>
@@ -269,7 +269,14 @@
     <string name="theme_title">थीम, रंग और स्टाइल</string>
     <string name="settings_appearance">रूप</string>
     <string name="settings_general">सामान्य</string>
+    <string name="settings_language_sub">ऐप की भाषा</string>
     <string name="settings_app">ऐप</string>
+    <string name="settings_behavior">व्यवहार</string>
+    <string name="settings_notif_widgets">सूचनाएं और विजेट</string>
+    <string name="settings_help">सहायता और फ़ीडबैक</string>
+    <string name="settings_notif_sub">बैटरी सूचना, स्टेटस चिप और बटन</string>
+    <string name="settings_widgets_sub">होम स्क्रीन विजेट और क्विक सेटिंग टाइल</string>
+    <string name="settings_setup_sub">अनुमतियां और पहले कदम</string>
     <string name="settings_layout_title">होम लेआउट</string>
     <string name="settings_layout_sub">पंक्तियां क्रम बदलें और छिपाएं</string>
     <string name="layout_title">लेआउट संपादित करें</string>
@@ -371,7 +378,6 @@
     <string name="widget_battery_name">QuickBuds बैटरी</string>
     <string name="widget_strip_name">QuickBuds बैटरी स्ट्रिप</string>
     <string name="settings_language_title">भाषा</string>
-    <string name="settings_language_sub">ऐप की भाषा</string>
     <string name="language_system">सिस्टम डिफ़ॉल्ट</string>
 
     <!-- Model list (ModelActivity) -->

@@ -10,8 +10,9 @@ import com.spizganed.quickbuds.R
 import com.spizganed.quickbuds.bluetooth.BudsService
 
 /**
- * Settings, a full screen reached from the header cog. Same layout pattern
- * as Earbud settings: title, then sectioned cards. Toggles save on change. The background service switch asks first.
+ * Settings, a full screen reached from the header cog. Same layout pattern as Earbud settings: title, then sectioned
+ * cards. The sections go from the most used to the least: appearance, behavior, notifications and widgets, help, the
+ * app itself. Toggles save on change.
  */
 class SettingsActivity : Activity() {
 
@@ -39,55 +40,58 @@ class SettingsActivity : Activity() {
             startActivity(Intent(this, ThemeActivity::class.java))
         }
         themeSubtitle = SettingRowFactory.subtitle(this, themeRow)
-        val layoutRow = link(R.drawable.ic_layout, R.string.settings_layout_title, R.string.settings_layout_sub) {
-            startActivity(Intent(this, HomeLayoutActivity::class.java))
+        val languageRow = link(R.drawable.ic_language, R.string.settings_language_title, 0) {
+            startActivity(Intent(this, LanguageActivity::class.java))
         }
-        section(R.string.settings_appearance, themeRow, layoutRow)
+        languageSubtitle = SettingRowFactory.subtitle(this, languageRow)
+        section(R.string.settings_appearance,
+            themeRow,
+            link(R.drawable.ic_layout, R.string.settings_layout_title, R.string.settings_layout_sub) {
+                startActivity(Intent(this, HomeLayoutActivity::class.java))
+            },
+            languageRow,
+            toggle(R.drawable.ic_haptics, R.string.settings_haptics_title, R.string.settings_haptics_sub, KEY_HAPTICS, true))
 
-        // Notifications and widgets have their own pages (the service, battery and chip rows; the widgets and the tile).
-        val general = mutableListOf<android.view.View>(
-            link(R.drawable.ic_notifications, R.string.setup_perm_notif, 0) {
-                startActivity(Intent(this, NotificationSettingsActivity::class.java))
-            },
-            link(R.drawable.ic_widgets, R.string.setup_widgets_title, 0) {
-                startActivity(Intent(this, WidgetPageActivity::class.java))
-            },
-            toggle(R.drawable.ic_haptics, R.string.settings_haptics_title, R.string.settings_haptics_sub, KEY_HAPTICS, true),
+        section(R.string.settings_behavior,
             toggle(R.drawable.ic_anc, R.string.settings_anc_pick_title, R.string.settings_anc_pick_sub, KEY_ANC_PICK_FIRST, false),
             toggle(R.drawable.ic_battery, R.string.settings_clear_battery_title, R.string.settings_clear_battery_sub,
-                BudsService.PREF_CLEAR_BATTERY, false),
-            toggle(R.drawable.ic_dev_tools, R.string.settings_devtools_title, R.string.settings_devtools_sub, KEY_DEV_TOOLS_BUTTON, false),
-            toggle(R.drawable.ic_info, R.string.settings_ping_title, R.string.settings_ping_sub, UsagePing.KEY_ENABLED, true)
-        )
-        general.add(0, link(R.drawable.ic_language, R.string.settings_language_title, R.string.settings_language_sub) {
-            startActivity(Intent(this, LanguageActivity::class.java))
-        })
-        general.add(link(R.drawable.ic_info, R.string.settings_setup_title, 0) {
-            startActivity(Intent(this, SetupActivity::class.java).putExtra(SetupActivity.EXTRA_AGAIN, true))
-        })
-        section(R.string.settings_general, *general.toTypedArray())
+                BudsService.PREF_CLEAR_BATTERY, false))
+
+        // Notifications and widgets have their own pages (the service, battery and chip rows; the widgets and the tile).
+        section(R.string.settings_notif_widgets,
+            link(R.drawable.ic_notifications, R.string.setup_perm_notif, R.string.settings_notif_sub) {
+                startActivity(Intent(this, NotificationSettingsActivity::class.java))
+            },
+            link(R.drawable.ic_widgets, R.string.setup_widgets_title, R.string.settings_widgets_sub) {
+                startActivity(Intent(this, WidgetPageActivity::class.java))
+            })
+
+        section(R.string.settings_help,
+            link(R.drawable.ic_check, R.string.settings_setup_title, R.string.settings_setup_sub) {
+                startActivity(Intent(this, SetupActivity::class.java).putExtra(SetupActivity.EXTRA_AGAIN, true))
+            },
+            link(R.drawable.ic_warning, R.string.settings_issues_title, R.string.settings_issues_sub) {
+                startActivity(Intent(this, KnownIssuesActivity::class.java))
+            },
+            link(R.drawable.ic_earbud, R.string.test_title, R.string.test_sub) {
+                startActivity(Intent(this, ModelTestActivity::class.java))
+            },
+            link(R.drawable.ic_chat, R.string.problem_title, R.string.problem_sub) {
+                startActivity(Intent(this, ReportActivity::class.java))
+            })
 
         val version = UpdateChecker.installed(this)
         val updateRow = link(R.drawable.ic_update, R.string.row_update_title, 0) {
             startActivity(Intent(this, UpdateActivity::class.java))
         }
         SettingRowFactory.subtitle(this, updateRow).text = getString(R.string.settings_update_sub, version)
-        section(
-            R.string.settings_app,
+        section(R.string.settings_app,
             updateRow,
-            link(R.drawable.ic_earbud, R.string.test_title, R.string.test_sub) {
-                startActivity(Intent(this, ModelTestActivity::class.java))
-            },
-            link(R.drawable.ic_dev_tools, R.string.problem_title, R.string.problem_sub) {
-                startActivity(Intent(this, ReportActivity::class.java))
-            },
             link(R.drawable.ic_info, R.string.settings_about_title, R.string.settings_about_sub) {
                 startActivity(Intent(this, AboutActivity::class.java))
             },
-            link(R.drawable.ic_info, R.string.settings_issues_title, R.string.settings_issues_sub) {
-                startActivity(Intent(this, KnownIssuesActivity::class.java))
-            }
-        )
+            toggle(R.drawable.ic_eye, R.string.settings_ping_title, R.string.settings_ping_sub, UsagePing.KEY_ENABLED, true),
+            toggle(R.drawable.ic_dev_tools, R.string.settings_devtools_title, R.string.settings_devtools_sub, KEY_DEV_TOOLS_BUTTON, false))
 
         setContentView(ScrollView(this).apply {
             setBackgroundColor(ThemeRes.color(this@SettingsActivity, R.attr.appColorBg))
@@ -96,10 +100,16 @@ class SettingsActivity : Activity() {
     }
 
     private var themeSubtitle: android.widget.TextView? = null
+    private var languageSubtitle: android.widget.TextView? = null
 
     override fun onResume() {
         super.onResume()
         themeSubtitle?.text = ThemeRes.palette(this).name
+        // The current language by its own name, as the language list shows it.
+        val tag = ThemeRes.language(this)
+        languageSubtitle?.text = ThemeRes.LANGUAGES.firstOrNull { it.first == tag }?.second
+            ?: ThemeRes.LANGUAGES.firstOrNull { tag.isNotEmpty() && it.first == tag.substringBefore('-') }?.second
+            ?: getString(R.string.language_system)
     }
 
     companion object {

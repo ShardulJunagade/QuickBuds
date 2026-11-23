@@ -71,7 +71,7 @@
     <string name="earbuds_section_about">イヤホンについて</string>
     <string name="row_firmware_title">ファームウェアバージョン</string>
     <string name="firmware_dialog_title">ファームウェアの更新</string>
-    <string name="firmware_dialog_body">QuickBuds はイヤホンのファームウェアを更新しません。更新に失敗すると使用できなくなる場合があります。HeyMelody から更新してください。</string>
+    <string name="firmware_dialog_body">QuickBuds はイヤホンのファームウェアを更新しません。更新に失敗すると使用できなくなる場合があります。イヤホンの公式アプリから更新してください。</string>
     <string name="settings_title">設定</string>
     <string name="row_wear_title">装着検出</string>
     <string name="row_wear_sub">イヤホンを外すと一時停止</string>
@@ -269,7 +269,14 @@
     <string name="theme_title">テーマ、カラー、スタイル</string>
     <string name="settings_appearance">外観</string>
     <string name="settings_general">全般</string>
+    <string name="settings_language_sub">アプリの言語</string>
     <string name="settings_app">アプリ</string>
+    <string name="settings_behavior">動作</string>
+    <string name="settings_notif_widgets">通知とウィジェット</string>
+    <string name="settings_help">ヘルプとフィードバック</string>
+    <string name="settings_notif_sub">バッテリー通知、ステータスチップ、ボタン</string>
+    <string name="settings_widgets_sub">ホーム画面ウィジェットとクイック設定タイル</string>
+    <string name="settings_setup_sub">権限と最初の手順</string>
     <string name="settings_layout_title">ホームのレイアウト</string>
     <string name="settings_layout_sub">行の並べ替えと非表示</string>
     <string name="layout_title">レイアウトを編集</string>
@@ -369,7 +376,6 @@
     <string name="widget_battery_name">QuickBuds バッテリー</string>
     <string name="widget_strip_name">QuickBuds バッテリーストリップ</string>
     <string name="settings_language_title">言語</string>
-    <string name="settings_language_sub">アプリの言語</string>
     <string name="language_system">システムのデフォルト</string>
 
     <!-- Model list (ModelActivity) -->

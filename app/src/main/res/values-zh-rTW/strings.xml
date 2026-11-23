@@ -71,7 +71,7 @@
     <string name="earbuds_section_about">關於耳機</string>
     <string name="row_firmware_title">韌體版本</string>
     <string name="firmware_dialog_title">韌體更新</string>
-    <string name="firmware_dialog_body">QuickBuds 不會更新耳機韌體：更新失敗可能導致耳機無法使用。請在 HeyMelody 中更新。</string>
+    <string name="firmware_dialog_body">QuickBuds 不會更新耳機韌體：更新失敗可能導致耳機無法使用。請在耳機的官方應用程式中更新。</string>
     <string name="settings_title">設定</string>
     <string name="row_wear_title">配戴偵測</string>
     <string name="row_wear_sub">摘下耳機時暫停</string>
@@ -269,7 +269,14 @@
     <string name="theme_title">主題、色彩與風格</string>
     <string name="settings_appearance">外觀</string>
     <string name="settings_general">一般</string>
+    <string name="settings_language_sub">應用程式語言</string>
     <string name="settings_app">應用程式</string>
+    <string name="settings_behavior">行為</string>
+    <string name="settings_notif_widgets">通知和小工具</string>
+    <string name="settings_help">說明與意見回饋</string>
+    <string name="settings_notif_sub">電量通知、狀態膠囊和按鈕</string>
+    <string name="settings_widgets_sub">主畫面小工具和快速設定圖塊</string>
+    <string name="settings_setup_sub">權限和入門步驟</string>
     <string name="settings_layout_title">主頁版面</string>
     <string name="settings_layout_sub">重新排序和隱藏列</string>
     <string name="layout_title">編輯版面</string>
@@ -371,7 +378,6 @@
     <string name="widget_battery_name">QuickBuds 電量</string>
     <string name="widget_strip_name">QuickBuds 電池條</string>
     <string name="settings_language_title">語言</string>
-    <string name="settings_language_sub">應用程式語言</string>
     <string name="language_system">跟隨系統</string>
 
     <!-- Model list (ModelActivity) -->

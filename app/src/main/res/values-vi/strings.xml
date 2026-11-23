@@ -71,7 +71,7 @@
     <string name="earbuds_section_about">Giới thiệu tai nghe</string>
     <string name="row_firmware_title">Phiên bản firmware</string>
     <string name="firmware_dialog_title">Cập nhật firmware</string>
-    <string name="firmware_dialog_body">QuickBuds không cập nhật firmware của tai nghe: cập nhật thất bại có thể khiến tai nghe không dùng được. Hãy cập nhật từ HeyMelody.</string>
+    <string name="firmware_dialog_body">QuickBuds không cập nhật firmware của tai nghe: cập nhật thất bại có thể khiến tai nghe không dùng được. Hãy cập nhật từ ứng dụng chính thức của tai nghe.</string>
     <string name="settings_title">Cài đặt</string>
     <string name="row_wear_title">Phát hiện đeo</string>
     <string name="row_wear_sub">Tạm dừng khi tháo tai nghe</string>
@@ -269,7 +269,14 @@
     <string name="theme_title">Chủ đề, màu sắc &amp; phong cách</string>
     <string name="settings_appearance">Giao diện</string>
     <string name="settings_general">Chung</string>
+    <string name="settings_language_sub">Ngôn ngữ ứng dụng</string>
     <string name="settings_app">Ứng dụng</string>
+    <string name="settings_behavior">Hành vi</string>
+    <string name="settings_notif_widgets">Thông báo và tiện ích</string>
+    <string name="settings_help">Trợ giúp và phản hồi</string>
+    <string name="settings_notif_sub">Thông báo pin, chip trạng thái và nút</string>
+    <string name="settings_widgets_sub">Tiện ích màn hình chính và ô Cài đặt nhanh</string>
+    <string name="settings_setup_sub">Quyền và các bước đầu tiên</string>
     <string name="settings_layout_title">Bố cục màn hình chính</string>
     <string name="settings_layout_sub">Sắp xếp và ẩn các hàng</string>
     <string name="layout_title">Sửa bố cục</string>
@@ -371,7 +378,6 @@
     <string name="widget_battery_name">QuickBuds pin</string>
     <string name="widget_strip_name">Thanh pin QuickBuds</string>
     <string name="settings_language_title">Ngôn ngữ</string>
-    <string name="settings_language_sub">Ngôn ngữ ứng dụng</string>
     <string name="language_system">Mặc định hệ thống</string>
 
     <!-- Model list (ModelActivity) -->

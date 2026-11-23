@@ -71,7 +71,7 @@
     <string name="earbuds_section_about">Om hörlurarna</string>
     <string name="row_firmware_title">Firmwareversion</string>
     <string name="firmware_dialog_title">Firmwareuppdateringar</string>
-    <string name="firmware_dialog_body">QuickBuds uppdaterar inte hörlurarnas firmware: en misslyckad uppdatering kan göra dem oanvändbara. Uppdatera dem i HeyMelody.</string>
+    <string name="firmware_dialog_body">QuickBuds uppdaterar inte hörlurarnas firmware: en misslyckad uppdatering kan göra dem oanvändbara. Uppdatera dem i hörlurarnas officiella app.</string>
     <string name="settings_title">Inställningar</string>
     <string name="row_wear_title">Bäraravkänning</string>
     <string name="row_wear_sub">Pausa när du tar ut hörlurarna</string>
@@ -269,7 +269,14 @@
     <string name="theme_title">Teman, färger och stilar</string>
     <string name="settings_appearance">Utseende</string>
     <string name="settings_general">Allmänt</string>
+    <string name="settings_language_sub">Appens språk</string>
     <string name="settings_app">App</string>
+    <string name="settings_behavior">Beteende</string>
+    <string name="settings_notif_widgets">Aviseringar och widgetar</string>
+    <string name="settings_help">Hjälp och feedback</string>
+    <string name="settings_notif_sub">Batteriavisering, statuschip och knappar</string>
+    <string name="settings_widgets_sub">Widgetar på startskärmen och rutor i snabbinställningar</string>
+    <string name="settings_setup_sub">Behörigheter och första steg</string>
     <string name="settings_layout_title">Startskärmens layout</string>
     <string name="settings_layout_sub">Ändra ordning och dölj rader</string>
     <string name="layout_title">Redigera layout</string>
@@ -369,7 +376,6 @@
     <string name="widget_battery_name">QuickBuds batteri</string>
     <string name="widget_strip_name">QuickBuds batteriremsa</string>
     <string name="settings_language_title">Språk</string>
-    <string name="settings_language_sub">Appens språk</string>
     <string name="language_system">Systemstandard</string>
 
     <!-- Model list (ModelActivity) -->

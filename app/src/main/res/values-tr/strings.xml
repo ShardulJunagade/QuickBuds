@@ -71,7 +71,7 @@
     <string name="earbuds_section_about">Kulaklık hakkında</string>
     <string name="row_firmware_title">Donanım yazılımı sürümü</string>
     <string name="firmware_dialog_title">Donanım yazılımı güncellemeleri</string>
-    <string name="firmware_dialog_body">QuickBuds kulaklıkların donanım yazılımını güncellemez: başarısız bir güncelleme onları kullanılamaz hale getirebilir. HeyMelody üzerinden güncelleyin.</string>
+    <string name="firmware_dialog_body">QuickBuds kulaklıkların donanım yazılımını güncellemez: başarısız bir güncelleme onları kullanılamaz hale getirebilir. Kulaklığınızın resmi uygulaması üzerinden güncelleyin.</string>
     <string name="settings_title">Ayarlar</string>
     <string name="row_wear_title">Takılma algılama</string>
     <string name="row_wear_sub">Kulaklıkları çıkardığınızda duraklat</string>
@@ -269,7 +269,14 @@
     <string name="theme_title">Temalar, renkler ve stiller</string>
     <string name="settings_appearance">Görünüm</string>
     <string name="settings_general">Genel</string>
+    <string name="settings_language_sub">Uygulama dili</string>
     <string name="settings_app">Uygulama</string>
+    <string name="settings_behavior">Davranış</string>
+    <string name="settings_notif_widgets">Bildirimler ve widget\'lar</string>
+    <string name="settings_help">Yardım ve geri bildirim</string>
+    <string name="settings_notif_sub">Pil bildirimi, durum çipi ve düğmeler</string>
+    <string name="settings_widgets_sub">Ana ekran widget\'ları ve Hızlı Ayarlar kutucukları</string>
+    <string name="settings_setup_sub">İzinler ve ilk adımlar</string>
     <string name="settings_layout_title">Ana ekran düzeni</string>
     <string name="settings_layout_sub">Satırları sırala ve gizle</string>
     <string name="layout_title">Düzeni düzenle</string>
@@ -369,7 +376,6 @@
     <string name="widget_battery_name">QuickBuds pil</string>
     <string name="widget_strip_name">QuickBuds pil şeridi</string>
     <string name="settings_language_title">Dil</string>
-    <string name="settings_language_sub">Uygulama dili</string>
     <string name="language_system">Sistem varsayılanı</string>
 
     <!-- Model list (ModelActivity) -->

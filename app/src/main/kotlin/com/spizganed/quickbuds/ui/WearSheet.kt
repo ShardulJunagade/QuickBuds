@@ -46,11 +46,12 @@ class WearSheet(private val activity: Activity, private val requestFirmware: (Bo
         if (v == 1 && smartSwitch.isChecked) smartSwitch.isChecked = false
     }
 
-    /** The engine applies a tap: the row says "Applying…" and its switch stays still. */
+    /** The engine applies a tap: its switch stays still, and a slow write says "Applying…" ([SettingRowFactory.applying]). */
     fun onSettingBusy(key: Int, on: Boolean) {
         if (key != Feature.AUTO_PLAY_PAUSE) return
         firmwareSwitch.isEnabled = !on
         val sub: TextView = SettingRowFactory.subtitle(activity, firmwareRow)
-        sub.setText(if (on) R.string.feature_applying else R.string.wear_firmware_sub)
+        SettingRowFactory.applying(sub, on)
+        if (!on) sub.setText(R.string.wear_firmware_sub)
     }
 }

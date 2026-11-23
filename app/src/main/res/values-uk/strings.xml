@@ -71,7 +71,7 @@
     <string name="earbuds_section_about">Про навушники</string>
     <string name="row_firmware_title">Версія прошивки</string>
     <string name="firmware_dialog_title">Оновлення прошивки</string>
-    <string name="firmware_dialog_body">QuickBuds не оновлює прошивку навушників: невдале оновлення може вивести їх з ладу. Оновлюйте їх через HeyMelody.</string>
+    <string name="firmware_dialog_body">QuickBuds не оновлює прошивку навушників: невдале оновлення може вивести їх з ладу. Оновлюйте їх через офіційний застосунок навушників.</string>
     <string name="settings_title">Налаштування</string>
     <string name="row_wear_title">Визначення носіння</string>
     <string name="row_wear_sub">Пауза, коли ви виймаєте навушники</string>
@@ -269,7 +269,14 @@
     <string name="theme_title">Теми, кольори й стилі</string>
     <string name="settings_appearance">Вигляд</string>
     <string name="settings_general">Загальні</string>
+    <string name="settings_language_sub">Мова застосунку</string>
     <string name="settings_app">Застосунок</string>
+    <string name="settings_behavior">Поведінка</string>
+    <string name="settings_notif_widgets">Сповіщення та віджети</string>
+    <string name="settings_help">Довідка та відгуки</string>
+    <string name="settings_notif_sub">Сповіщення про батарею, чип стану та кнопки</string>
+    <string name="settings_widgets_sub">Віджети головного екрана та плитки швидких налаштувань</string>
+    <string name="settings_setup_sub">Дозволи та перші кроки</string>
     <string name="settings_layout_title">Макет головного екрана</string>
     <string name="settings_layout_sub">Порядок і приховування рядків</string>
     <string name="layout_title">Змінити макет</string>
@@ -369,7 +376,6 @@
     <string name="widget_battery_name">QuickBuds батарея</string>
     <string name="widget_strip_name">Смуга батареї QuickBuds</string>
     <string name="settings_language_title">Мова</string>
-    <string name="settings_language_sub">Мова застосунку</string>
     <string name="language_system">Як у системі</string>
 
     <!-- Model list (ModelActivity) -->
