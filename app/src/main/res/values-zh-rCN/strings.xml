@@ -271,6 +271,9 @@
     <string name="settings_general">通用</string>
     <string name="settings_language_sub">应用语言</string>
     <string name="settings_app">应用</string>
+    <string name="about_privacy_reset_sub">下一次每日计数将算作新的安装。对你旧报告的回复将不再送达</string>
+    <string name="about_privacy_reset_done">已设置新的安装 ID</string>
+    <string name="widget_placed_sub">此小部件的按钮和外观</string>
     <string name="setup_theme_sub">所有样式、颜色和主题</string>
     <string name="setup_pair_sub">在那里配对新耳机，然后返回</string>
     <string name="dual_add_sub">将另一部手机或电脑与耳机配对</string>

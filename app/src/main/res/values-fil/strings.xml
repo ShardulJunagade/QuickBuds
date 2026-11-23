@@ -271,6 +271,9 @@
     <string name="settings_general">Pangkalahatan</string>
     <string name="settings_language_sub">Wika ng app</string>
     <string name="settings_app">App</string>
+    <string name="about_privacy_reset_sub">Ang susunod na araw-araw na bilang ay bibilangin bilang bagong install. Hindi na aabot sa iyo ang mga sagot sa luma mong ulat</string>
+    <string name="about_privacy_reset_done">May bagong install ID na</string>
+    <string name="widget_placed_sub">Mga button at hitsura ng widget na ito</string>
     <string name="setup_theme_sub">Lahat ng style, kulay at tema</string>
     <string name="setup_pair_sub">Mag-pair doon ng bagong earbuds, saka bumalik</string>
     <string name="dual_add_sub">Mag-pair ng ibang phone o computer sa earbuds</string>

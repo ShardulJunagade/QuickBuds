@@ -271,6 +271,9 @@
     <string name="settings_general">Általános</string>
     <string name="settings_language_sub">Alkalmazás nyelve</string>
     <string name="settings_app">Alkalmazás</string>
+    <string name="about_privacy_reset_sub">A következő napi számlálás új telepítésnek számít. A régi jelentéseidre adott válaszok már nem érnek el hozzád</string>
+    <string name="about_privacy_reset_done">Új telepítési azonosító beállítva</string>
+    <string name="widget_placed_sub">A widget gombjai és megjelenése</string>
     <string name="setup_theme_sub">Minden stílus, szín és téma</string>
     <string name="setup_pair_sub">Ott párosíts új fülhallgatót, majd gyere vissza</string>
     <string name="dual_add_sub">Párosíts egy másik telefont vagy számítógépet a fülhallgatóval</string>

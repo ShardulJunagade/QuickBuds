@@ -271,6 +271,9 @@
     <string name="settings_general">一般</string>
     <string name="settings_language_sub">應用程式語言</string>
     <string name="settings_app">應用程式</string>
+    <string name="about_privacy_reset_sub">下一次每日計數將算作新的安裝。對你舊報告的回覆將不再送達</string>
+    <string name="about_privacy_reset_done">已設定新的安裝 ID</string>
+    <string name="widget_placed_sub">此小工具的按鈕和外觀</string>
     <string name="setup_theme_sub">所有樣式、顏色和主題</string>
     <string name="setup_pair_sub">在那裡配對新耳機，然後返回</string>
     <string name="dual_add_sub">將另一支手機或電腦與耳機配對</string>

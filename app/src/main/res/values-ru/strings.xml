@@ -271,6 +271,9 @@
     <string name="settings_general">Общие</string>
     <string name="settings_language_sub">Язык приложения</string>
     <string name="settings_app">Приложение</string>
+    <string name="about_privacy_reset_sub">Следующий ежедневный подсчёт засчитается как новая установка. Ответы на ваши старые отчёты больше не придут</string>
+    <string name="about_privacy_reset_done">Задан новый ID установки</string>
+    <string name="widget_placed_sub">Кнопки и вид этого виджета</string>
     <string name="setup_theme_sub">Все стили, цвета и темы</string>
     <string name="setup_pair_sub">Подключите там новые наушники и вернитесь</string>
     <string name="dual_add_sub">Подключите к наушникам другой телефон или компьютер</string>

@@ -271,6 +271,9 @@
     <string name="settings_general">General</string>
     <string name="settings_language_sub">Limba aplicației</string>
     <string name="settings_app">Aplicație</string>
+    <string name="about_privacy_reset_sub">Următoarea numărare zilnică contează ca o instalare nouă. Răspunsurile la rapoartele tale vechi nu mai ajung la tine</string>
+    <string name="about_privacy_reset_done">Un nou ID de instalare este setat</string>
+    <string name="widget_placed_sub">Butoanele și aspectul acestui widget</string>
     <string name="setup_theme_sub">Toate stilurile, culorile și temele</string>
     <string name="setup_pair_sub">Asociază acolo căști noi, apoi revino</string>
     <string name="dual_add_sub">Asociază alt telefon sau computer cu căștile</string>

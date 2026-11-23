@@ -455,7 +455,7 @@ function buildWindow(){
       <div class="col"><div class="lbl">${$t('about_license_title')}</div><div class="card pad prose" style="flex:1">${$t('about_license_body')}</div></div>
       <div class="col"><div class="lbl">${$t('about_privacy_title')}</div><div class="card pad prose" style="flex:1">${$t('about_privacy_body')}</div></div>
     </div>
-    <div class="group"><div class="row">${ic('info')}<div class="txt"><div class="t">${$t('about_privacy_reset')}</div><div class="s">${$t('about_privacy_reply')}</div></div><button class="btn press" data-act="resetid">${$t('about_privacy_reset')}</button></div></div>
+    <div class="group"><div class="row">${ic('info')}<div class="txt"><div class="t">${$t('about_privacy_reset')}</div><div class="s">${$t('about_privacy_reset_sub')}</div></div><button class="btn press" data-act="resetid">${$t('about_privacy_reset')}</button></div></div>
   </section>
   </main>
   <div class="toast" role="status" aria-live="polite"></div>`;
@@ -791,7 +791,7 @@ document.addEventListener('click',ev=>{
     if(a==='tprev'){QBLIVE.testPreview();return;}
     if(a==='tsend'){QBLIVE.send({t:'test_send'});return;}
     if(a==='url'){window.__TAURI__.core.invoke('open_url',{url:v});return;}
-    if(a==='resetid'){window.__TAURI__.core.invoke('reset_install_id');toast($t('about_privacy_reset'));return;}
+    if(a==='resetid'){window.__TAURI__.core.invoke('reset_install_id');toast($t('about_privacy_reset_done'));return;}
   }
   if(a==='conn'){if(window.QBLIVE)QBLIVE.toggleConn();return;}
   if(a==='openwin'){setView('window');return;}

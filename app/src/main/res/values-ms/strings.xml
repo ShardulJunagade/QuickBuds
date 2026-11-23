@@ -271,6 +271,9 @@
     <string name="settings_general">Umum</string>
     <string name="settings_language_sub">Bahasa aplikasi</string>
     <string name="settings_app">Aplikasi</string>
+    <string name="about_privacy_reset_sub">Kiraan harian seterusnya dikira sebagai pemasangan baharu. Balasan kepada laporan lama anda tidak lagi sampai kepada anda</string>
+    <string name="about_privacy_reset_done">ID pemasangan baharu telah ditetapkan</string>
+    <string name="widget_placed_sub">Butang dan rupa widget ini</string>
     <string name="setup_theme_sub">Semua gaya, warna dan tema</string>
     <string name="setup_pair_sub">Gandingkan fon telinga baharu di sana, kemudian kembali</string>
     <string name="dual_add_sub">Gandingkan telefon atau komputer lain dengan fon telinga</string>

@@ -271,6 +271,9 @@
     <string name="settings_general">सामान्य</string>
     <string name="settings_language_sub">ऐप की भाषा</string>
     <string name="settings_app">ऐप</string>
+    <string name="about_privacy_reset_sub">अगली दैनिक गिनती एक नए इंस्टॉल के रूप में गिनी जाएगी। आपकी पुरानी रिपोर्ट के जवाब अब आप तक नहीं पहुंचेंगे</string>
+    <string name="about_privacy_reset_done">एक नया इंस्टॉल आईडी सेट है</string>
+    <string name="widget_placed_sub">इस विजेट के बटन और रूप</string>
     <string name="setup_theme_sub">सभी स्टाइल, रंग और थीम</string>
     <string name="setup_pair_sub">वहां नए ईयरबड्स पेयर करें, फिर वापस आएं</string>
     <string name="dual_add_sub">ईयरबड्स के साथ दूसरा फ़ोन या कंप्यूटर पेयर करें</string>

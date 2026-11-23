@@ -271,6 +271,9 @@
     <string name="settings_general">全般</string>
     <string name="settings_language_sub">アプリの言語</string>
     <string name="settings_app">アプリ</string>
+    <string name="about_privacy_reset_sub">次の日次カウントは新しいインストールとして数えられます。以前のレポートへの返信は届かなくなります</string>
+    <string name="about_privacy_reset_done">新しいインストールIDを設定しました</string>
+    <string name="widget_placed_sub">このウィジェットのボタンと外観</string>
     <string name="setup_theme_sub">すべてのスタイル、色、テーマ</string>
     <string name="setup_pair_sub">そこで新しいイヤホンをペアリングして戻ります</string>
     <string name="dual_add_sub">別のスマホやパソコンをイヤホンとペアリング</string>

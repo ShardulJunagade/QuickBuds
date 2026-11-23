@@ -271,6 +271,9 @@
     <string name="settings_general">Chung</string>
     <string name="settings_language_sub">Ngôn ngữ ứng dụng</string>
     <string name="settings_app">Ứng dụng</string>
+    <string name="about_privacy_reset_sub">Lần đếm hằng ngày tiếp theo được tính là một lượt cài mới. Phản hồi cho các báo cáo cũ sẽ không đến với bạn nữa</string>
+    <string name="about_privacy_reset_done">Đã đặt ID cài đặt mới</string>
+    <string name="widget_placed_sub">Nút và giao diện của tiện ích này</string>
     <string name="setup_theme_sub">Mọi kiểu, màu và chủ đề</string>
     <string name="setup_pair_sub">Ghép nối tai nghe mới ở đó rồi quay lại</string>
     <string name="dual_add_sub">Ghép nối điện thoại hoặc máy tính khác với tai nghe</string>

@@ -271,6 +271,9 @@
     <string name="settings_general">ทั่วไป</string>
     <string name="settings_language_sub">ภาษาของแอป</string>
     <string name="settings_app">แอป</string>
+    <string name="about_privacy_reset_sub">การนับรายวันครั้งถัดไปจะนับเป็นการติดตั้งใหม่ คำตอบของรายงานเก่าจะไม่มาถึงคุณอีก</string>
+    <string name="about_privacy_reset_done">ตั้งรหัสการติดตั้งใหม่แล้ว</string>
+    <string name="widget_placed_sub">ปุ่มและหน้าตาของวิดเจ็ตนี้</string>
     <string name="setup_theme_sub">สไตล์ สี และธีมทั้งหมด</string>
     <string name="setup_pair_sub">จับคู่หูฟังใหม่ที่นั่น แล้วกลับมา</string>
     <string name="dual_add_sub">จับคู่โทรศัพท์หรือคอมพิวเตอร์อีกเครื่องกับหูฟัง</string>

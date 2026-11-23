@@ -113,7 +113,7 @@ const STRINGS: &[&str] = &[
     "update_permission_title", "update_permission_body", "update_permission_action",
     "disconnect_title", "disconnect_body", "codec_dialog_deny",
     "crash_saved_to", "crash_share", "crash_share_title", "perm_title", "perm_body", "perm_action",
-    "about_privacy_reply", "issues_dialog_body", "issues_dialog_action",
+    "about_privacy_reply", "about_privacy_reset_sub", "about_privacy_reset_done", "issues_dialog_body", "issues_dialog_action",
     // The desktop tray menu.
     "tray_open", "tray_quit",
     // Desktop-only rows and the Tauri pages.

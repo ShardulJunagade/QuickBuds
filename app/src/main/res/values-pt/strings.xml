@@ -271,6 +271,9 @@
     <string name="settings_general">Geral</string>
     <string name="settings_language_sub">Idioma da app</string>
     <string name="settings_app">App</string>
+    <string name="about_privacy_reset_sub">A próxima contagem diária conta como uma nova instalação. As respostas aos seus relatórios antigos não chegam mais até você</string>
+    <string name="about_privacy_reset_done">Um novo ID de instalação foi definido</string>
+    <string name="widget_placed_sub">Botões e aparência deste widget</string>
     <string name="setup_theme_sub">Todos os estilos, cores e temas</string>
     <string name="setup_pair_sub">Emparelhe novos fones lá e volte</string>
     <string name="dual_add_sub">Emparelhe outro telefone ou computador com os fones</string>

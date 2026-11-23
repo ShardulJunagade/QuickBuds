@@ -271,6 +271,9 @@
     <string name="settings_general">Загальні</string>
     <string name="settings_language_sub">Мова застосунку</string>
     <string name="settings_app">Застосунок</string>
+    <string name="about_privacy_reset_sub">Наступний щоденний підрахунок зарахується як нове встановлення. Відповіді на ваші старі звіти більше не надійдуть</string>
+    <string name="about_privacy_reset_done">Задано новий ID встановлення</string>
+    <string name="widget_placed_sub">Кнопки та вигляд цього віджета</string>
     <string name="setup_theme_sub">Усі стилі, кольори та теми</string>
     <string name="setup_pair_sub">Під\'єднайте там нові навушники й поверніться</string>
     <string name="dual_add_sub">Під\'єднайте до навушників інший телефон або комп\'ютер</string>

@@ -110,18 +110,17 @@ class AboutActivity : Activity() {
                 setTextColor(p.textSecondary)
                 setLineSpacing(0f, 1.15f)
             })
-            addView(TextView(this@AboutActivity).apply {
-                setText(R.string.about_privacy_reset)
-                textSize = 15f
-                typeface = ThemeRes.medium(context)
-                setTextColor(p.accent)
-                setPadding(0, dp(14f), 0, 0)
-                setOnClickListener {
-                    UsagePing.resetId(this@AboutActivity)
-                    isEnabled = false
-                    alpha = 0.4f
-                }
-            })
+        })
+        // A row as the other settings: what the reset does, then what happened.
+        lateinit var resetRow: android.widget.LinearLayout
+        resetRow = SettingRowFactory.build(this, R.drawable.ic_eye, R.string.about_privacy_reset, R.string.about_privacy_reset_sub, null) {
+            UsagePing.resetId(this@AboutActivity)
+            SettingRowFactory.subtitle(this@AboutActivity, resetRow).setText(R.string.about_privacy_reset_done)
+            resetRow.isEnabled = false
+        }
+        root.addView(SettingRowFactory.card(this).apply {
+            (layoutParams as? android.widget.LinearLayout.LayoutParams)?.topMargin = dp(8f)
+            addView(resetRow)
         })
 
         setContentView(ScrollView(this).apply {

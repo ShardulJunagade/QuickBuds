@@ -271,6 +271,9 @@
     <string name="settings_general">일반</string>
     <string name="settings_language_sub">앱 언어</string>
     <string name="settings_app">앱</string>
+    <string name="about_privacy_reset_sub">다음 일일 집계는 새 설치로 계산됩니다. 이전 보고서에 대한 답변은 더 이상 받을 수 없습니다</string>
+    <string name="about_privacy_reset_done">새 설치 ID가 설정되었습니다</string>
+    <string name="widget_placed_sub">이 위젯의 버튼과 모양</string>
     <string name="setup_theme_sub">모든 스타일, 색상, 테마</string>
     <string name="setup_pair_sub">그곳에서 새 이어버드를 페어링한 후 돌아오세요</string>
     <string name="dual_add_sub">이어버드에 다른 휴대폰이나 컴퓨터를 페어링</string>

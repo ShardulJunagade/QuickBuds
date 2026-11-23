@@ -271,6 +271,9 @@
     <string name="settings_general">Generali</string>
     <string name="settings_language_sub">Lingua dell\'app</string>
     <string name="settings_app">App</string>
+    <string name="about_privacy_reset_sub">Il prossimo conteggio giornaliero conta come una nuova installazione. Le risposte ai tuoi vecchi rapporti non ti arrivano più</string>
+    <string name="about_privacy_reset_done">È stato impostato un nuovo ID di installazione</string>
+    <string name="widget_placed_sub">Pulsanti e aspetto di questo widget</string>
     <string name="setup_theme_sub">Tutti gli stili, i colori e i temi</string>
     <string name="setup_pair_sub">Abbina lì nuovi auricolari, poi torna qui</string>
     <string name="dual_add_sub">Abbina un altro telefono o computer agli auricolari</string>

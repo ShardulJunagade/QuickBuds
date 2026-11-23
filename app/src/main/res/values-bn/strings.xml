@@ -271,6 +271,9 @@
     <string name="settings_general">সাধারণ</string>
     <string name="settings_language_sub">অ্যাপের ভাষা</string>
     <string name="settings_app">অ্যাপ</string>
+    <string name="about_privacy_reset_sub">পরের দৈনিক গণনা একটি নতুন ইনস্টল হিসেবে গোনা হবে। আপনার পুরোনো রিপোর্টের উত্তর আর আপনার কাছে আসবে না</string>
+    <string name="about_privacy_reset_done">একটি নতুন ইনস্টল আইডি সেট হয়েছে</string>
+    <string name="widget_placed_sub">এই উইজেটের বোতাম ও চেহারা</string>
     <string name="setup_theme_sub">সব স্টাইল, রং ও থিম</string>
     <string name="setup_pair_sub">সেখানে নতুন ইয়ারবাড পেয়ার করুন, তারপর ফিরে আসুন</string>
     <string name="dual_add_sub">ইয়ারবাডের সাথে আরেকটি ফোন বা কম্পিউটার পেয়ার করুন</string>

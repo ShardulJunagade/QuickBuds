@@ -351,6 +351,9 @@
     <string name="settings_general">General</string>
     <string name="settings_language_sub">App language</string>
     <string name="settings_app">App</string>
+    <string name="about_privacy_reset_sub">The next daily count counts as a new install. Replies to your old reports no longer reach you</string>
+    <string name="about_privacy_reset_done">A new install ID is set</string>
+    <string name="widget_placed_sub">Buttons and look of this widget</string>
     <string name="setup_theme_sub">Every style, color and theme</string>
     <string name="setup_pair_sub">Pair new earbuds there, then come back</string>
     <string name="dual_add_sub">Pair another phone or computer with the earbuds</string>

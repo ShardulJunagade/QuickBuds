@@ -71,7 +71,7 @@ class WidgetPageActivity : Activity() {
                 val info = manager.getAppWidgetInfo(id) ?: return@forEachIndexed
                 val configure = info.configure ?: return@forEachIndexed
                 val name = info.loadLabel(packageManager) + if (ids.size > 1) " ${i + 1}" else ""
-                val row = SettingRowFactory.build(this, R.drawable.ic_widgets, 0, 0, SettingRowFactory.buildChevron(this)) {
+                val row = SettingRowFactory.build(this, R.drawable.ic_widgets, 0, R.string.widget_placed_sub, SettingRowFactory.buildChevron(this)) {
                     startActivity(Intent().setComponent(configure).putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, id))
                 }
                 row.findViewWithTag<android.widget.TextView>(SettingRowFactory.TITLE_TAG)?.text = name

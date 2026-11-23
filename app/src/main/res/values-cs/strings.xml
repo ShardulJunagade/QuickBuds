@@ -271,6 +271,9 @@
     <string name="settings_general">Obecné</string>
     <string name="settings_language_sub">Jazyk aplikace</string>
     <string name="settings_app">Aplikace</string>
+    <string name="about_privacy_reset_sub">Další denní počet se započítá jako nová instalace. Odpovědi na vaše starší hlášení už k vám nedorazí</string>
+    <string name="about_privacy_reset_done">Nastaveno nové ID instalace</string>
+    <string name="widget_placed_sub">Tlačítka a vzhled tohoto widgetu</string>
     <string name="setup_theme_sub">Všechny styly, barvy a motivy</string>
     <string name="setup_pair_sub">Spárujte tam nová sluchátka a vraťte se</string>
     <string name="dual_add_sub">Spárujte se sluchátky další telefon nebo počítač</string>

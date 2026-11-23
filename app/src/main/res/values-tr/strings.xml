@@ -271,6 +271,9 @@
     <string name="settings_general">Genel</string>
     <string name="settings_language_sub">Uygulama dili</string>
     <string name="settings_app">Uygulama</string>
+    <string name="about_privacy_reset_sub">Bir sonraki günlük sayım yeni bir kurulum olarak sayılır. Eski raporlarınıza verilen yanıtlar artık size ulaşmaz</string>
+    <string name="about_privacy_reset_done">Yeni bir kurulum kimliği ayarlandı</string>
+    <string name="widget_placed_sub">Bu widget\'ın düğmeleri ve görünümü</string>
     <string name="setup_theme_sub">Tüm stiller, renkler ve temalar</string>
     <string name="setup_pair_sub">Yeni kulaklıkları orada eşleyin, sonra geri dönün</string>
     <string name="dual_add_sub">Kulaklıklarla başka bir telefon veya bilgisayar eşleyin</string>
