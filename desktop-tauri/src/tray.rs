@@ -24,7 +24,10 @@ impl ksni::Tray for Tray {
     fn activate(&mut self, x: i32, y: i32) { crate::tray_click(x as f64, y as f64); self.open_panel(); }
     // The host asks for the menu on a right click. The menu is empty, so the panel opens instead.
     // The right click sends no point: the panel keeps the corner of the last left click.
-    fn menu_about_to_show(&mut self) { self.open_panel(); }
+    fn menu_about_to_show(&mut self) {
+        crate::session::log("NOTE", Vec::new(), Some("TRAY RIGHT CLICK: no position".into()));
+        self.open_panel();
+    }
 }
 
 pub fn start(app: &AppHandle) {

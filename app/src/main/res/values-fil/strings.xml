@@ -271,6 +271,13 @@
     <string name="settings_general">Pangkalahatan</string>
     <string name="settings_language_sub">Wika ng app</string>
     <string name="settings_app">App</string>
+    <string name="panel_corner_title">Sulok ng panel</string>
+    <string name="panel_corner_sub">Kung saan bubukas ang tray panel. Awtomatiko: sa sulok na pinakamalapit sa tray icon</string>
+    <string name="panel_corner_auto">Awtomatiko</string>
+    <string name="panel_corner_tl">Itaas kaliwa</string>
+    <string name="panel_corner_tr">Itaas kanan</string>
+    <string name="panel_corner_bl">Ibaba kaliwa</string>
+    <string name="panel_corner_br">Ibaba kanan</string>
     <string name="settings_behavior">Gawi</string>
     <string name="settings_notif_widgets">Mga notification at widget</string>
     <string name="settings_help">Tulong at feedback</string>

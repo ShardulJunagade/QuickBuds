@@ -271,6 +271,13 @@
     <string name="settings_general">General</string>
     <string name="settings_language_sub">Limba aplicației</string>
     <string name="settings_app">Aplicație</string>
+    <string name="panel_corner_title">Colțul panoului</string>
+    <string name="panel_corner_sub">Unde se deschide panoul din tavă. Automat: în colțul cel mai apropiat de pictogramă</string>
+    <string name="panel_corner_auto">Automat</string>
+    <string name="panel_corner_tl">Stânga sus</string>
+    <string name="panel_corner_tr">Dreapta sus</string>
+    <string name="panel_corner_bl">Stânga jos</string>
+    <string name="panel_corner_br">Dreapta jos</string>
     <string name="settings_behavior">Comportament</string>
     <string name="settings_notif_widgets">Notificări și widgeturi</string>
     <string name="settings_help">Ajutor și feedback</string>

@@ -271,6 +271,13 @@
     <string name="settings_general">Genel</string>
     <string name="settings_language_sub">Uygulama dili</string>
     <string name="settings_app">Uygulama</string>
+    <string name="panel_corner_title">Panel köşesi</string>
+    <string name="panel_corner_sub">Tepsi panelinin açıldığı yer. Otomatik: tepsi simgesine en yakın köşede</string>
+    <string name="panel_corner_auto">Otomatik</string>
+    <string name="panel_corner_tl">Sol üst</string>
+    <string name="panel_corner_tr">Sağ üst</string>
+    <string name="panel_corner_bl">Sol alt</string>
+    <string name="panel_corner_br">Sağ alt</string>
     <string name="settings_behavior">Davranış</string>
     <string name="settings_notif_widgets">Bildirimler ve widget\'lar</string>
     <string name="settings_help">Yardım ve geri bildirim</string>

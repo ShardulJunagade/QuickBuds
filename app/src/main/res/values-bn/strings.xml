@@ -271,6 +271,13 @@
     <string name="settings_general">সাধারণ</string>
     <string name="settings_language_sub">অ্যাপের ভাষা</string>
     <string name="settings_app">অ্যাপ</string>
+    <string name="panel_corner_title">প্যানেলের কোণ</string>
+    <string name="panel_corner_sub">ট্রে প্যানেল কোথায় খোলে। স্বয়ংক্রিয়: ট্রে আইকনের সবচেয়ে কাছের কোণে</string>
+    <string name="panel_corner_auto">স্বয়ংক্রিয়</string>
+    <string name="panel_corner_tl">উপরে বাঁয়ে</string>
+    <string name="panel_corner_tr">উপরে ডানে</string>
+    <string name="panel_corner_bl">নিচে বাঁয়ে</string>
+    <string name="panel_corner_br">নিচে ডানে</string>
     <string name="settings_behavior">আচরণ</string>
     <string name="settings_notif_widgets">বিজ্ঞপ্তি ও উইজেট</string>
     <string name="settings_help">সাহায্য ও মতামত</string>

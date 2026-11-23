@@ -271,6 +271,13 @@
     <string name="settings_general">Umum</string>
     <string name="settings_language_sub">Bahasa aplikasi</string>
     <string name="settings_app">Aplikasi</string>
+    <string name="panel_corner_title">Sudut panel</string>
+    <string name="panel_corner_sub">Tempat panel dulang dibuka. Automatik: di sudut paling dekat dengan ikon dulang</string>
+    <string name="panel_corner_auto">Automatik</string>
+    <string name="panel_corner_tl">Kiri atas</string>
+    <string name="panel_corner_tr">Kanan atas</string>
+    <string name="panel_corner_bl">Kiri bawah</string>
+    <string name="panel_corner_br">Kanan bawah</string>
     <string name="settings_behavior">Tingkah laku</string>
     <string name="settings_notif_widgets">Pemberitahuan dan widget</string>
     <string name="settings_help">Bantuan dan maklum balas</string>

@@ -271,6 +271,13 @@
     <string name="settings_general">Allgemein</string>
     <string name="settings_language_sub">App-Sprache</string>
     <string name="settings_app">App</string>
+    <string name="panel_corner_title">Panel-Ecke</string>
+    <string name="panel_corner_sub">Wo sich das Tray-Panel öffnet. Automatisch: in der Ecke nahe dem Tray-Symbol</string>
+    <string name="panel_corner_auto">Automatisch</string>
+    <string name="panel_corner_tl">Oben links</string>
+    <string name="panel_corner_tr">Oben rechts</string>
+    <string name="panel_corner_bl">Unten links</string>
+    <string name="panel_corner_br">Unten rechts</string>
     <string name="settings_behavior">Verhalten</string>
     <string name="settings_notif_widgets">Benachrichtigungen und Widgets</string>
     <string name="settings_help">Hilfe und Feedback</string>

@@ -51,6 +51,7 @@ pub fn get_settings() -> Value {
         "anc_pick_first": flag("anc_pick_first", false),
         "dev_tools_button": flag("dev_tools_button", false),
         "update_auto": flag("update_auto", true),
+        "panel_corner": st["panel_corner"].as_u64().filter(|&c| c <= 4).unwrap_or(0),
         "autostart": autostart_on(),
         "reply": REPLY.lock().unwrap().clone(),
         "canInstall": update::can_install(),
@@ -60,6 +61,12 @@ pub fn get_settings() -> Value {
 #[tauri::command]
 pub fn set_setting(key: String, value: Value) {
     if KEYS.contains(&key.as_str()) && value.is_boolean() { crate::save_setting(&key, value); }
+}
+
+/// App settings › Panel corner: 0 automatic, 1 top left, 2 top right, 3 bottom left, 4 bottom right.
+#[tauri::command]
+pub fn set_panel_corner(index: u64) {
+    if index <= 4 { crate::save_setting("panel_corner", index.into()); }
 }
 
 /// Saves the language and tells every window to load its strings again.

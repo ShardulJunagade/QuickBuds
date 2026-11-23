@@ -271,6 +271,13 @@
     <string name="settings_general">一般</string>
     <string name="settings_language_sub">應用程式語言</string>
     <string name="settings_app">應用程式</string>
+    <string name="panel_corner_title">面板位置</string>
+    <string name="panel_corner_sub">系統匣面板開啟的位置。自動：在離系統匣圖示最近的角落</string>
+    <string name="panel_corner_auto">自動</string>
+    <string name="panel_corner_tl">左上</string>
+    <string name="panel_corner_tr">右上</string>
+    <string name="panel_corner_bl">左下</string>
+    <string name="panel_corner_br">右下</string>
     <string name="settings_behavior">行為</string>
     <string name="settings_notif_widgets">通知和小工具</string>
     <string name="settings_help">說明與意見回饋</string>

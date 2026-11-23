@@ -271,6 +271,13 @@
     <string name="settings_general">सामान्य</string>
     <string name="settings_language_sub">ऐप की भाषा</string>
     <string name="settings_app">ऐप</string>
+    <string name="panel_corner_title">पैनल का कोना</string>
+    <string name="panel_corner_sub">ट्रे पैनल कहां खुलता है। स्वचालित: ट्रे आइकन के सबसे पास वाले कोने में</string>
+    <string name="panel_corner_auto">स्वचालित</string>
+    <string name="panel_corner_tl">ऊपर बाएं</string>
+    <string name="panel_corner_tr">ऊपर दाएं</string>
+    <string name="panel_corner_bl">नीचे बाएं</string>
+    <string name="panel_corner_br">नीचे दाएं</string>
     <string name="settings_behavior">व्यवहार</string>
     <string name="settings_notif_widgets">सूचनाएं और विजेट</string>
     <string name="settings_help">सहायता और फ़ीडबैक</string>

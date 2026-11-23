@@ -271,6 +271,13 @@
     <string name="settings_general">全般</string>
     <string name="settings_language_sub">アプリの言語</string>
     <string name="settings_app">アプリ</string>
+    <string name="panel_corner_title">パネルの位置</string>
+    <string name="panel_corner_sub">トレイパネルを開く場所。自動：トレイアイコンに最も近い角</string>
+    <string name="panel_corner_auto">自動</string>
+    <string name="panel_corner_tl">左上</string>
+    <string name="panel_corner_tr">右上</string>
+    <string name="panel_corner_bl">左下</string>
+    <string name="panel_corner_br">右下</string>
     <string name="settings_behavior">動作</string>
     <string name="settings_notif_widgets">通知とウィジェット</string>
     <string name="settings_help">ヘルプとフィードバック</string>

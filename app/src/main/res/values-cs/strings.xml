@@ -271,6 +271,13 @@
     <string name="settings_general">Obecné</string>
     <string name="settings_language_sub">Jazyk aplikace</string>
     <string name="settings_app">Aplikace</string>
+    <string name="panel_corner_title">Roh panelu</string>
+    <string name="panel_corner_sub">Kde se panel v oznamovací oblasti otevře. Automaticky: v rohu nejblíže ikoně</string>
+    <string name="panel_corner_auto">Automaticky</string>
+    <string name="panel_corner_tl">Vlevo nahoře</string>
+    <string name="panel_corner_tr">Vpravo nahoře</string>
+    <string name="panel_corner_bl">Vlevo dole</string>
+    <string name="panel_corner_br">Vpravo dole</string>
     <string name="settings_behavior">Chování</string>
     <string name="settings_notif_widgets">Oznámení a widgety</string>
     <string name="settings_help">Nápověda a zpětná vazba</string>

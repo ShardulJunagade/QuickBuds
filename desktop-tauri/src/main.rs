@@ -216,11 +216,22 @@ static TRAY_AT: std::sync::Mutex<Option<(f64, f64)>> = std::sync::Mutex::new(Non
 /// Keeps the tray click point. The panel opens in the screen corner nearest to it (issue #46).
 pub fn tray_click(x: f64, y: f64) {
     // Some tray hosts send 0, 0 for every click: that is no point.
-    *TRAY_AT.lock().unwrap() = (x != 0.0 || y != 0.0).then_some((x, y));
+    let at = (x != 0.0 || y != 0.0).then_some((x, y));
+    // The log shows what the tray host sent, for a panel in the wrong corner (report #232).
+    session::log("NOTE", Vec::new(), Some(match at { Some((x, y)) => format!("TRAY CLICK: x={x} y={y}"), None => "TRAY CLICK: no position".into() }));
+    *TRAY_AT.lock().unwrap() = at;
 }
 
-/// The panel's corner as (left, top): the half of the screen with the tray click. With no click point, the bottom right.
+/// The panel's corner as (left, top). App settings › Panel corner wins; Automatic takes the half of the screen with the
+/// tray click. With no click point, the bottom right. Some tray hosts send no point, so the setting exists (report #232).
 fn panel_corner(p: &WebviewWindow) -> (bool, bool) {
+    match load_settings()["panel_corner"].as_u64() {
+        Some(1) => return (true, true),
+        Some(2) => return (false, true),
+        Some(3) => return (true, false),
+        Some(4) => return (false, false),
+        _ => {}
+    }
     let Some((x, y)) = *TRAY_AT.lock().unwrap() else { return (false, false) };
     corner_at(p, x, y).unwrap_or((false, false))
 }
@@ -397,7 +408,7 @@ fn main() {
     #[cfg(target_os = "linux")]
     gtk::glib::set_prgname(Some("quickbuds"));
     let app = tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![fit_panel, main_size, main_ready, open_main, quit, link::get_snapshot, link::get_log, link::send, link::get_strings, app::get_settings, app::set_setting, app::set_language, app::reset_install_id, app::open_url, app::set_autostart, app::update_check, app::update_install, app::report_preview, app::report_send, app::test_preview, app::js_log, app::crash_pending, app::crash_send, support::support_due, support::support_off])
+        .invoke_handler(tauri::generate_handler![fit_panel, main_size, main_ready, open_main, quit, link::get_snapshot, link::get_log, link::send, link::get_strings, app::get_settings, app::set_setting, app::set_panel_corner, app::set_language, app::reset_install_id, app::open_url, app::set_autostart, app::update_check, app::update_install, app::report_preview, app::report_send, app::test_preview, app::js_log, app::crash_pending, app::crash_send, support::support_due, support::support_off])
         .setup(move |app| {
             if let Some(l) = instance { serve_instance(app.handle().clone(), l); }
             hearing::init(app.handle());

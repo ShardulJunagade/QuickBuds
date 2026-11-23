@@ -271,6 +271,13 @@
     <string name="settings_general">Általános</string>
     <string name="settings_language_sub">Alkalmazás nyelve</string>
     <string name="settings_app">Alkalmazás</string>
+    <string name="panel_corner_title">Panel sarka</string>
+    <string name="panel_corner_sub">Hol nyílik meg a tálcapanel. Automatikus: a tálcaikonhoz legközelebbi sarokban</string>
+    <string name="panel_corner_auto">Automatikus</string>
+    <string name="panel_corner_tl">Bal felső</string>
+    <string name="panel_corner_tr">Jobb felső</string>
+    <string name="panel_corner_bl">Bal alsó</string>
+    <string name="panel_corner_br">Jobb alsó</string>
     <string name="settings_behavior">Működés</string>
     <string name="settings_notif_widgets">Értesítések és widgetek</string>
     <string name="settings_help">Súgó és visszajelzés</string>

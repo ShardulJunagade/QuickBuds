@@ -271,6 +271,13 @@
     <string name="settings_general">Général</string>
     <string name="settings_language_sub">Langue de l\'app</string>
     <string name="settings_app">Application</string>
+    <string name="panel_corner_title">Coin du panneau</string>
+    <string name="panel_corner_sub">Où s\'ouvre le panneau de la barre. Automatique : dans le coin le plus proche de l\'icône</string>
+    <string name="panel_corner_auto">Automatique</string>
+    <string name="panel_corner_tl">En haut à gauche</string>
+    <string name="panel_corner_tr">En haut à droite</string>
+    <string name="panel_corner_bl">En bas à gauche</string>
+    <string name="panel_corner_br">En bas à droite</string>
     <string name="settings_behavior">Comportement</string>
     <string name="settings_notif_widgets">Notifications et widgets</string>
     <string name="settings_help">Aide et commentaires</string>

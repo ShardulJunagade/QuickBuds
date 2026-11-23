@@ -271,6 +271,13 @@
     <string name="settings_general">Allmänt</string>
     <string name="settings_language_sub">Appens språk</string>
     <string name="settings_app">App</string>
+    <string name="panel_corner_title">Panelens hörn</string>
+    <string name="panel_corner_sub">Var fältpanelen öppnas. Automatiskt: i hörnet närmast ikonen</string>
+    <string name="panel_corner_auto">Automatiskt</string>
+    <string name="panel_corner_tl">Uppe till vänster</string>
+    <string name="panel_corner_tr">Uppe till höger</string>
+    <string name="panel_corner_bl">Nere till vänster</string>
+    <string name="panel_corner_br">Nere till höger</string>
     <string name="settings_behavior">Beteende</string>
     <string name="settings_notif_widgets">Aviseringar och widgetar</string>
     <string name="settings_help">Hjälp och feedback</string>

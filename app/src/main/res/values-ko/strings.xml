@@ -271,6 +271,13 @@
     <string name="settings_general">일반</string>
     <string name="settings_language_sub">앱 언어</string>
     <string name="settings_app">앱</string>
+    <string name="panel_corner_title">패널 모서리</string>
+    <string name="panel_corner_sub">트레이 패널이 열리는 위치. 자동: 트레이 아이콘에 가장 가까운 모서리</string>
+    <string name="panel_corner_auto">자동</string>
+    <string name="panel_corner_tl">왼쪽 위</string>
+    <string name="panel_corner_tr">오른쪽 위</string>
+    <string name="panel_corner_bl">왼쪽 아래</string>
+    <string name="panel_corner_br">오른쪽 아래</string>
     <string name="settings_behavior">동작</string>
     <string name="settings_notif_widgets">알림 및 위젯</string>
     <string name="settings_help">도움말 및 의견</string>

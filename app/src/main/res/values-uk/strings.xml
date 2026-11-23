@@ -271,6 +271,13 @@
     <string name="settings_general">Загальні</string>
     <string name="settings_language_sub">Мова застосунку</string>
     <string name="settings_app">Застосунок</string>
+    <string name="panel_corner_title">Кут панелі</string>
+    <string name="panel_corner_sub">Де відкривається панель трею. Автоматично: у куті біля значка</string>
+    <string name="panel_corner_auto">Автоматично</string>
+    <string name="panel_corner_tl">Ліворуч угорі</string>
+    <string name="panel_corner_tr">Праворуч угорі</string>
+    <string name="panel_corner_bl">Ліворуч унизу</string>
+    <string name="panel_corner_br">Праворуч унизу</string>
     <string name="settings_behavior">Поведінка</string>
     <string name="settings_notif_widgets">Сповіщення та віджети</string>
     <string name="settings_help">Довідка та відгуки</string>
