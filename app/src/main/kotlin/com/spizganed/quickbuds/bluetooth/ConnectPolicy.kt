@@ -29,4 +29,22 @@ object ConnectPolicy {
         val plainOnly = known.isNotEmpty() && vendor.none { it in known }
         return if (plainOnly) vendor + OpoProtocol.SPP_UUID_PLAIN else vendor
     }
+
+    /** Who made the buds: picks the driver before any frame goes out. */
+    enum class Brand { OPPO, SOUNDCORE }
+
+    /** Soundcore's vendor service: `0cf12d31-fac3-4553-bd80-d6832e7` plus 5 hex digits (OpenSCQ30, `soundcore.rs`). */
+    private const val SOUNDCORE_UUID_PREFIX = "0CF12D31-FAC3-4553-BD80-D6832E7"
+
+    /** Soundcore when the buds list its vendor service, or their name starts with "soundcore". Else OPPO. */
+    fun brand(offered: List<String>, name: String?): Brand {
+        val vendor = offered.any { it.uppercase().startsWith(SOUNDCORE_UUID_PREFIX) }
+        val named = name?.trim()?.startsWith("soundcore", ignoreCase = true) == true
+        return if (vendor || named) Brand.SOUNDCORE else Brand.OPPO
+    }
+
+    /** The Soundcore service UUIDs of one connect: the vendor ones the buds list, then plain SPP. */
+    fun soundcoreUuids(offered: List<String>): List<String> =
+        offered.map { it.uppercase() }.filter { it.startsWith(SOUNDCORE_UUID_PREFIX) } + OpoProtocol.SPP_UUID_PLAIN
 }
+
