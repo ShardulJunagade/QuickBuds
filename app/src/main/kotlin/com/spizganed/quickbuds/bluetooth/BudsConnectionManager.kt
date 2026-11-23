@@ -675,6 +675,7 @@ class BudsConnectionManager(private val context: Context) {
                     Capabilities.supports(context, OpoProtocol.CMD_SPATIAL_SOURCE)) {
                     delay(200); sendRawBlocking(Commands.spatialOnBuds(),"3D audio on the buds")
                 }
+                com.spizganed.quickbuds.protocol.RustShadow.initDone()
             } catch (e: Exception) {
                 log("Init sequence error: ${e.message}")
             }

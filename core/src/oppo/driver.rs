@@ -335,6 +335,8 @@ pub struct Driver {
     case_hidden: bool,
     /// The last stand-in case level: (level, charging, when).
     stand_in: Option<(u8, bool, u64)>,
+    /// The battery levels of the last link and the device name they came from.
+    last_battery: Option<(String, [Option<(u8, bool)>; 3])>,
 }
 
 impl Driver {
@@ -344,7 +346,7 @@ impl Driver {
             engine: FeatureSync::default(), wire: HashMap::new(), busy: Vec::new(), notice: None, last_tick: 0,
             framer: Framer::default(), seq: 0, level: None, holds: Vec::new(), feature_writes: HashMap::new(),
             eq_hold: Default::default(), steps: VecDeque::new(), wait_until: None, pending: Vec::new(), now: 0,
-            link_case: None, case_hidden: false, stand_in: None,
+            link_case: None, case_hidden: false, stand_in: None, last_battery: None,
         }
     }
 
@@ -396,7 +398,10 @@ impl Driver {
         self.case_hidden = false;
         self.stand_in = None;
         let detected = find_model(None, Some(&name));
-        self.s = Snapshot { status: Status::On, name, detected, ..Default::default() };
+        // The levels of the last link of these buds show until the buds report: a part a report leaves out keeps its
+        // level, as Settings › Hide old battery levels off promises.
+        let battery = self.last_battery.take().filter(|(n, _)| *n == name && !self.settings.clear_battery).map(|(_, b)| b);
+        self.s = Snapshot { status: Status::On, name, detected, battery: battery.unwrap_or_default(), ..Default::default() };
         if let Some(eq) = &self.settings.eq_saved {
             self.s.eq_current = eq.current;
             self.s.bass_level = eq.bass_level;
@@ -427,6 +432,7 @@ impl Driver {
     pub fn disconnected(&mut self, now: u64) -> Vec<Effect> {
         self.now = now;
         if self.phase != Phase::Off {
+            self.last_battery = Some((self.s.name.clone(), self.s.battery));
             let outs = self.engine.disconnect(now);
             if self.exec(outs) { self.out.push(Effect::State); }
         }

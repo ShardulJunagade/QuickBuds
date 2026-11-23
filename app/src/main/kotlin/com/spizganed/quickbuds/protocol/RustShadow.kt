@@ -25,6 +25,8 @@ object RustShadow {
     /** The commands this layer sent since the link came up, until [checkInit]. */
     private val initSent = mutableListOf<Int>()
     private var recordInit = false
+    /** The init comparison of this link is still to come. */
+    private var checkPending = false
 
     /** What the Kotlin layer reported through its listener and keeps nowhere else. Reset on each link. */
     class Seen {
@@ -81,6 +83,7 @@ object RustShadow {
         seen = Seen().also { it.busy += busy }
         initSent.clear()
         recordInit = true
+        checkPending = true
         nativeConnected(handle, SystemClock.elapsedRealtime(), name, Capabilities.productId(c), ModelCatalog.manual(c),
             clear, PhoneSpatial.supported(c), caseLevel ?: -1, eqJson(eq))
         lastDiff = null
@@ -101,6 +104,10 @@ object RustShadow {
         level.level?.let { nativeCaseStandIn(handle, SystemClock.elapsedRealtime(), it, level.charging) }
     }
 
+    /** This layer's init sequence ended: later writes (a tap, the battery poll) are not init commands. */
+    @Synchronized
+    fun initDone() { recordInit = false }
+
     /** A frame this layer wrote to the buds: kept for [checkInit]. */
     @Synchronized
     fun sent(frame: ByteArray) {
@@ -118,6 +125,7 @@ object RustShadow {
     @Synchronized
     fun disconnected() {
         recordInit = false
+        checkPending = false
         if (handle != 0L) { nativeDisconnected(handle, SystemClock.elapsedRealtime()); ticker.removeCallbacks(tickRun) }
     }
 
@@ -135,12 +143,13 @@ object RustShadow {
     }
 
     /**
-     * The commands of the init sequence, once per link (10 s after it came up): the ids only this layer sent, and
-     * the ids only the core would send. Later writes (a tap, the battery poll) do not count.
+     * The commands of the init sequence, once per link (10 s after it came up): the ids only this layer sent until
+     * [initDone], and the ids only the core would send until its own init ended.
      */
     @Synchronized
     fun checkInit(log: (String) -> Unit) {
-        if (handle == 0L || !recordInit) return
+        if (handle == 0L || !checkPending) return
+        checkPending = false
         recordInit = false
         val core = nativeInitSent(handle, SystemClock.elapsedRealtime()) ?: return log("RUST TX DIFF: core failed")
         val done = core.endsWith("+")

@@ -100,3 +100,17 @@ fn a_stand_in_case_level_shows_while_the_link_gives_none() {
     d.on_bytes(20, 0, &build_packet(0x8106, 1, &[0, 1, 3, 0x41]));
     assert_eq!(d.common().battery[2].map(|l| l.value), Some(0x41));
 }
+
+#[test]
+fn the_levels_of_the_last_link_show_until_the_buds_report() {
+    let mut d = Driver::new(Settings::default());
+    d.connected(0, "X".into());
+    d.on_bytes(5, 0, &build_packet(0x8106, 1, &[0, 2, 1, 0x5A, 3, 0x3C]));
+    d.disconnected(10);
+    d.connected(20, "X".into());
+    assert_eq!(d.common().battery[2].map(|l| l.value), Some(0x3C));
+    // Other buds start empty.
+    d.disconnected(30);
+    d.connected(40, "Y".into());
+    assert_eq!(d.common().battery[2], None);
+}
