@@ -96,6 +96,7 @@ jobs:
         if: ${{ !inputs.appimage_only }}
         run: |
           cd core && cargo test
+          cd ../core-jni && cargo test
           cd ../desktop-tauri && cargo test
       - name: Archives
         env:
