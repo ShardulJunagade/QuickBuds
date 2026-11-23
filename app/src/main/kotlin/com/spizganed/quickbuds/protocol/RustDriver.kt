@@ -107,7 +107,7 @@ class RustDriver(private val shell: Shell) {
     companion object {
         private val loaded: Boolean = try { System.loadLibrary("buds_core_jni"); true } catch (_: Throwable) { false }
 
-        /** Dev tools › Rust engine (default off). It applies from the next app start. */
+        /** Dev tools › Rust engine (default off). The next connect reads it. */
         const val PREF = "devRustEngine"
 
         fun enabled(c: Context): Boolean =

@@ -34,7 +34,7 @@ A new difference goes to the log as one `RUST DIFF:` line. 10 s after the link c
 commands of the init sequence: the core's would-be frames against its own (`RUST TX DIFF:`).
 Why: 90 % of the users are on Android, and the Kotlin layer knows more than the core. The report logs show each gap
 on real buds before the core takes over, and users see no change. A panic in the core is caught in the bridge.
-Driver mode (Dev tools › Rust engine, default off, applies on the next app start): the core drives the link
+Driver mode (Dev tools › Rust engine, default off, read on each connect): the core drives the link
 (`protocol/RustDriver.kt`). `BudsConnectionManager` stays the shell: it owns the socket, gives the core the bytes and
 the UI commands (JSON), writes the core's frames and maps the core's state JSON to its fields and listeners
 (`applyRust`). All core calls run on one thread. The core reads the battery every 5 min, reads it on the lid-close

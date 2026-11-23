@@ -83,26 +83,23 @@ object LogDecoder {
         var direction: Direction = Direction.STATUS
         var label: String? = null
 
-        if (msg.startsWith("TX[")) {
-            direction = Direction.TX
-            val bracketEnd = msg.indexOf(']')
-            if (bracketEnd > 2) {
-                label = msg.substring(3, bracketEnd)
-                hexPart = msg.substring(bracketEnd + 3) // skip "]: "
-            }
-        } else if (msg.startsWith("RX")) {
-            direction = Direction.RX
-            // Format: "RX: AA 08 ..." or "RX[batch]: AA 08 ..."
-            val bracketStart = msg.indexOf('[')
-            if (bracketStart >= 0) {
-                val bracketEnd = msg.indexOf(']')
-                if (bracketEnd > bracketStart) {
-                    label = msg.substring(bracketStart + 1, bracketEnd)
-                    hexPart = msg.substring(bracketEnd + 3) // skip "]: "
+        // Formats: "TX[label]: AA ..." (Kotlin engine), "TX: AA ... (text)" and "RX: AA ... (text)" (Rust engine),
+        // "RX[batch]: AA ...". Only a bracket right after the direction is a label: the text after the hex can hold
+        // brackets too.
+        val tx = msg.startsWith("TX[") || msg.startsWith("TX: ")
+        if (tx || msg.startsWith("RX[") || msg.startsWith("RX: ")) {
+            direction = if (tx) Direction.TX else Direction.RX
+            if (msg[2] == '[') {
+                val bracketEnd = msg.indexOf("]: ")
+                if (bracketEnd > 2) {
+                    label = msg.substring(3, bracketEnd)
+                    hexPart = msg.substring(bracketEnd + 3)
                 }
             } else {
-                hexPart = msg.substring(3) // skip "RX: "
+                hexPart = msg.substring(4)
             }
+            // The Rust engine's text after the hex: "(Query codec)".
+            hexPart = hexPart?.substringBefore(" (")
         } else {
             // Status messages (WEAR EVT/QRY, connection messages, etc.)
             // These are already human-readable — pass through.
