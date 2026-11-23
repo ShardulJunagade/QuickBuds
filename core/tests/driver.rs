@@ -27,9 +27,10 @@ fn a_command_waits_for_the_end_of_the_init() {
     let mut all = Vec::new();
     let mut now = 0;
     while let Some(t) = d.next_wake() {
+        // The battery poll keeps a wake after the init: stop before it.
+        if t > 60_000 { break; }
         now = t.max(now + 1);
         all.extend(sent(&d.tick(now)));
-        if now > 60_000 { break; }
     }
     assert_eq!(all.last(), Some(&0x0400));
 }
@@ -113,4 +114,50 @@ fn the_levels_of_the_last_link_show_until_the_buds_report() {
     d.disconnected(30);
     d.connected(40, "Y".into());
     assert_eq!(d.common().battery[2], None);
+}
+
+/// Runs the init to its end; returns the time.
+fn init(d: &mut Driver) -> u64 {
+    d.connected(0, "X".into());
+    let mut now = 0;
+    while let Some(t) = d.next_wake() {
+        if t > 60_000 { break; }
+        now = t.max(now + 1);
+        d.tick(now);
+    }
+    now
+}
+
+#[test]
+fn the_battery_is_read_every_5_minutes() {
+    use buds_core::oppo::driver::BATTERY_POLL_MS;
+    let mut d = Driver::new(Settings::default());
+    let end = init(&mut d);
+    assert_eq!(d.next_wake(), Some(end + BATTERY_POLL_MS));
+    assert!(sent(&d.tick(end + BATTERY_POLL_MS - 1)).is_empty());
+    assert_eq!(sent(&d.tick(end + BATTERY_POLL_MS)), [0x0106]);
+    assert_eq!(d.next_wake(), Some(end + 2 * BATTERY_POLL_MS));
+}
+
+#[test]
+fn the_all_zero_wear_push_reads_the_battery() {
+    let mut d = Driver::new(Settings::default());
+    let end = init(&mut d);
+    // 0x0204 subType 02: 3 parts, all 0 (lid closed).
+    let e = d.on_bytes(end + 1, 0, &build_packet(0x0204, 1, &[2, 3, 1, 0, 2, 0, 3, 0]));
+    assert_eq!(sent(&e), [0x0106]);
+    let e = d.on_bytes(end + 2, 0, &build_packet(0x0204, 2, &[2, 3, 1, 3, 2, 3, 3, 4]));
+    assert!(sent(&e).is_empty());
+}
+
+#[test]
+fn find_phone_rings_only_on_a_find_phone_model() {
+    let rings = |manual: Option<&str>| {
+        let mut d = Driver::new(Settings { model_manual: manual.map(Into::into), ..Default::default() });
+        let end = init(&mut d);
+        d.on_bytes(end + 1, 0, &build_packet(0x0502, 1, &[0x05]))
+            .into_iter().any(|e| matches!(e, Effect::FindPhone(true)))
+    };
+    assert!(rings(Some("050812")));
+    assert!(!rings(None));
 }

@@ -171,6 +171,8 @@ impl Conn<'_> {
                 Effect::Save(key, value) => crate::save_setting(key, value),
                 // Buds that named their model are remembered, renamed or not.
                 Effect::Ready => if driver.snapshot().model.is_some() { remember(addr) },
+                // The desktop has no ringer: the driver's NOTE line is the record.
+                Effect::FindPhone(_) => {}
             }
         }
         if changed { emit(driver.snapshot().clone()); }

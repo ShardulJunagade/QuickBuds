@@ -103,6 +103,8 @@ pub const FEATURE_POWER_SAVING: u8 = 0x17;
 pub const FEATURE_HEARING_OPTIMIZE: u8 = 0x38;
 
 pub const EVT_PUSH: u16 = 0x0204;
+/// realme find phone (HeyMelody models: the camera shutter). Never answered.
+pub const REQ_FIND_PHONE: u16 = 0x0502;
 
 /// Dual connection (PROTOCOL.md section 19): switch `0x11`; the device list `0x0112` -> `8112 00 <list>`, push `0204 06 <list>`.
 /// Each toggle is followed by `0x0413 08 00 <00 after on | 01 after off>` (HeyMelody's, meaning unknown).

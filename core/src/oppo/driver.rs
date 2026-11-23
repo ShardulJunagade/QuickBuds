@@ -87,6 +87,8 @@ pub enum Cmd {
     OnCall(u8, u8, u8),
     /// Hearing profile frames, in order; a switch among them re-reads the status after.
     Hearing(Vec<Frame>),
+    /// `0x0106`: the battery levels. The driver sends it every [`BATTERY_POLL_MS`] by itself.
+    BatteryRead,
     /// The shell's own: it opens the link. The driver ignores it.
     Connect,
     /// The shell's own: it closes the link. The driver ignores it.
@@ -245,6 +247,8 @@ pub enum Effect {
     Save(&'static str, Value),
     /// The init sequence is done.
     Ready,
+    /// Find phone (realme, model flag `findPhone`): true rings the phone, false stops it.
+    FindPhone(bool),
 }
 
 /// One entry of the step queue.
@@ -295,6 +299,9 @@ const ENGINE_TICK_MS: u64 = 500;
 /// A stand-in case level counts this long: the phone scans at most once in 5 min.
 const STAND_IN_MS: u64 = 5 * 60_000;
 
+/// The battery read period while connected. Some buds push no level change for a long time.
+pub const BATTERY_POLL_MS: u64 = 5 * 60_000;
+
 pub struct Driver {
     settings: Settings,
     phase: Phase,
@@ -337,6 +344,8 @@ pub struct Driver {
     stand_in: Option<(u8, bool, u64)>,
     /// The battery levels of the last link and the device name they came from.
     last_battery: Option<(String, [Option<(u8, bool)>; 3])>,
+    /// The time of the next battery read; None before the init sequence ends.
+    poll_at: Option<u64>,
 }
 
 impl Driver {
@@ -346,7 +355,7 @@ impl Driver {
             engine: FeatureSync::default(), wire: HashMap::new(), busy: Vec::new(), notice: None, last_tick: 0,
             framer: Framer::default(), seq: 0, level: None, holds: Vec::new(), feature_writes: HashMap::new(),
             eq_hold: Default::default(), steps: VecDeque::new(), wait_until: None, pending: Vec::new(), now: 0,
-            link_case: None, case_hidden: false, stand_in: None, last_battery: None,
+            link_case: None, case_hidden: false, stand_in: None, last_battery: None, poll_at: None,
         }
     }
 
@@ -379,7 +388,8 @@ impl Driver {
             None if !self.steps.is_empty() || !self.pending.is_empty() => Some(self.now),
             None => None,
         };
-        [engine, step].into_iter().flatten().min()
+        let poll = self.poll_at.filter(|_| self.phase == Phase::Run);
+        [engine, step, poll].into_iter().flatten().min()
     }
 
     /// The link is up to buds named `name`. The init sequence starts.
@@ -397,6 +407,7 @@ impl Driver {
         self.link_case = None;
         self.case_hidden = false;
         self.stand_in = None;
+        self.poll_at = None;
         let detected = find_model(None, Some(&name));
         // The levels of the last link of these buds show until the buds report: a part a report leaves out keeps its
         // level, as Settings › Hide old battery levels off promises.
@@ -461,6 +472,10 @@ impl Driver {
             self.last_tick = now;
             let outs = self.engine.tick(now);
             if self.exec(outs) { self.out.push(Effect::State); }
+        }
+        if self.phase == Phase::Run && self.poll_at.is_some_and(|t| now >= t) {
+            self.poll_at = Some(now + BATTERY_POLL_MS);
+            if self.s.caps.supports(CMD_QUERY_BATTERY) { self.pending.push(Cmd::BatteryRead); }
         }
         self.drive();
         std::mem::take(&mut self.out)
@@ -605,7 +620,11 @@ impl Driver {
                 Step::Run(f) => { let next = f(self); self.front(next) }
                 Step::Cmd(c) => { let next = self.run_cmd(c); self.front(next) }
                 Step::Emit => self.out.push(Effect::State),
-                Step::Ready => { self.phase = Phase::Run; self.out.push(Effect::Ready) }
+                Step::Ready => {
+                    self.phase = Phase::Run;
+                    self.poll_at = Some(self.now + BATTERY_POLL_MS);
+                    self.out.push(Effect::Ready)
+                }
             }
         }
     }
@@ -716,6 +735,26 @@ impl Driver {
             }
         }
         if let Some(((cmd, pl), seq)) = answer { self.send(cmd, Some(seq), &pl); }
+        // The all-zero wear push comes just before a lid close drops the link (PROTOCOL.md section 13): read the
+        // case level now, so the last level is not 0 or blank.
+        if cmd_of(p) == EVT_PUSH && self.s.caps.supports(CMD_QUERY_BATTERY) {
+            if let Some(Event::Wear(v)) = &e {
+                let zero = |i: u8| v.iter().any(|&(k, st)| k == i && st == 0);
+                if zero(1) && zero(2) && zero(3) {
+                    self.note("battery on lid close".into());
+                    self.send(CMD_QUERY_BATTERY, None, &[]);
+                }
+            }
+        }
+        // Find phone (realme): `0x0502 05` rings the phone, `06` stops it. HeyMelody models use 0x0502 for the
+        // camera, so only a model with the `findPhone` flag acts on it (PROTOCOL.md section 11).
+        if cmd_of(p) == REQ_FIND_PHONE {
+            let action = payload_of(p).first().copied();
+            self.note(format!("FIND PHONE: action={action:?}"));
+            if Profile(self.s.model).find_phone() {
+                match action { Some(0x05) => self.out.push(Effect::FindPhone(true)), Some(0x06) => self.out.push(Effect::FindPhone(false)), _ => {} }
+            }
+        }
         if refused { let f = cmd::anc_read(1, 1); self.send(f.0, None, &f.1); }
         if need_ear { self.s.anc_refused += 1; changed = true; }
         // The engine's own reports: a status read reply, or a game-mode push.
@@ -1006,6 +1045,7 @@ impl Driver {
                 if switch { st.extend([Step::Wait(400), self.status_read()]); }
                 st
             }
+            Cmd::BatteryRead => vec![Step::Tx(CMD_QUERY_BATTERY, None, vec![])],
             Cmd::Connect | Cmd::Disconnect => vec![],
         }
     }

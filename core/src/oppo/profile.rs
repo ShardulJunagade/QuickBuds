@@ -29,6 +29,8 @@ impl<'a> Profile<'a> {
 
     // Rows.
     pub fn no_find(&self) -> bool { self.flag("noFind") }
+    /// realme: `0x0502 05` / `06` ring and stop the phone.
+    pub fn find_phone(&self) -> bool { self.flag("findPhone") }
     pub fn tap_level(&self) -> bool { self.flag("tapLevel") }
     pub fn personal_anc(&self) -> bool { self.flag("personalAnc") }
     pub fn find_phone(&self) -> bool { self.flag("findPhone") }
