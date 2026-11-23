@@ -3,6 +3,9 @@
 //! the commands of its init sequence, so the app can compare them with its own.
 //! Each call catches a panic, so a core bug shows as a log line, never as a crash.
 
+// The state JSON is one large `json!` literal.
+#![recursion_limit = "256"]
+
 use std::panic::{catch_unwind, AssertUnwindSafe};
 use std::sync::Mutex;
 
