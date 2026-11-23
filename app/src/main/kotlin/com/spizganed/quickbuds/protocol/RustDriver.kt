@@ -32,7 +32,7 @@ class RustDriver(private val shell: Shell) {
     private val thread = HandlerThread("rust-driver").apply { start() }
     private val handler = Handler(thread.looper)
     private val handle: Long = if (loaded) nativeNew() else 0L
-    private val tickRun = Runnable { drive { nativeTick(handle, now()) } }
+    private val tickRun: Runnable = Runnable { drive { nativeTick(handle, now()) } }
 
     /** The native library loaded: driver mode can run. */
     val available: Boolean get() = handle != 0L
@@ -40,7 +40,7 @@ class RustDriver(private val shell: Shell) {
     private fun now() = SystemClock.elapsedRealtime()
 
     /** Runs one driver call on the driver thread, then its effects, then schedules the next tick. */
-    private fun drive(call: () -> String?) = handler.post {
+    private fun drive(call: () -> String?): Boolean = handler.post {
         if (handle == 0L) return@post
         val text = runCatching { call() }.getOrNull()
         if (text != null) effects(text)
