@@ -271,6 +271,11 @@
     <string name="settings_general">Загальні</string>
     <string name="settings_language_sub">Мова застосунку</string>
     <string name="settings_app">Застосунок</string>
+    <string name="setup_theme_sub">Усі стилі, кольори та теми</string>
+    <string name="setup_pair_sub">Під\'єднайте там нові навушники й поверніться</string>
+    <string name="dual_add_sub">Під\'єднайте до навушників інший телефон або комп\'ютер</string>
+    <string name="theme_accent_row_sub">Колір перемикачів, кілець і виділень</string>
+    <string name="theme_new_sub">Ваші кольори на основі цієї теми</string>
     <string name="panel_corner_title">Кут панелі</string>
     <string name="panel_corner_sub">Де відкривається панель трею. Автоматично: у куті біля значка</string>
     <string name="panel_corner_auto">Автоматично</string>

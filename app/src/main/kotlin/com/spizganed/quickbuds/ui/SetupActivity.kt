@@ -294,7 +294,7 @@ class SetupActivity : Activity() {
                 SettingRowFactory.addRow(this, row)
             }
             // The full accent picker and the custom presets stay in Settings > Theme.
-            SettingRowFactory.addRow(this, SettingRowFactory.build(this@SetupActivity, R.drawable.ic_palette, R.string.theme_title, 0,
+            SettingRowFactory.addRow(this, SettingRowFactory.build(this@SetupActivity, R.drawable.ic_palette, R.string.theme_title, R.string.setup_theme_sub,
                 SettingRowFactory.buildChevron(this@SetupActivity)) { startActivity(Intent(this@SetupActivity, ThemeActivity::class.java)) })
         })
     }
@@ -383,7 +383,7 @@ class SetupActivity : Activity() {
         }
         body.addView(SettingRowFactory.card(this).apply {
             (layoutParams as LinearLayout.LayoutParams).topMargin = dp(12f)
-            addView(SettingRowFactory.build(this@SetupActivity, R.drawable.ic_earbud, R.string.setup_earbuds_pair, 0,
+            addView(SettingRowFactory.build(this@SetupActivity, R.drawable.ic_earbud, R.string.setup_earbuds_pair, R.string.setup_pair_sub,
                 SettingRowFactory.buildChevron(this@SetupActivity)) {
                 startActivity(Intent(Settings.ACTION_BLUETOOTH_SETTINGS))
             })

@@ -271,6 +271,11 @@
     <string name="settings_general">Chung</string>
     <string name="settings_language_sub">Ngôn ngữ ứng dụng</string>
     <string name="settings_app">Ứng dụng</string>
+    <string name="setup_theme_sub">Mọi kiểu, màu và chủ đề</string>
+    <string name="setup_pair_sub">Ghép nối tai nghe mới ở đó rồi quay lại</string>
+    <string name="dual_add_sub">Ghép nối điện thoại hoặc máy tính khác với tai nghe</string>
+    <string name="theme_accent_row_sub">Màu của công tắc, vòng và điểm nhấn</string>
+    <string name="theme_new_sub">Màu riêng của bạn, bắt đầu từ chủ đề này</string>
     <string name="panel_corner_title">Góc bảng</string>
     <string name="panel_corner_sub">Nơi bảng khay mở. Tự động: ở góc gần biểu tượng khay nhất</string>
     <string name="panel_corner_auto">Tự động</string>

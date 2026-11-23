@@ -154,7 +154,7 @@ class DualDeviceActivity : Activity(), BudsConnectionManager.Listener {
         if (deviceCard.childCount > 0) deviceCard.addView(SettingRowFactory.buildDivider(this))
         deviceCard.addView(
             SettingRowFactory.build(
-                this, 0, R.string.dual_add_title, 0, SettingRowFactory.buildChevron(this)
+                this, 0, R.string.dual_add_title, R.string.dual_add_sub, SettingRowFactory.buildChevron(this)
             ) { showAddDevice() }
         )
     }

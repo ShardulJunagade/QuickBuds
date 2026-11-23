@@ -271,6 +271,11 @@
     <string name="settings_general">General</string>
     <string name="settings_language_sub">Idioma de la app</string>
     <string name="settings_app">App</string>
+    <string name="setup_theme_sub">Todos los estilos, colores y temas</string>
+    <string name="setup_pair_sub">Empareja ahí auriculares nuevos y vuelve</string>
+    <string name="dual_add_sub">Empareja otro teléfono u ordenador con los auriculares</string>
+    <string name="theme_accent_row_sub">El color de interruptores, anillos y resaltados</string>
+    <string name="theme_new_sub">Tus propios colores, a partir de este tema</string>
     <string name="panel_corner_title">Esquina del panel</string>
     <string name="panel_corner_sub">Dónde se abre el panel de la bandeja. Automático: en la esquina más cercana al icono</string>
     <string name="panel_corner_auto">Automático</string>

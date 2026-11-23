@@ -271,6 +271,11 @@
     <string name="settings_general">全般</string>
     <string name="settings_language_sub">アプリの言語</string>
     <string name="settings_app">アプリ</string>
+    <string name="setup_theme_sub">すべてのスタイル、色、テーマ</string>
+    <string name="setup_pair_sub">そこで新しいイヤホンをペアリングして戻ります</string>
+    <string name="dual_add_sub">別のスマホやパソコンをイヤホンとペアリング</string>
+    <string name="theme_accent_row_sub">スイッチ、リング、強調表示の色</string>
+    <string name="theme_new_sub">このテーマを元にした自分の色</string>
     <string name="panel_corner_title">パネルの位置</string>
     <string name="panel_corner_sub">トレイパネルを開く場所。自動：トレイアイコンに最も近い角</string>
     <string name="panel_corner_auto">自動</string>

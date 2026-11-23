@@ -271,6 +271,11 @@
     <string name="settings_general">Obecné</string>
     <string name="settings_language_sub">Jazyk aplikace</string>
     <string name="settings_app">Aplikace</string>
+    <string name="setup_theme_sub">Všechny styly, barvy a motivy</string>
+    <string name="setup_pair_sub">Spárujte tam nová sluchátka a vraťte se</string>
+    <string name="dual_add_sub">Spárujte se sluchátky další telefon nebo počítač</string>
+    <string name="theme_accent_row_sub">Barva přepínačů, kruhů a zvýraznění</string>
+    <string name="theme_new_sub">Vlastní barvy, vycházející z tohoto motivu</string>
     <string name="panel_corner_title">Roh panelu</string>
     <string name="panel_corner_sub">Kde se panel v oznamovací oblasti otevře. Automaticky: v rohu nejblíže ikoně</string>
     <string name="panel_corner_auto">Automaticky</string>

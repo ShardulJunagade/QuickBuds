@@ -271,6 +271,11 @@
     <string name="settings_general">सामान्य</string>
     <string name="settings_language_sub">ऐप की भाषा</string>
     <string name="settings_app">ऐप</string>
+    <string name="setup_theme_sub">सभी स्टाइल, रंग और थीम</string>
+    <string name="setup_pair_sub">वहां नए ईयरबड्स पेयर करें, फिर वापस आएं</string>
+    <string name="dual_add_sub">ईयरबड्स के साथ दूसरा फ़ोन या कंप्यूटर पेयर करें</string>
+    <string name="theme_accent_row_sub">स्विच, रिंग और हाइलाइट का रंग</string>
+    <string name="theme_new_sub">आपके अपने रंग, इस थीम से शुरू</string>
     <string name="panel_corner_title">पैनल का कोना</string>
     <string name="panel_corner_sub">ट्रे पैनल कहां खुलता है। स्वचालित: ट्रे आइकन के सबसे पास वाले कोने में</string>
     <string name="panel_corner_auto">स्वचालित</string>

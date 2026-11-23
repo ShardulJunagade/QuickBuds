@@ -271,6 +271,11 @@
     <string name="settings_general">Général</string>
     <string name="settings_language_sub">Langue de l\'app</string>
     <string name="settings_app">Application</string>
+    <string name="setup_theme_sub">Tous les styles, couleurs et thèmes</string>
+    <string name="setup_pair_sub">Associez-y de nouveaux écouteurs, puis revenez</string>
+    <string name="dual_add_sub">Associez un autre téléphone ou ordinateur aux écouteurs</string>
+    <string name="theme_accent_row_sub">La couleur des interrupteurs, anneaux et surbrillances</string>
+    <string name="theme_new_sub">Vos propres couleurs, à partir de ce thème</string>
     <string name="panel_corner_title">Coin du panneau</string>
     <string name="panel_corner_sub">Où s\'ouvre le panneau de la barre. Automatique : dans le coin le plus proche de l\'icône</string>
     <string name="panel_corner_auto">Automatique</string>

@@ -271,6 +271,11 @@
     <string name="settings_general">Geral</string>
     <string name="settings_language_sub">Idioma da app</string>
     <string name="settings_app">App</string>
+    <string name="setup_theme_sub">Todos os estilos, cores e temas</string>
+    <string name="setup_pair_sub">Emparelhe novos fones lá e volte</string>
+    <string name="dual_add_sub">Emparelhe outro telefone ou computador com os fones</string>
+    <string name="theme_accent_row_sub">A cor de botões, anéis e destaques</string>
+    <string name="theme_new_sub">Suas próprias cores, a partir deste tema</string>
     <string name="panel_corner_title">Canto do painel</string>
     <string name="panel_corner_sub">Onde o painel da bandeja abre. Automático: no canto mais perto do ícone</string>
     <string name="panel_corner_auto">Automático</string>

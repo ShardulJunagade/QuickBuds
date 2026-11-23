@@ -271,6 +271,11 @@
     <string name="settings_general">Γενικά</string>
     <string name="settings_language_sub">Γλώσσα εφαρμογής</string>
     <string name="settings_app">Εφαρμογή</string>
+    <string name="setup_theme_sub">Όλα τα στιλ, χρώματα και θέματα</string>
+    <string name="setup_pair_sub">Συνδέστε εκεί νέα ακουστικά και επιστρέψτε</string>
+    <string name="dual_add_sub">Συνδέστε άλλο τηλέφωνο ή υπολογιστή με τα ακουστικά</string>
+    <string name="theme_accent_row_sub">Το χρώμα διακοπτών, δακτυλίων και επισημάνσεων</string>
+    <string name="theme_new_sub">Τα δικά σας χρώματα, με βάση αυτό το θέμα</string>
     <string name="panel_corner_title">Γωνία πάνελ</string>
     <string name="panel_corner_sub">Πού ανοίγει το πάνελ της περιοχής ειδοποιήσεων. Αυτόματα: στη γωνία κοντά στο εικονίδιο</string>
     <string name="panel_corner_auto">Αυτόματα</string>

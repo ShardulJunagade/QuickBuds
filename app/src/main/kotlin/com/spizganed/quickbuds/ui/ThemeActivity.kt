@@ -210,7 +210,7 @@ class ThemeActivity : Activity() {
                 }
             ).apply { setPadding(dp(16f), dp(4f), dp(16f), dp(16f)) }
             val row = SettingRowFactory.build(
-                this, 0, R.string.theme_accent, 0, chevron, leading = swatch, minHeightDp = 54f
+                this, 0, R.string.theme_accent, R.string.theme_accent_row_sub, chevron, leading = swatch, minHeightDp = 54f
             ) {
                 // Unfolds or folds in place; the rest of the screen is not rebuilt.
                 accentOpen = !accentOpen
@@ -285,7 +285,7 @@ class ThemeActivity : Activity() {
                 }
             }
             val left = PaletteStore.MAX_CUSTOM - custom.size
-            val newRow = SettingRowFactory.build(this, R.drawable.ic_plus, R.string.theme_new, 0, null) { createPreset() }
+            val newRow = SettingRowFactory.build(this, R.drawable.ic_plus, R.string.theme_new, R.string.theme_new_sub, null) { createPreset() }
             SettingRowFactory.subtitle(this, newRow).text = when (left) {
                 0 -> getString(R.string.theme_new_full)
                 1 -> getString(R.string.theme_new_sub_one)

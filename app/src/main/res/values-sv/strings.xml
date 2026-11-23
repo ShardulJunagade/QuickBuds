@@ -271,6 +271,11 @@
     <string name="settings_general">Allmänt</string>
     <string name="settings_language_sub">Appens språk</string>
     <string name="settings_app">App</string>
+    <string name="setup_theme_sub">Alla stilar, färger och teman</string>
+    <string name="setup_pair_sub">Parkoppla nya hörlurar där och kom tillbaka</string>
+    <string name="dual_add_sub">Parkoppla en annan telefon eller dator med hörlurarna</string>
+    <string name="theme_accent_row_sub">Färgen på reglage, ringar och markeringar</string>
+    <string name="theme_new_sub">Egna färger, utgående från detta tema</string>
     <string name="panel_corner_title">Panelens hörn</string>
     <string name="panel_corner_sub">Var fältpanelen öppnas. Automatiskt: i hörnet närmast ikonen</string>
     <string name="panel_corner_auto">Automatiskt</string>

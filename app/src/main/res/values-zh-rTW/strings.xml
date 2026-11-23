@@ -271,6 +271,11 @@
     <string name="settings_general">一般</string>
     <string name="settings_language_sub">應用程式語言</string>
     <string name="settings_app">應用程式</string>
+    <string name="setup_theme_sub">所有樣式、顏色和主題</string>
+    <string name="setup_pair_sub">在那裡配對新耳機，然後返回</string>
+    <string name="dual_add_sub">將另一支手機或電腦與耳機配對</string>
+    <string name="theme_accent_row_sub">開關、圓環和醒目提示的顏色</string>
+    <string name="theme_new_sub">以此主題為基礎的自訂顏色</string>
     <string name="panel_corner_title">面板位置</string>
     <string name="panel_corner_sub">系統匣面板開啟的位置。自動：在離系統匣圖示最近的角落</string>
     <string name="panel_corner_auto">自動</string>

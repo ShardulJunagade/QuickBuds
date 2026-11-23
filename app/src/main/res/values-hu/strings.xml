@@ -271,6 +271,11 @@
     <string name="settings_general">Általános</string>
     <string name="settings_language_sub">Alkalmazás nyelve</string>
     <string name="settings_app">Alkalmazás</string>
+    <string name="setup_theme_sub">Minden stílus, szín és téma</string>
+    <string name="setup_pair_sub">Ott párosíts új fülhallgatót, majd gyere vissza</string>
+    <string name="dual_add_sub">Párosíts egy másik telefont vagy számítógépet a fülhallgatóval</string>
+    <string name="theme_accent_row_sub">A kapcsolók, gyűrűk és kiemelések színe</string>
+    <string name="theme_new_sub">Saját színek, ebből a témából kiindulva</string>
     <string name="panel_corner_title">Panel sarka</string>
     <string name="panel_corner_sub">Hol nyílik meg a tálcapanel. Automatikus: a tálcaikonhoz legközelebbi sarokban</string>
     <string name="panel_corner_auto">Automatikus</string>
