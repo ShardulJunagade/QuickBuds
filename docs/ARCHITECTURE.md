@@ -123,6 +123,14 @@ waits for the first report after the reconnect.
    for each report.
 6. The developer reads the report on the Worker page with the read key and sets its status in D1.
 
+### The desktop tray panel
+
+A click on the tray icon opens the quick panel (`desktop-tauri/src/tray.rs`, `main.rs`). On Linux a layer-shell
+compositor pins it to a screen corner. App settings › Panel corner picks the corner, or Automatic: the half of the
+screen with the click point the tray host sent. A host that sends no point (0, 0, or a right click) gets the bottom
+right. Why the setting: some tray hosts never send a point, and the bar can sit on any edge (issues #46, report #232).
+Each click goes to the log as `TRAY CLICK` with the point or "no position".
+
 ### A crash report
 
 Android: an uncaught-exception handler (`QuickBudsApp.kt`) writes the stack trace and the log. The next start shows it once

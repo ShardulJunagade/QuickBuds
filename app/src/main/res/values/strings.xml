@@ -351,6 +351,13 @@
     <string name="settings_general">General</string>
     <string name="settings_language_sub">App language</string>
     <string name="settings_app">App</string>
+    <string name="panel_corner_title">Panel corner</string>
+    <string name="panel_corner_sub">Where the tray panel opens. Automatic: in the corner nearest the tray icon</string>
+    <string name="panel_corner_auto">Automatic</string>
+    <string name="panel_corner_tl">Top left</string>
+    <string name="panel_corner_tr">Top right</string>
+    <string name="panel_corner_bl">Bottom left</string>
+    <string name="panel_corner_br">Bottom right</string>
     <string name="settings_behavior">Behavior</string>
     <string name="settings_notif_widgets">Notifications and widgets</string>
     <string name="settings_help">Help and feedback</string>

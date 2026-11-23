@@ -428,6 +428,7 @@ function buildWindow(){
     <div class="group">
       <div class="row">${ic('language')}<div class="txt"><div class="t">${$t('settings_language_title')}</div></div><button class="sel press pick" data-act="langdlg" id="langBtn" style="width:200px">${$t('language_system')}</button></div>
       ${swRow('power',$t('desktop_autostart_title','Start with your computer'),$t('desktop_autostart_sub','Opens in the tray when you sign in'),'svc')}
+      <div class="row">${ic('tray')}<div class="txt"><div class="t">${$t('panel_corner_title')}</div><div class="s">${$t('panel_corner_sub')}</div></div><button class="sel press pick" data-act="cornerdlg" id="cornerBtn" style="width:200px">${$t('panel_corner_auto')}</button></div>
       ${swRow('anc',$t('settings_anc_pick_title'),$t('settings_anc_pick_sub'),'ancPick')}
       ${swRow('battery',$t('settings_clear_battery_title'),$t('settings_clear_battery_sub'),'hide')}
       ${swRow('dev',$t('settings_devtools_title'),$t('desktop_devtools_sub','Show Dev tools in the menu on the left'),'devtools')}
@@ -776,6 +777,7 @@ document.addEventListener('click',ev=>{
   if(a==='fwinfo'){infoDialog($t('firmware_dialog_title'),$t('firmware_dialog_body'));return;}
   if(a==='model'){window.QBLIVE&&QBLIVE.models?QBLIVE.modelDialog():modelDialog();return;}
   if(a==='langdlg'){window.QBLIVE&&QBLIVE.langDialog?QBLIVE.langDialog():langPick();return;}
+  if(a==='cornerdlg'){window.QBLIVE&&QBLIVE.cornerDialog&&QBLIVE.cornerDialog();return;}
   if(a==='gpick'){const i=+v,side=b.dataset.side,g=GROWS[i];pickDialog(`${g[1]} · ${side==='L'?'left':'right'} earbud`,g[2].map(x=>[x,ACTS[x]]),S.gest[side][i],x=>{S.gest[side][i]=x;save();renderGestures();pixelize(document.getElementById('gt'));toast(`${g[1]} on the ${side==='L'?'left':'right'} earbud: ${ACTS[x]}.`);});return;}
   if(a==='devreconnect'&&window.QBLIVE){QBLIVE.send({t:'disconnect'});QBLIVE.send({t:'connect'});return;}
   if(a==='devdisc'&&window.QBLIVE){QBLIVE.send({t:'disconnect'});return;}
@@ -1144,9 +1146,11 @@ if(window.__TAURI__){
 
   // ---- app settings, update, feedback, test, about ----
   let AS=null;   // get_settings
+  const CORNERS=()=>['panel_corner_auto','panel_corner_tl','panel_corner_tr','panel_corner_bl','panel_corner_br'].map((k,i)=>[i,$t(k)]);
   const loadSettings=()=>T.core.invoke('get_settings').then(st=>{AS=st;
     S.ancPick=st.anc_pick_first;S.count=st.usage_ping;S.hide=st.clear_battery;S.devtools=st.dev_tools_button;S.upd=st.update_auto;S.svc=st.autostart;S.lang=st.language;
     const iv=byId('updInst');if(iv)iv.textContent=st.version;
+    const cb=byId('cornerBtn');if(cb)cb.textContent=CORNERS()[st.panel_corner||0][1];
     const ab=byId('aboutVer');if(ab)ab.textContent=$t('about_version').replace('%1$s',st.version);
     const rp=byId('replyBox');if(rp){rp.hidden=!st.reply;if(st.reply)rp.querySelector('.prose').textContent=st.reply;}
     apply();});
@@ -1164,6 +1168,7 @@ if(window.__TAURI__){
         d.querySelector('#spNever').addEventListener('click',()=>{T.core.invoke('support_off',{card:c.card});close();});});});
   const SETKEY={ancPick:'anc_pick_first',count:'usage_ping',hide:'clear_battery',devtools:'dev_tools_button',upd:'update_auto'};
   QBLIVE.setting=(k,on)=>{if(SETKEY[k])T.core.invoke('set_setting',{key:SETKEY[k],value:on});if(k==='svc')T.core.invoke('set_autostart',{on});};
+  QBLIVE.cornerDialog=()=>pickDialog($t('panel_corner_title'),CORNERS(),AS?AS.panel_corner:0,v=>T.core.invoke('set_panel_corner',{index:+v}).then(loadSettings));
   QBLIVE.langDialog=()=>pickDialog($t('settings_language_title'),LANGS.map((l,i)=>[i,i===0?$t('language_system'):l]),AS?AS.language:0,v=>T.core.invoke('set_language',{index:+v}),'scroll');
   QBLIVE.issuesDialog=function(){const list=(this.ex&&this.ex.issues)||[];
     dialog(`<h3>${esc($t('settings_issues_title'))}</h3>${list.length?`<div class="group">${list.map(i=>`<div class="row" style="align-items:flex-start;padding-block:12px">${ic('warn')}<div class="txt"><div class="t">${esc(i.title)}</div><div class="s">${esc(i.body)}</div></div></div>`).join('')}</div>`:`<div class="s" style="text-align:center;margin:0">${esc($t('issues_none'))}</div>`}<div class="acts"><button class="btn press" data-close>${esc($t('dialog_close'))}</button></div>`);};

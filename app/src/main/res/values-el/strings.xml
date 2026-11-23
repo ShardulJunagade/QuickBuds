@@ -271,6 +271,13 @@
     <string name="settings_general">Γενικά</string>
     <string name="settings_language_sub">Γλώσσα εφαρμογής</string>
     <string name="settings_app">Εφαρμογή</string>
+    <string name="panel_corner_title">Γωνία πάνελ</string>
+    <string name="panel_corner_sub">Πού ανοίγει το πάνελ της περιοχής ειδοποιήσεων. Αυτόματα: στη γωνία κοντά στο εικονίδιο</string>
+    <string name="panel_corner_auto">Αυτόματα</string>
+    <string name="panel_corner_tl">Πάνω αριστερά</string>
+    <string name="panel_corner_tr">Πάνω δεξιά</string>
+    <string name="panel_corner_bl">Κάτω αριστερά</string>
+    <string name="panel_corner_br">Κάτω δεξιά</string>
     <string name="settings_behavior">Συμπεριφορά</string>
     <string name="settings_notif_widgets">Ειδοποιήσεις και widget</string>
     <string name="settings_help">Βοήθεια και σχόλια</string>

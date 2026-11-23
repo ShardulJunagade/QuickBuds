@@ -271,6 +271,13 @@
     <string name="settings_general">Общие</string>
     <string name="settings_language_sub">Язык приложения</string>
     <string name="settings_app">Приложение</string>
+    <string name="panel_corner_title">Угол панели</string>
+    <string name="panel_corner_sub">Где открывается панель трея. Автоматически: в углу рядом со значком</string>
+    <string name="panel_corner_auto">Автоматически</string>
+    <string name="panel_corner_tl">Слева вверху</string>
+    <string name="panel_corner_tr">Справа вверху</string>
+    <string name="panel_corner_bl">Слева внизу</string>
+    <string name="panel_corner_br">Справа внизу</string>
     <string name="settings_behavior">Поведение</string>
     <string name="settings_notif_widgets">Уведомления и виджеты</string>
     <string name="settings_help">Помощь и отзывы</string>

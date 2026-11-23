@@ -271,6 +271,13 @@
     <string name="settings_general">ทั่วไป</string>
     <string name="settings_language_sub">ภาษาของแอป</string>
     <string name="settings_app">แอป</string>
+    <string name="panel_corner_title">มุมของแผง</string>
+    <string name="panel_corner_sub">ตำแหน่งที่แผงถาดเปิด อัตโนมัติ: ที่มุมใกล้ไอคอนถาดที่สุด</string>
+    <string name="panel_corner_auto">อัตโนมัติ</string>
+    <string name="panel_corner_tl">บนซ้าย</string>
+    <string name="panel_corner_tr">บนขวา</string>
+    <string name="panel_corner_bl">ล่างซ้าย</string>
+    <string name="panel_corner_br">ล่างขวา</string>
     <string name="settings_behavior">การทำงาน</string>
     <string name="settings_notif_widgets">การแจ้งเตือนและวิดเจ็ต</string>
     <string name="settings_help">ความช่วยเหลือและความคิดเห็น</string>

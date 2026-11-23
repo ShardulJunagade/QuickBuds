@@ -271,6 +271,13 @@
     <string name="settings_general">Algemeen</string>
     <string name="settings_language_sub">Taal van de app</string>
     <string name="settings_app">App</string>
+    <string name="panel_corner_title">Paneelhoek</string>
+    <string name="panel_corner_sub">Waar het systeemvakpaneel opent. Automatisch: in de hoek het dichtst bij het pictogram</string>
+    <string name="panel_corner_auto">Automatisch</string>
+    <string name="panel_corner_tl">Linksboven</string>
+    <string name="panel_corner_tr">Rechtsboven</string>
+    <string name="panel_corner_bl">Linksonder</string>
+    <string name="panel_corner_br">Rechtsonder</string>
     <string name="settings_behavior">Gedrag</string>
     <string name="settings_notif_widgets">Meldingen en widgets</string>
     <string name="settings_help">Hulp en feedback</string>

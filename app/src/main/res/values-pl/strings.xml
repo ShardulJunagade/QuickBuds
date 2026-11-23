@@ -271,6 +271,13 @@
     <string name="settings_general">Ogólne</string>
     <string name="settings_language_sub">Język aplikacji</string>
     <string name="settings_app">Aplikacja</string>
+    <string name="panel_corner_title">Róg panelu</string>
+    <string name="panel_corner_sub">Gdzie otwiera się panel zasobnika. Automatycznie: w rogu najbliżej ikony</string>
+    <string name="panel_corner_auto">Automatycznie</string>
+    <string name="panel_corner_tl">Lewy górny</string>
+    <string name="panel_corner_tr">Prawy górny</string>
+    <string name="panel_corner_bl">Lewy dolny</string>
+    <string name="panel_corner_br">Prawy dolny</string>
     <string name="settings_behavior">Działanie</string>
     <string name="settings_notif_widgets">Powiadomienia i widżety</string>
     <string name="settings_help">Pomoc i opinie</string>

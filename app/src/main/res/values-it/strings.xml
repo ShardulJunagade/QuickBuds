@@ -271,6 +271,13 @@
     <string name="settings_general">Generali</string>
     <string name="settings_language_sub">Lingua dell\'app</string>
     <string name="settings_app">App</string>
+    <string name="panel_corner_title">Angolo del pannello</string>
+    <string name="panel_corner_sub">Dove si apre il pannello dell\'area di notifica. Automatico: nell\'angolo più vicino all\'icona</string>
+    <string name="panel_corner_auto">Automatico</string>
+    <string name="panel_corner_tl">In alto a sinistra</string>
+    <string name="panel_corner_tr">In alto a destra</string>
+    <string name="panel_corner_bl">In basso a sinistra</string>
+    <string name="panel_corner_br">In basso a destra</string>
     <string name="settings_behavior">Comportamento</string>
     <string name="settings_notif_widgets">Notifiche e widget</string>
     <string name="settings_help">Aiuto e feedback</string>

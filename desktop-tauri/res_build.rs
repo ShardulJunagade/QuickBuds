@@ -33,6 +33,7 @@ const STRINGS: &[&str] = &[
     "issue_hires_spatial_title", "issue_hires_spatial_body", "issue_hires_no_codec_title", "issue_hires_no_codec_body", "about_discord_desc", "reply_title",
     "app_name", "about_version", "about_tagline", "about_github", "about_kofi", "about_discord", "about_license_title", "about_license_body",
     "settings_about_title", "settings_about_sub", "settings_appearance", "settings_general", "settings_app", "theme_accent_sub",
+    "panel_corner_title", "panel_corner_sub", "panel_corner_auto", "panel_corner_tl", "panel_corner_tr", "panel_corner_bl", "panel_corner_br",
     "problem_title", "problem_sub", "problem_intro", "problem_model", "problem_category", "problem_description", "problem_description_hint", "problem_log_title", "problem_preview", "problem_send", "problem_sending", "problem_unsupported", "problem_supported_list", "problem_log_empty", "problem_cat_ui", "problem_cat_lag", "problem_cat_connection", "problem_cat_feature", "problem_cat_battery", "problem_cat_other", "crash_title",
     "report_title", "test_title", "test_sub", "test_ask_body", "test_ask_later", "test_intro", "test_start", "test_restart",
     "test_reconnecting", "test_failed", "test_section_check", "test_check_battery", "test_check_features", "test_check_states",

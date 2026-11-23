@@ -271,6 +271,13 @@
     <string name="settings_general">Chung</string>
     <string name="settings_language_sub">Ngôn ngữ ứng dụng</string>
     <string name="settings_app">Ứng dụng</string>
+    <string name="panel_corner_title">Góc bảng</string>
+    <string name="panel_corner_sub">Nơi bảng khay mở. Tự động: ở góc gần biểu tượng khay nhất</string>
+    <string name="panel_corner_auto">Tự động</string>
+    <string name="panel_corner_tl">Trên trái</string>
+    <string name="panel_corner_tr">Trên phải</string>
+    <string name="panel_corner_bl">Dưới trái</string>
+    <string name="panel_corner_br">Dưới phải</string>
     <string name="settings_behavior">Hành vi</string>
     <string name="settings_notif_widgets">Thông báo và tiện ích</string>
     <string name="settings_help">Trợ giúp và phản hồi</string>

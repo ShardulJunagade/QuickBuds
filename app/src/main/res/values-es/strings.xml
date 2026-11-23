@@ -271,6 +271,13 @@
     <string name="settings_general">General</string>
     <string name="settings_language_sub">Idioma de la app</string>
     <string name="settings_app">App</string>
+    <string name="panel_corner_title">Esquina del panel</string>
+    <string name="panel_corner_sub">Dónde se abre el panel de la bandeja. Automático: en la esquina más cercana al icono</string>
+    <string name="panel_corner_auto">Automático</string>
+    <string name="panel_corner_tl">Arriba a la izquierda</string>
+    <string name="panel_corner_tr">Arriba a la derecha</string>
+    <string name="panel_corner_bl">Abajo a la izquierda</string>
+    <string name="panel_corner_br">Abajo a la derecha</string>
     <string name="settings_behavior">Comportamiento</string>
     <string name="settings_notif_widgets">Notificaciones y widgets</string>
     <string name="settings_help">Ayuda y comentarios</string>
