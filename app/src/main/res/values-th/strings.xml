@@ -71,7 +71,7 @@
     <string name="earbuds_section_about">เกี่ยวกับหูฟัง</string>
     <string name="row_firmware_title">เวอร์ชันเฟิร์มแวร์</string>
     <string name="firmware_dialog_title">อัปเดตเฟิร์มแวร์</string>
-    <string name="firmware_dialog_body">QuickBuds ไม่อัปเดตเฟิร์มแวร์ของหูฟัง: การอัปเดตที่ล้มเหลวอาจทำให้ใช้งานไม่ได้ อัปเดตผ่าน HeyMelody</string>
+    <string name="firmware_dialog_body">QuickBuds ไม่อัปเดตเฟิร์มแวร์ของหูฟัง: การอัปเดตที่ล้มเหลวอาจทำให้ใช้งานไม่ได้ อัปเดตผ่านแอปทางการของหูฟัง</string>
     <string name="settings_title">การตั้งค่า</string>
     <string name="row_wear_title">ตรวจจับการสวม</string>
     <string name="row_wear_sub">หยุดชั่วคราวเมื่อถอดหูฟัง</string>

@@ -120,7 +120,7 @@ class EarbudSettingsActivity : Activity(), BudsConnectionManager.Listener {
         if (RowRules.FIRMWARE in rows) {
             root.addView(SettingRowFactory.sectionLabel(this, R.string.earbuds_section_about))
             // No firmware updates here: a failed flash can brick the buds, so a tap
-            // points to HeyMelody instead.
+            // points to the official app instead.
             val row = SettingRowFactory.build(this, R.drawable.ic_info, R.string.row_firmware_title, 0, null) {
                 ConfirmDialog.show(this, getString(R.string.firmware_dialog_title),
                     getString(R.string.firmware_dialog_body), getString(R.string.dialog_close), cancelRes = null)
@@ -292,14 +292,14 @@ class EarbudSettingsActivity : Activity(), BudsConnectionManager.Listener {
     /** One tap on a feature switch: the buds' own report moves the switch. */
     private fun requestFeature(id: Int, on: Boolean) = manager?.setFeature(id, on)
 
-    /** The engine applies a tap: the row says "Applying…" and its switch stays still. */
+    /** The engine applies a tap: its switch stays still, and a slow write says "Applying…" ([SettingRowFactory.applying]). */
     override fun onSettingBusy(key: Int, on: Boolean) {
         wearSheet?.onSettingBusy(key, on)
         val sw = featureSwitches[key] ?: return
         val sub = featureRows[key]?.findViewWithTag<TextView>(SettingRowFactory.SUBTITLE_TAG)
+        sub?.let { SettingRowFactory.applying(it, on) }
         if (on) {
             sw.isEnabled = false
-            sub?.setText(R.string.feature_applying)
             return
         }
         sw.isEnabled = true

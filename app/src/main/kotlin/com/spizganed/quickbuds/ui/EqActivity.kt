@@ -573,12 +573,13 @@ class EqActivity : Activity(), BudsConnectionManager.Listener {
     override fun onEqState() = render()
     override fun onFeatureStates(states: Map<Int, Int>) = render()
 
-    /** The engine applies a tap: the row says "Applying…" and its switch stays still. */
+    /** The engine applies a tap: its switch stays still, and a slow write says "Applying…" ([SettingRowFactory.applying]). */
     override fun onSettingBusy(key: Int, on: Boolean) {
         if (key != Feature.BASSWAVE) return
         bassSwitch.isEnabled = !on
         val sub = SettingRowFactory.subtitle(this, bassRow)
-        sub.setText(if (on) R.string.feature_applying else R.string.eq_basswave_sub)
+        SettingRowFactory.applying(sub, on)
+        if (!on) sub.setText(R.string.eq_basswave_sub)
     }
     override fun onConnected(connected: Boolean) {
         if (connected) manager?.refreshEq()

@@ -71,7 +71,7 @@
     <string name="earbuds_section_about">Über die Earbuds</string>
     <string name="row_firmware_title">Firmware-Version</string>
     <string name="firmware_dialog_title">Firmware-Updates</string>
-    <string name="firmware_dialog_body">QuickBuds aktualisiert die Firmware der Kopfhörer nicht: Ein fehlgeschlagenes Update kann sie unbrauchbar machen. Aktualisiere sie mit HeyMelody.</string>
+    <string name="firmware_dialog_body">QuickBuds aktualisiert die Firmware der Kopfhörer nicht: Ein fehlgeschlagenes Update kann sie unbrauchbar machen. Aktualisiere sie mit der offiziellen App deiner Kopfhörer.</string>
     <string name="settings_title">Einstellungen</string>
     <string name="row_wear_title">Trageerkennung</string>
     <string name="row_wear_sub">Pausieren, wenn du die Earbuds herausnimmst</string>
