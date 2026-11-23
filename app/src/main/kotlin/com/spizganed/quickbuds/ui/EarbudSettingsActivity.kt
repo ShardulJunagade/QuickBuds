@@ -122,8 +122,11 @@ class EarbudSettingsActivity : Activity(), BudsConnectionManager.Listener {
             // No firmware updates here: a failed flash can brick the buds, so a tap
             // points to the official app instead.
             val row = SettingRowFactory.build(this, R.drawable.ic_info, R.string.row_firmware_title, 0, null) {
+                // The version shows in the dialog, under the reason.
+                val version = Capabilities.firmware(this) ?: "—"
                 ConfirmDialog.show(this, getString(R.string.firmware_dialog_title),
-                    getString(R.string.firmware_dialog_body), getString(R.string.dialog_close), cancelRes = null)
+                    getString(R.string.firmware_dialog_body) + "\n\n" + getString(R.string.row_firmware_title) + ": " + version,
+                    getString(R.string.dialog_close), cancelRes = null)
             }
             firmwareText = SettingRowFactory.subtitle(this, row)
             paintFirmware()
@@ -133,8 +136,8 @@ class EarbudSettingsActivity : Activity(), BudsConnectionManager.Listener {
         setContentView(ScrollView(this).apply { addView(root) })
     }
 
-    private fun paintFirmware(version: String? = Capabilities.firmware(this)) {
-        firmwareText?.text = SettingRowFactory.described(getString(R.string.firmware_row_desc), version ?: "—")
+    private fun paintFirmware() {
+        firmwareText?.text = getString(R.string.firmware_row_desc)
     }
 
     /**
@@ -469,7 +472,7 @@ class EarbudSettingsActivity : Activity(), BudsConnectionManager.Listener {
 
     override fun onConnected(connected: Boolean) {}
     /** A firmware reply that lands while this screen is open. */
-    override fun onFirmware(version: String) = paintFirmware(version)
+    override fun onFirmware(version: String) = paintFirmware()
     override fun onBattery(
         left: Int?, case: Int?, right: Int?,
         chargingLeft: Boolean, chargingCase: Boolean, chargingRight: Boolean

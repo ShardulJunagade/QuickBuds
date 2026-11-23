@@ -381,7 +381,7 @@ function buildWindow(){
       <div><div class="lbl" id="dualLbl">${$t('dual_title')}</div><div class="card dualw" id="dualW">
         <div class="row">${ic('devices')}<div class="txt"><div class="t">${$t('dual_title')}</div><div class="s">${$t('dual_switch_sub')}</div></div>${sw('dual')}</div>
         <div class="devs" id="devs"></div></div></div>
-      <div id="fwBox"><div class="lbl">${$t('earbuds_section_about')}</div><div class="group"><button class="row press" data-act="fwinfo">${ic('info')}<div class="txt"><div class="t">${$t('row_firmware_title')}</div></div><span class="v mono">–</span>${ic('chev','ch')}</button></div></div>
+      <div id="fwBox"><div class="lbl">${$t('earbuds_section_about')}</div><div class="group"><button class="row press" data-act="fwinfo">${ic('info')}<div class="txt"><div class="t">${$t('row_firmware_title')}</div><div class="s">${$t('firmware_row_desc')}</div></div>${ic('chev','ch')}</button></div></div>
     </div>
   </section>
 
@@ -774,7 +774,8 @@ document.addEventListener('click',ev=>{
   }
   if(a==='lang'){langDialog();return;}
   if(a==='known'){window.QBLIVE&&QBLIVE.live?QBLIVE.issuesDialog():knownDialog();return;}
-  if(a==='fwinfo'){infoDialog($t('firmware_dialog_title'),$t('firmware_dialog_body'));return;}
+  // The version shows in the dialog, under the reason.
+  if(a==='fwinfo'){infoDialog($t('firmware_dialog_title'),$t('firmware_dialog_body')+'\n\n'+$t('row_firmware_title')+': '+(QBLIVE.firmware||'–'));return;}
   if(a==='model'){window.QBLIVE&&QBLIVE.models?QBLIVE.modelDialog():modelDialog();return;}
   if(a==='langdlg'){window.QBLIVE&&QBLIVE.langDialog?QBLIVE.langDialog():langPick();return;}
   if(a==='cornerdlg'){window.QBLIVE&&QBLIVE.cornerDialog&&QBLIVE.cornerDialog();return;}
@@ -935,7 +936,7 @@ if(window.__TAURI__){
     if(s.status==='on'&&s.eq&&!(QBLIVE.eqHold>Date.now()))takeEq(s.eq);
     const eb=s.earbud;QBLIVE.earbud=s.status==='on'?eb:null;
     if(eb&&eb.alert!=null){S.alert=eb.alert;const ar=document.getElementById('alertR');if(ar){ar.min=1;ar.max=10;}}
-    if(s.firmware)document.querySelectorAll('.mono').forEach(e=>e.textContent=s.firmware);
+    if(s.firmware)QBLIVE.firmware=s.firmware;
     document.querySelectorAll('[data-model]').forEach(e=>e.textContent=s.model||s.name||'No earbuds');
     if(s.status!==undefined&&s.gestures)QBLIVE.takeMore(s);QBLIVE.takeTest(s);
     apply();renderBuds();
