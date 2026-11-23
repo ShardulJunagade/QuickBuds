@@ -108,8 +108,13 @@ mod tests {
         let first = bind_unix(&path).expect("first bind");
         assert!(bind_unix(&path).is_none(), "a live copy holds the socket");
         drop(first);
-        assert!(path.exists(), "the file stays after the copy ends");
+        let _ = std::fs::remove_file(&path);
+        // The left-over file is a socket that no stream connect reaches. A dropped listener is not that: a test that
+        // starts a process (update.rs) holds a copy of every open socket from its fork to its exec, so the listener
+        // can still answer for that moment.
+        let left_over = std::os::unix::net::UnixDatagram::bind(&path).expect("left-over socket file");
         assert!(bind_unix(&path).is_some(), "a left-over file is replaced");
+        drop(left_over);
         let _ = std::fs::remove_file(&path);
     }
 
