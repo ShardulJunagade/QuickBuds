@@ -6,6 +6,7 @@ mod json;
 pub mod model;
 pub mod msg;
 pub mod oppo;
+pub mod soundcore;
 pub mod wire;
 
 /// The OPPO model data and rules, at the crate root as the desktop app names them.
