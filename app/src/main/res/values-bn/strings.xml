@@ -209,6 +209,8 @@
     <string name="update_permission_action">সেটিংস খুলুন</string>
     <string name="update_auto_title">আপডেট দেখুন</string>
     <string name="update_auto_sub">প্রতি ৬ ঘণ্টায় এবং অ্যাপ খুললে</string>
+    <string name="update_beta_title">বেটা সংস্করণ</string>
+    <string name="update_beta_sub">স্থিতিশীল রিলিজের আগে পরীক্ষামূলক সংস্করণ। বন্ধ করলে পরের স্থিতিশীল রিলিজে ফিরে যাবেন।</string>
     <string name="update_found_title">QuickBuds %1$s উপলব্ধ</string>
     <string name="update_found_body">আপনার কাছে %1$s আছে। এখন ডাউনলোড করবেন?</string>
     <string name="update_found_view">দেখুন</string>

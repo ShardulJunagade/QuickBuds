@@ -31,4 +31,14 @@ class UpdateCheckerTest {
         assertEquals(old, UpdateChecker.lastCheckAfterFetch(false, now, old))
         assertEquals(now, UpdateChecker.lastCheckAfterFetch(true, now, old))
     }
+
+    @Test fun aBetaSortsBelowItsStableAndAboveTheLastStable() {
+        assertTrue(UpdateChecker.isNewer("v6.4.0-beta.1", "6.3.0"))
+        assertTrue(UpdateChecker.isNewer("v6.4.0-beta.2", "6.4.0-beta.1"))
+        assertTrue(UpdateChecker.isNewer("v6.4.0", "6.4.0-beta.2"))
+        assertFalse(UpdateChecker.isNewer("v6.3.0", "6.4.0-beta.1"))
+        assertFalse(UpdateChecker.isNewer("v6.4.0-beta.1", "6.4.0"))
+        assertFalse(UpdateChecker.isNewer("v6.3.0", "6.3.0-debug"))
+        assertFalse(UpdateChecker.isNewer("v6.3", "6.3.0"))
+    }
 }
