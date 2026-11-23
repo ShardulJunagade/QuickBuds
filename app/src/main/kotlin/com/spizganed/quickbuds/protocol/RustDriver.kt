@@ -81,7 +81,11 @@ class RustDriver(private val shell: Shell) {
         handler.post { nativeSettings(handle, product, manual, clear, spatial, caseLevel ?: -1, eqJson) }
     }
 
-    fun connected(name: String) = drive { nativeConnected(handle, now(), name) }
+    /** [soundcore]: the brand of this link ([com.spizganed.quickbuds.bluetooth.ConnectPolicy.brand]). */
+    fun connected(name: String, soundcore: Boolean = false) = drive {
+        nativeBrand(handle, soundcore)
+        nativeConnected(handle, now(), name)
+    }
 
     fun bytes(buffer: ByteArray, count: Int) {
         val data = buffer.copyOf(count)
@@ -109,6 +113,9 @@ class RustDriver(private val shell: Shell) {
         fun enabled(c: Context): Boolean =
             loaded && c.getSharedPreferences(ThemeRes.PREFS_NAME, Context.MODE_PRIVATE).getBoolean(PREF, false)
 
+        /** The native library loaded: Soundcore buds, which only the core drives, can connect. */
+        val libraryLoaded: Boolean get() = loaded
+
         fun unhex(t: String): ByteArray = ByteArray(t.length / 2) { t.substring(it * 2, it * 2 + 2).toInt(16).toByte() }
 
         fun hex(b: ByteArray): String = b.joinToString("") { "%02X".format(it.toInt() and 0xFF) }
@@ -116,6 +123,7 @@ class RustDriver(private val shell: Shell) {
         private fun spaced(hex: String) = hex.chunked(2).joinToString(" ")
 
         @JvmStatic private external fun nativeNew(): Long
+        @JvmStatic private external fun nativeBrand(h: Long, soundcore: Boolean)
         @JvmStatic private external fun nativeSettings(h: Long, product: String?, manual: String?, clearBattery: Boolean,
             phoneSpatial: Boolean, caseLevel: Int, eq: String?)
         @JvmStatic private external fun nativeConnected(h: Long, now: Long, name: String): String?

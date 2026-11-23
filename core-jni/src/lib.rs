@@ -10,6 +10,7 @@ use std::panic::{catch_unwind, AssertUnwindSafe};
 use std::sync::Mutex;
 
 use buds_core::model::Wear;
+use buds_core::soundcore::driver as sc;
 use buds_core::oppo::driver::{Cmd, Driver, Effect, EqSaved, Settings, Status};
 use buds_core::types::{HearingEv, Preset};
 use buds_core::types::{cmd_of, payload_of};
@@ -343,19 +344,63 @@ fn command(v: &Value) -> Option<Cmd> {
     })
 }
 
-fn driver<R>(h: jlong, f: impl FnOnce(&mut Driver) -> R) -> Option<R> {
+/// One driver handle: the brand picks the driver of the next link (`nativeBrand`).
+struct Link {
+    soundcore: bool,
+    oppo: Driver,
+    sc: sc::Driver,
+}
+
+fn link<R>(h: jlong, f: impl FnOnce(&mut Link) -> R) -> Option<R> {
     if h == 0 { return None; }
     // SAFETY: `h` comes from `RustDriver.nativeNew` and the app never frees it.
-    let m = unsafe { &*(h as *const Mutex<Driver>) };
+    let m = unsafe { &*(h as *const Mutex<Link>) };
     catch_unwind(AssertUnwindSafe(|| f(&mut m.lock().unwrap_or_else(|e| e.into_inner())))).ok()
+}
+
+fn driver<R>(h: jlong, f: impl FnOnce(&mut Driver) -> R) -> Option<R> { link(h, |l| f(&mut l.oppo)) }
+
+/// The Soundcore effects in the same JSON as the OPPO ones.
+fn sc_effects_json(effects: Vec<sc::Effect>) -> String {
+    effects_json(effects.into_iter().map(|e| match e {
+        sc::Effect::Send(b) => Effect::Send(b),
+        sc::Effect::Log { dir, bytes, human } => Effect::Log { dir, bytes, human },
+        sc::Effect::State => Effect::State,
+        sc::Effect::Ready => Effect::Ready,
+    }).collect())
+}
+
+/// The Soundcore state: the shared state, with battery levels as a percent for the app's rings.
+fn sc_state_json(d: &sc::Driver) -> String {
+    let c = d.common();
+    json!({
+        "brand": "soundcore",
+        "status": if c.connected { 2 } else { 0 },
+        "battery": c.battery.map(|b| b.map_or(-1, |l| (l.value as i32 * 100) / l.max.max(1) as i32)),
+        "charging": c.battery.map(|b| b.is_some_and(|l| l.charging)),
+        "anc": c.noise,
+        "noiseModes": c.noise_modes,
+        "lowLatency": c.low_latency,
+        "features": c.features,
+        "model": c.model_id,
+        "firmware": d.firmware.first(),
+        "ldac": d.ldac,
+    }).to_string()
 }
 
 #[no_mangle]
 pub extern "system" fn Java_com_spizganed_quickbuds_protocol_RustDriver_nativeNew(_env: JNIEnv, _this: JObject) -> jlong {
-    Box::into_raw(Box::new(Mutex::new(Driver::new(Settings::default())))) as jlong
+    let l = Link { soundcore: false, oppo: Driver::new(Settings::default()), sc: sc::Driver::new() };
+    Box::into_raw(Box::new(Mutex::new(l))) as jlong
 }
 
-/// The settings the driver reads; call before `nativeConnected` and after a change.
+/// The brand of the next link: true for Soundcore. Call before `nativeConnected`.
+#[no_mangle]
+pub extern "system" fn Java_com_spizganed_quickbuds_protocol_RustDriver_nativeBrand(_env: JNIEnv, _this: JObject, h: jlong, soundcore: jboolean) {
+    link(h, |l| l.soundcore = soundcore != 0);
+}
+
+/// The settings the OPPO driver reads; call before `nativeConnected` and after a change.
 #[no_mangle]
 #[allow(clippy::too_many_arguments)]
 pub extern "system" fn Java_com_spizganed_quickbuds_protocol_RustDriver_nativeSettings(
@@ -379,7 +424,7 @@ pub extern "system" fn Java_com_spizganed_quickbuds_protocol_RustDriver_nativeCo
     mut env: JNIEnv, _this: JObject, h: jlong, now: jlong, name: JString,
 ) -> jstring {
     let name = text(&mut env, &name).unwrap_or_default();
-    let e = driver(h, |d| effects_json(d.connected(now as u64, name)));
+    let e = link(h, |l| if l.soundcore { sc_effects_json(l.sc.connected(now as u64, name)) } else { effects_json(l.oppo.connected(now as u64, name)) });
     out(&mut env, e)
 }
 
@@ -388,18 +433,24 @@ pub extern "system" fn Java_com_spizganed_quickbuds_protocol_RustDriver_nativeBy
     mut env: JNIEnv, _this: JObject, h: jlong, now: jlong, unix: jlong, data: JByteArray,
 ) -> jstring {
     let Ok(bytes) = env.convert_byte_array(&data) else { return std::ptr::null_mut() };
-    let e = driver(h, |d| effects_json(d.on_bytes(now as u64, unix as u32, &bytes)));
+    let e = link(h, |l| if l.soundcore { sc_effects_json(l.sc.on_bytes(now as u64, &bytes)) } else { effects_json(l.oppo.on_bytes(now as u64, unix as u32, &bytes)) });
     out(&mut env, e)
 }
 
-/// A UI command as JSON (see `command`). An unknown command returns null.
+/// A UI command as JSON (see `command`). An unknown command, or one the brand lacks, returns null.
 #[no_mangle]
 pub extern "system" fn Java_com_spizganed_quickbuds_protocol_RustDriver_nativeCommand(
     mut env: JNIEnv, _this: JObject, h: jlong, now: jlong, json: JString,
 ) -> jstring {
-    let c = text(&mut env, &json).and_then(|t| serde_json::from_str::<Value>(&t).ok()).as_ref().and_then(command);
-    let Some(c) = c else { return std::ptr::null_mut() };
-    let e = driver(h, |d| effects_json(d.command(now as u64, c)));
+    let Some(v) = text(&mut env, &json).and_then(|t| serde_json::from_str::<Value>(&t).ok()) else { return std::ptr::null_mut() };
+    let e = link(h, |l| {
+        if l.soundcore {
+            let c = match command(&v)? { Cmd::Anc(m) => sc::Cmd::Anc(m), _ => return None };
+            Some(sc_effects_json(l.sc.command(now as u64, c)))
+        } else {
+            Some(effects_json(l.oppo.command(now as u64, command(&v)?)))
+        }
+    }).flatten();
     out(&mut env, e)
 }
 
@@ -407,7 +458,7 @@ pub extern "system" fn Java_com_spizganed_quickbuds_protocol_RustDriver_nativeCo
 pub extern "system" fn Java_com_spizganed_quickbuds_protocol_RustDriver_nativeTick(
     mut env: JNIEnv, _this: JObject, h: jlong, now: jlong,
 ) -> jstring {
-    let e = driver(h, |d| effects_json(d.tick(now as u64)));
+    let e = link(h, |l| if l.soundcore { sc_effects_json(l.sc.tick(now as u64)) } else { effects_json(l.oppo.tick(now as u64)) });
     out(&mut env, e)
 }
 
@@ -415,29 +466,30 @@ pub extern "system" fn Java_com_spizganed_quickbuds_protocol_RustDriver_nativeTi
 pub extern "system" fn Java_com_spizganed_quickbuds_protocol_RustDriver_nativeDisconnected(
     mut env: JNIEnv, _this: JObject, h: jlong, now: jlong,
 ) -> jstring {
-    let e = driver(h, |d| effects_json(d.disconnected(now as u64)));
+    let e = link(h, |l| if l.soundcore { sc_effects_json(l.sc.disconnected(now as u64)) } else { effects_json(l.oppo.disconnected(now as u64)) });
     out(&mut env, e)
 }
 
+/// A case level from the BLE advertisement (OPPO only).
 #[no_mangle]
 pub extern "system" fn Java_com_spizganed_quickbuds_protocol_RustDriver_nativeCaseStandIn(
     mut env: JNIEnv, _this: JObject, h: jlong, now: jlong, level: jint, charging: jboolean,
 ) -> jstring {
     let Ok(level) = u8::try_from(level) else { return std::ptr::null_mut() };
-    let e = driver(h, |d| effects_json(d.case_stand_in(now as u64, level, charging != 0)));
+    let e = link(h, |l| (!l.soundcore).then(|| effects_json(l.oppo.case_stand_in(now as u64, level, charging != 0)))).flatten();
     out(&mut env, e)
 }
 
 /// The time of the next `nativeTick`, or -1 for none.
 #[no_mangle]
 pub extern "system" fn Java_com_spizganed_quickbuds_protocol_RustDriver_nativeNextWake(_env: JNIEnv, _this: JObject, h: jlong) -> jlong {
-    driver(h, |d| d.next_wake().map_or(-1, |t| t as jlong)).unwrap_or(-1)
+    link(h, |l| (if l.soundcore { l.sc.next_wake() } else { l.oppo.next_wake() }).map_or(-1, |t| t as jlong)).unwrap_or(-1)
 }
 
-/// The state as JSON (`state_json`).
+/// The state as JSON (`state_json`, or `sc_state_json` for Soundcore).
 #[no_mangle]
 pub extern "system" fn Java_com_spizganed_quickbuds_protocol_RustDriver_nativeState(mut env: JNIEnv, _this: JObject, h: jlong) -> jstring {
-    let st = driver(h, |d| state_json(d));
+    let st = link(h, |l| if l.soundcore { sc_state_json(&l.sc) } else { state_json(&l.oppo) });
     out(&mut env, st)
 }
 

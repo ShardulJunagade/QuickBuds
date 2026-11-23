@@ -393,7 +393,13 @@ class BudsConnectionManager(private val context: Context) {
                 log("Bond state: ${ConnectDiagnostics.bondStateWord(device.bondState)}")
                 val offered = device.uuids?.map { it.uuid.toString() }.orEmpty()
                 log("Cached service UUIDs: ${ConnectDiagnostics.formatUuids(offered)}")
-                val uuids = ConnectPolicy.connectUuids(offered)
+                linkBrand = ConnectPolicy.brand(offered, deviceName(device))
+                rustLink = linkBrand == ConnectPolicy.Brand.SOUNDCORE ||
+                    com.spizganed.quickbuds.protocol.RustDriver.enabled(context)
+                log("BRAND: $linkBrand, engine: ${if (rustLink) "Rust" else "Kotlin"}")
+                if (rustLink && rustEngine == null) log("RUST ENGINE: the native library is missing")
+                val uuids = if (linkBrand == ConnectPolicy.Brand.SOUNDCORE) ConnectPolicy.soundcoreUuids(offered)
+                    else ConnectPolicy.connectUuids(offered)
                 // Secure first, then insecure: a stale bond or a firmware that refuses an
                 // authenticated link fails both secure tries, and the desktop app never asks for one.
                 val tries = listOf(false, true).flatMap { insecure -> uuids.map { it to insecure } }
@@ -578,7 +584,7 @@ class BudsConnectionManager(private val context: Context) {
             rustLast = null
             r.settings(context, com.spizganed.quickbuds.protocol.RustShadow.eqJson(equalizer.stateFor(device?.address)), case)
             log("Ready for commands. The Rust engine runs the init sequence.")
-            r.connected(deviceName(device) ?: "")
+            r.connected(deviceName(device) ?: "", soundcore = linkBrand == ConnectPolicy.Brand.SOUNDCORE)
             return
         }
         syncPrimed = false
@@ -2147,12 +2153,22 @@ class BudsConnectionManager(private val context: Context) {
 
     // --- Driver mode (protocol/RustDriver.kt): the Rust core drives the link; this class is the shell. ---
 
-    /** The Rust engine, when Dev tools › Rust engine is on and the native library loaded. Else the Kotlin layer drives. */
-    private val rust: com.spizganed.quickbuds.protocol.RustDriver? by lazy {
-        if (!com.spizganed.quickbuds.protocol.RustDriver.enabled(context)) null
+    /** The Rust engine, when the native library loaded. */
+    private val rustEngine: com.spizganed.quickbuds.protocol.RustDriver? by lazy {
+        if (!com.spizganed.quickbuds.protocol.RustDriver.libraryLoaded) null
         else com.spizganed.quickbuds.protocol.RustDriver(rustShell).takeIf { it.available }
-            ?.also { log("RUST ENGINE: on") }
     }
+
+    /** The brand of the current or last link ([ConnectPolicy.brand]). */
+    @Volatile private var linkBrand = ConnectPolicy.Brand.OPPO
+
+    /**
+     * The core drives this link: Soundcore buds always (no Kotlin path), OPPO buds when Dev tools › Rust engine is on.
+     * Else the Kotlin layer drives and the core shadows it.
+     */
+    @Volatile private var rustLink = false
+
+    private val rust: com.spizganed.quickbuds.protocol.RustDriver? get() = rustEngine.takeIf { rustLink }
 
     /** The last state the core gave on this link, to call only the listeners whose part changed. */
     @Volatile private var rustLast: org.json.JSONObject? = null

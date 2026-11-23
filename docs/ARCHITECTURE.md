@@ -40,6 +40,8 @@ the UI commands (JSON), writes the core's frames and maps the core's state JSON 
 (`applyRust`). All core calls run on one thread. The core reads the battery every 5 min, reads it on the lid-close
 push, and gives find phone as an effect. Shadow mode is off while driver mode runs.
 Why a switch: the developer tests driver mode on real buds before it becomes the default.
+The connect picks the brand first (`ConnectPolicy.brand`: the service list, then the name). Soundcore buds always
+run in driver mode, with the Soundcore driver (`core/src/soundcore/driver.rs`), because no Kotlin copy exists.
 The desktop app calls the core directly (`desktop-tauri/src/main.rs` re-exports `cmd`, `msg`, `wire` and the OPPO model data in `core/src/oppo/`).
 
 Both apps decode a frame in one place. Android: `Decode.decode`, then `BudsConnectionManager.apply`. Desktop: `buds_core::msg::decode`, mapped to the session's `Event` in `core/src/oppo/protocol.rs`.
