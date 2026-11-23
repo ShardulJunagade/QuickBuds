@@ -164,14 +164,16 @@ object RustShadow {
     }
 
     /** The EQ state as the bridge reads it. */
-    private fun eqJson(eq: EqState): String = JSONObject().apply {
+    fun eqJson(eq: EqState): String = JSONObject().apply {
         put("current", eq.current ?: JSONObject.NULL)
         put("bass", eq.bassWave ?: JSONObject.NULL)
-        put("custom", JSONArray(eq.custom.map { p ->
-            JSONObject().put("id", p.id).put("name", p.name).put("freqs", JSONArray(p.freqs)).put("gains", JSONArray(p.gains))
-                .put("selected", p.selected).put("tag", JSONArray(p.tag.map { it.toInt() and 0xFF }))
-        }))
+        put("custom", JSONArray(eq.custom.map(::presetJson)))
     }.toString()
+
+    /** One EQ preset as the bridge reads it (`core-jni` `preset`). */
+    fun presetJson(p: EqCodec.Preset): JSONObject =
+        JSONObject().put("id", p.id).put("name", p.name).put("freqs", JSONArray(p.freqs)).put("gains", JSONArray(p.gains))
+            .put("selected", p.selected).put("tag", JSONArray(p.tag.map { it.toInt() and 0xFF }))
 
     /** A raw wear status as the core names it (PROTOCOL.md section 13). */
     private fun wear(raw: Int) = when (raw) {

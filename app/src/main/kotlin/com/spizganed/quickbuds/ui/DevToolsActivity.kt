@@ -128,6 +128,18 @@ class DevToolsActivity : Activity() {
         })
         root.addView(actions, spaced(dp(12f)))
 
+        // Driver mode of the Rust core (protocol/RustDriver.kt). It applies on the next start of the app process.
+        val prefs = getSharedPreferences(ThemeRes.PREFS_NAME, MODE_PRIVATE)
+        val rustSwitch = SettingRowFactory.buildSwitch(this, prefs.getBoolean(com.spizganed.quickbuds.protocol.RustDriver.PREF, false))
+        rustSwitch.setOnCheckedChangeListener { _, on ->
+            prefs.edit().putBoolean(com.spizganed.quickbuds.protocol.RustDriver.PREF, on).apply()
+            showInLog("Rust engine ${if (on) "on" else "off"}: restart the app")
+        }
+        root.addView(SettingRowFactory.card(this).apply {
+            addView(SettingRowFactory.build(this@DevToolsActivity, R.drawable.ic_info, R.string.dev_rust_engine_title,
+                R.string.dev_rust_engine_sub, rustSwitch) { rustSwitch.performClick() })
+        }, spaced(dp(12f)))
+
         logText = TextView(this).apply {
             setTextIsSelectable(true)
             textSize = 12f

@@ -466,7 +466,7 @@ class BudsConnectionManager(private val context: Context) {
                 }
                 if (socket != null) {
                     bluetoothSocket = socket
-                    shadowLinkUp(device)
+                    if (rust == null) shadowLinkUp(device)
                     connectedThread = ConnectedThread(socket.inputStream, socket.outputStream) { socket.close() }
                     connectedThread?.start()
                     onLinkUp(device)
@@ -572,6 +572,15 @@ class BudsConnectionManager(private val context: Context) {
         if (audioDevice != null && audioAfterRestart) { audioAfterRestart = false; setPhoneAudio(audioDevice, on = true) }
         (audioDevice ?: lastDevice)?.let { audioCheck(it, connectGeneration) }
         handler.post { listeners.forEach { it.onConnected(true) } }
+        rust?.let { r ->
+            val device = audioDevice ?: lastDevice
+            val case = caseKey(device?.address)?.let { featurePrefs().getInt(it, -1) }?.takeIf { it > 0 }
+            rustLast = null
+            r.settings(context, com.spizganed.quickbuds.protocol.RustShadow.eqJson(equalizer.stateFor(device?.address)), case)
+            log("Ready for commands. The Rust engine runs the init sequence.")
+            r.connected(deviceName(device) ?: "")
+            return
+        }
         syncPrimed = false
         syncHandler.post { execute(sync.reconnect(SystemClock.elapsedRealtime())) }
         log("Ready for commands. Running init sequence...")
@@ -728,6 +737,7 @@ class BudsConnectionManager(private val context: Context) {
         handler.removeCallbacks(shadowCheck)
         handler.removeCallbacks(shadowInitCheck)
         com.spizganed.quickbuds.protocol.RustShadow.disconnected()
+        rust?.disconnected()
         equalizer.onLinkDown()
         connectedThread?.cancel()
         connectedThread = null
@@ -745,6 +755,7 @@ class BudsConnectionManager(private val context: Context) {
      * model does not have is logged and not sent: its bit would be another mode's, or nothing.
      */
     fun sendAnc(mode: String) {
+        rust?.let { it.command("anc", "mode" to mode); return }
         val bit = AncModes.of(context).bit(mode)
             ?: return log("ANC: $mode is not a mode of these buds, not sent")
         if (mode in AncModes.LEVELS) lastAncLevelSent = mode
@@ -776,6 +787,7 @@ class BudsConnectionManager(private val context: Context) {
      * re-read, then `0x0413 08 00 xx`. The buds answer with a `0x0204` subType `06` device list.
      */
     fun setDualDevice(on: Boolean) {
+        rust?.let { it.command("dual", "on" to on); return }
         Thread {
             try {
                 notePending(Feature.DUAL_DEVICE, on)
@@ -797,13 +809,16 @@ class BudsConnectionManager(private val context: Context) {
     @Volatile var devices: List<PairedDevice> = emptyList()
         private set
 
-    fun refreshDevices() = sendRaw(Commands.queryDevices(), "query devices")
+    fun refreshDevices() { rust?.command("dualReads", "preferred" to false) ?: sendRaw(Commands.queryDevices(), "query devices") }
 
     /** Connects or disconnects another device on the list; the buds push the new list. */
-    fun connectDevice(mac: String, on: Boolean) =
-        sendRaw(Commands.connectDevice(mac, on),"${if (on) "Connect" else "Disconnect"} $mac")
+    fun connectDevice(mac: String, on: Boolean) {
+        rust?.command("connectDevice", "mac" to mac, "on" to on)
+            ?: sendRaw(Commands.connectDevice(mac, on),"${if (on) "Connect" else "Disconnect"} $mac")
+    }
 
     fun setPreferred(mac: String?) {
+        rust?.let { it.command("preferred", "mac" to mac); return }
         Thread {
             try {
                 sendRawBlocking(Commands.setPreferred(mac), "Preferred ${mac ?: "auto"}")
@@ -815,7 +830,7 @@ class BudsConnectionManager(private val context: Context) {
         }.start()
     }
 
-    fun refreshPreferred() = sendRaw(Commands.queryPreferred(), "query preferred")
+    fun refreshPreferred() { rust?.let { rustRaw(it, Commands.queryPreferred()) } ?: sendRaw(Commands.queryPreferred(), "query preferred") }
 
     // --- Equalizer (PROTOCOL.md §17). Read on demand by the EQ screen, re-read after every write. ---
     /** The events these buds offer (`0x8200`), once read; reset on each connect. */
@@ -833,22 +848,28 @@ class BudsConnectionManager(private val context: Context) {
         log = ::log,
     )
     /** The whole state, so one render paints one version of it. */
-    val eq: EqState get() = equalizer.state
-    val eqCurrent: Int? get() = equalizer.state.current
-    val eqCustom: List<EqCodec.Preset> get() = equalizer.state.custom
-    val bassWaveLevel: Int? get() = equalizer.state.bassWave
+    val eq: EqState get() = rustEq ?: equalizer.state
+    val eqCurrent: Int? get() = eq.current
+    val eqCustom: List<EqCodec.Preset> get() = eq.custom
+    val bassWaveLevel: Int? get() = eq.bassWave
 
-    fun refreshEq() = equalizer.refresh()
-    fun selectBuiltInEq(id: Int) = equalizer.selectBuiltIn(id)
-    fun selectCustomEq(p: EqCodec.Preset) = equalizer.selectCustom(p)
-    fun saveCustomEq(p: EqCodec.Preset) = equalizer.saveCustom(p)
-    fun createCustomEq(name: String, freqs: List<Int>) = equalizer.createCustom(name, freqs)
-    fun deleteCustomEq(p: EqCodec.Preset) = equalizer.deleteCustom(p)
-    fun setBassWaveLevel(level: Int) = equalizer.setBassWave(level)
-    fun setBassBand(band: Int, level: Int) = equalizer.setBassBand(band, level)
+    // Driver mode: the core reads the EQ in its init and keeps the state.
+    fun refreshEq() { if (rust == null) equalizer.refresh() }
+    fun selectBuiltInEq(id: Int) { rust?.command("eqBuiltIn", "id" to id) ?: equalizer.selectBuiltIn(id) }
+    fun selectCustomEq(p: EqCodec.Preset) { rust?.command("eqSave", "preset" to rustPreset(p)) ?: equalizer.selectCustom(p) }
+    fun saveCustomEq(p: EqCodec.Preset) { rust?.command("eqSave", "preset" to rustPreset(p)) ?: equalizer.saveCustom(p) }
+    fun createCustomEq(name: String, freqs: List<Int>) {
+        rust?.command("eqCreate", "preset" to org.json.JSONObject().put("id", 0).put("name", name)
+            .put("freqs", org.json.JSONArray(freqs)).put("gains", org.json.JSONArray(freqs.map { 0 })))
+            ?: equalizer.createCustom(name, freqs)
+    }
+    fun deleteCustomEq(p: EqCodec.Preset) { rust?.command("eqDelete", "preset" to rustPreset(p)) ?: equalizer.deleteCustom(p) }
+    fun setBassWaveLevel(level: Int) { rust?.command("bassLevel", "level" to level, "band" to 0) ?: equalizer.setBassWave(level) }
+    /** [band] 1 low, 2 medium, 3 high. */
+    fun setBassBand(band: Int, level: Int) { rust?.command("bassLevel", "level" to level, "band" to band) ?: equalizer.setBassBand(band, level) }
 
     /** Find my earbuds: both buds' own locator tone. `[CAPTURE]` 2026-09-23, PROTOCOL.md §18. */
-    fun setFindTone(on: Boolean) = sendRaw(Commands.findTone(on),"Find tone -> $on")
+    fun setFindTone(on: Boolean) { rust?.command("find", "on" to on) ?: sendRaw(Commands.findTone(on),"Find tone -> $on") }
 
     /**
      * Latest `0x810D` reply as feature id -> value (PROTOCOL.md §16). Persisted, so the switches
@@ -888,7 +909,7 @@ class BudsConnectionManager(private val context: Context) {
      * reports what the buds actually took. A codec change drops the link, in which case the
      * connect sequence's own status query does that instead.
      */
-    fun setVolumeEnhancer(on: Boolean) = sendRaw(Commands.volumeEnhancer(on), "Volume enhancer -> $on")
+    fun setVolumeEnhancer(on: Boolean) { rust?.let { rustRaw(it, Commands.volumeEnhancer(on)) } ?: sendRaw(Commands.volumeEnhancer(on), "Volume enhancer -> $on") }
 
     private fun setFeatures(vararg changes: Pair<Int, Boolean>) {
         Thread {
@@ -915,6 +936,7 @@ class BudsConnectionManager(private val context: Context) {
      * HeyMelody's order (spatial first). A write-only switch (auto-answer) is sent once with no confirmation.
      */
     fun setFeature(id: Int, on: Boolean) {
+        rust?.let { rustFeature(it, id, on); return }
         if (id in WRITE_ONLY) return setFeatures(id to on)
         val model = ModelCatalog.current(context)?.json
         val exclusive = !ModelProfile(model).spatialToggle
@@ -1066,6 +1088,7 @@ class BudsConnectionManager(private val context: Context) {
      * the tone, a record is applied in four writes. A `0x0403` among them is followed by a status read.
      */
     fun golden(vararg packets: ByteArray) {
+        rust?.let { rustRaw(it, *packets); return }
         Thread {
             try {
                 for (p in packets) { sendRawBlocking(p, "golden"); Thread.sleep(60) }
@@ -1107,7 +1130,7 @@ class BudsConnectionManager(private val context: Context) {
     @Volatile var headMotionType: Int? = null
         private set
 
-    fun setHeadMotionType(type: Int) = writeThenRead(Commands.headMotionType(type),"Head motion type $type",
+    fun setHeadMotionType(type: Int): Unit = if (rust != null) { rust?.command("headMotion", "type" to type); Unit } else writeThenRead(Commands.headMotionType(type),"Head motion type $type",
         Commands.queryHeadMotionType(), "query head motion type") { headMotionType = type }
 
     /** Codec picker (`hiRes` models): the current codec and the offered ones, from `0x8114` / `0x8123`. */
@@ -1118,19 +1141,21 @@ class BudsConnectionManager(private val context: Context) {
 
     /** Reads the phone link's codec again: the phone can switch codec after the connect. The reply sets [codec]. */
     fun refreshCodec() {
+        rust?.let { rustRaw(it, Commands.queryCodec()); return }
         if (Capabilities.supports(context, OpoProtocol.CMD_QUERY_CODEC)) sendRaw(Commands.queryCodec(), "query codec")
     }
 
     /** The buds restart after it and come back without phone audio, as after power saving. */
     fun setCodec(codec: Int, hiRes: Boolean) {
+        rust?.let { audioAfterRestart = true; it.command("codec", "codec" to codec, "hires" to hiRes); return }
         audioAfterRestart = true
         sendRaw(Commands.codec(codec, hiRes),"Codec $codec hiRes=$hiRes")
     }
 
-    fun setSpatialType(type: Int) = writeThenRead(Commands.spatialType(type),"Spatial type $type",
+    fun setSpatialType(type: Int): Unit = if (rust != null) { rust?.command("spatialType", "type" to type); Unit } else writeThenRead(Commands.spatialType(type),"Spatial type $type",
         Commands.querySpatialType(), "query spatial type") { spatialType = type }
 
-    fun setGameSoundType(type: Int) = writeThenRead(Commands.gameSoundType(type),"Game sound type $type",
+    fun setGameSoundType(type: Int): Unit = if (rust != null) { rust?.command("gameSoundType", "type" to type); Unit } else writeThenRead(Commands.gameSoundType(type),"Game sound type $type",
         Commands.queryGameSound(), "query game sound") { gameSoundType = type }
 
     private fun writeThenRead(write: ByteArray, label: String, read: ByteArray, readLabel: String, optimistic: () -> Unit) {
@@ -1147,19 +1172,20 @@ class BudsConnectionManager(private val context: Context) {
     }
 
     /** Personalized ANC action ([OpoProtocol.PERSONAL_NOISE_TEST] ...); see [Listener.onPersonalNoiseResult]. */
-    fun personalNoise(action: Int) = sendRaw(Commands.personalNoise(action),"Personalized ANC $action")
-    fun queryPersonalNoise() = sendRaw(Commands.queryPersonalNoise(), "query personalized ANC")
+    fun personalNoise(action: Int) { rust?.command("pnc", "action" to action) ?: sendRaw(Commands.personalNoise(action),"Personalized ANC $action") }
+    fun queryPersonalNoise() { rust?.command("pncQuery") ?: sendRaw(Commands.queryPersonalNoise(), "query personalized ANC") }
 
     /** The default from the last `0x8133` reply; the push carries the level only. */
     private var tapLevelDefault = 0
 
     /** `0x0420 01 <1|0>`: a game app is in the foreground (PROTOCOL.md §18). */
-    fun setGameEqState(inGame: Boolean) = sendRaw(Commands.gameEqState(inGame),"Game equalizer in game=$inGame")
+    fun setGameEqState(inGame: Boolean) { rust?.let { rustRaw(it, Commands.gameEqState(inGame)) } ?: sendRaw(Commands.gameEqState(inGame),"Game equalizer in game=$inGame") }
 
-    fun refreshTapLevel() = sendRaw(Commands.queryTapLevel(), "query tap level")
+    fun refreshTapLevel() { rust?.command("earbudReads") ?: sendRaw(Commands.queryTapLevel(), "query tap level") }
 
     /** Write, then read back. */
     fun setTapLevel(level: Int) {
+        rust?.let { it.command("tapLevel", "level" to level); return }
         Thread {
             try {
                 sendRawBlocking(Commands.setTapLevel(level),"Tap level $level")
@@ -1172,16 +1198,17 @@ class BudsConnectionManager(private val context: Context) {
     }
 
     /** Starts (`true`) or stops the earbud fit test; the result comes as [Listener.onFitResult]. */
-    fun fitTest(on: Boolean) = sendRaw(Commands.fitTest(on),"Fit test ${if (on) "start" else "stop"}")
+    fun fitTest(on: Boolean) { rust?.command("fitTest", "on" to on) ?: sendRaw(Commands.fitTest(on),"Fit test ${if (on) "start" else "stop"}") }
 
     /** Alert-sound volume 1..10 from `0x8130` / `0x8427`, null until read. `[CAPTURE]` 2026-09-25. */
     @Volatile var alertVolume: Int? = null
         private set
 
-    fun refreshAlertVolume() = sendRaw(Commands.queryAlertVolume(), "query alert volume")
+    fun refreshAlertVolume() { rust?.command("earbudReads") ?: sendRaw(Commands.queryAlertVolume(), "query alert volume") }
 
     /** Write, then read back — as HeyMelody does after every change. */
     fun setAlertVolume(level: Int) {
+        rust?.let { it.command("alertVolume", "level" to level); return }
         alertVolume = level
         Thread {
             try {
@@ -1202,6 +1229,7 @@ class BudsConnectionManager(private val context: Context) {
      * everywhere else in this protocol.
      */
     fun sendHoldAncModes(mask: Int, type: Int) {
+        rust?.let { it.command("holdModes", "mask" to mask, "type" to type); return }
         sendRaw(Commands.holdAncModes(mask, type),"Hold ANC modes ($type) -> 0x%04X".format(mask))
         Thread {
             try {
@@ -1222,6 +1250,7 @@ class BudsConnectionManager(private val context: Context) {
      * what actually changed.
      */
     fun sendOnCall(act: Int, fn: Int, button: Int = KeyFunctionParser.BUTTON_ON_CALL) {
+        rust?.let { it.command("onCall", "button" to button, "act" to act, "fn" to fn); return }
         sendRaw(Commands.setOnCall(act, fn, button), "Both-buds btn 0x%02X act 0x%02X -> fn 0x%02X".format(button, act, fn))
         verifyKeyFunctionAfterDelay()
     }
@@ -1237,7 +1266,7 @@ class BudsConnectionManager(private val context: Context) {
         }.start()
     }
 
-    fun requestFullStatus() { sendRaw(statusQuery(), "manual status") }
+    fun requestFullStatus() { rust?.command("statusRead") ?: sendRaw(statusQuery(), "manual status") }
 
     /**
      * A model picked by hand ([ModelCatalog.setManual]): the connect reads again, because some depend on the model
@@ -1245,6 +1274,12 @@ class BudsConnectionManager(private val context: Context) {
      * the old model's until the next connect.
      */
     fun modelPicked() {
+        rust?.let { r ->
+            r.settings(context, null, null)
+            r.command("modelPicked")
+            handler.post { listeners.forEach { it.onCapabilities() } }
+            return
+        }
         if (isConnected()) runInitSequence()
         handler.post { listeners.forEach { it.onCapabilities() } }
     }
@@ -1353,6 +1388,11 @@ class BudsConnectionManager(private val context: Context) {
         keyFnAction: Int,
         functionByte: Int
     ): Boolean {
+        rust?.let {
+            if (lastKeyFnTable?.entries.isNullOrEmpty()) return false
+            it.command("gesture", "dev" to side, "act" to keyFnAction, "fn" to functionByte)
+            return true
+        }
         val table = lastKeyFnTable
         if (table == null || table.entries.isEmpty()) {
             log("KEYFN WRITE: refused - no 0x8108 reading yet, will not invent a table")
@@ -1502,7 +1542,9 @@ class BudsConnectionManager(private val context: Context) {
                     val bytes = inputStream.read(buffer)
                     // Target 37+: a dropped RFCOMM link returns -1 instead of throwing.
                     if (bytes < 0) throw IOException("stream closed")
-                    if (bytes > 0) {
+                    if (bytes > 0 && rust != null) {
+                        rust?.bytes(buffer, bytes)
+                    } else if (bytes > 0) {
                         com.spizganed.quickbuds.protocol.RustShadow.bytes(buffer, bytes)
                         // The handlers read the fixed 9-byte header, so each packet comes out in that form.
                         for (frame in framer.append(buffer, bytes)) handlePacket(frame)
@@ -2030,7 +2072,8 @@ class BudsConnectionManager(private val context: Context) {
             fpCase = level
             fpCaseAt = SystemClock.elapsedRealtime()
             com.spizganed.quickbuds.protocol.RustShadow.caseStandIn(level)
-            emitBattery()
+            level.level?.let { rust?.caseStandIn(it, level.charging) }
+            if (rust == null) emitBattery()
         }
         advertScan = me
         if (!me.start()) advertScan = null
@@ -2100,6 +2143,202 @@ class BudsConnectionManager(private val context: Context) {
                 )
             }
         }
+    }
+
+    // --- Driver mode (protocol/RustDriver.kt): the Rust core drives the link; this class is the shell. ---
+
+    /** The Rust engine, when Dev tools › Rust engine is on and the native library loaded. Else the Kotlin layer drives. */
+    private val rust: com.spizganed.quickbuds.protocol.RustDriver? by lazy {
+        if (!com.spizganed.quickbuds.protocol.RustDriver.enabled(context)) null
+        else com.spizganed.quickbuds.protocol.RustDriver(rustShell).takeIf { it.available }
+            ?.also { log("RUST ENGINE: on") }
+    }
+
+    /** The last state the core gave on this link, to call only the listeners whose part changed. */
+    @Volatile private var rustLast: org.json.JSONObject? = null
+    @Volatile private var rustEq: EqState? = null
+
+    private fun rustPreset(p: EqCodec.Preset) = com.spizganed.quickbuds.protocol.RustShadow.presetJson(p)
+
+    /** Frames the core has no command for: sent as they are, in order (`hearing` re-reads the status after a switch). */
+    private fun rustRaw(r: com.spizganed.quickbuds.protocol.RustDriver, vararg frames: ByteArray) {
+        val list = org.json.JSONArray(frames.filter { it.size >= 9 }.map { f ->
+            org.json.JSONArray().put(OpoProtocol.u16(f, 4)).put(com.spizganed.quickbuds.protocol.RustDriver.hex(payloadOf(f)))
+        })
+        r.command("hearing", "frames" to list)
+    }
+
+    /** One switch, as [setFeature] writes it: game mode, Hi-Res and 3D audio have their own operations in the core. */
+    private fun rustFeature(r: com.spizganed.quickbuds.protocol.RustDriver, id: Int, on: Boolean) {
+        val exclusive = !ModelProfile(ModelCatalog.current(context)?.json).spatialToggle
+        when {
+            id == Capabilities.gameModeId(context) -> r.command("lowLatency", "on" to on)
+            id == Feature.HIRES_CODEC -> {
+                audioAfterRestart = true
+                r.command("hires", "on" to on, "dropSpatial" to (exclusive && on && featureStates[Feature.SPATIAL_SOUND] == 1))
+            }
+            id == Feature.DUAL_DEVICE -> r.command("dual", "on" to on)
+            else -> {
+                val list = org.json.JSONArray().put(org.json.JSONArray().put(id).put(on))
+                if (exclusive && on && id == Feature.SPATIAL_SOUND && featureStates[Feature.HIRES_CODEC] == 1)
+                    list.put(org.json.JSONArray().put(Feature.HIRES_CODEC).put(false))
+                if (id in RESTARTS) audioAfterRestart = true
+                r.command("features", "list" to list)
+            }
+        }
+    }
+
+    private val rustShell = object : com.spizganed.quickbuds.protocol.RustDriver.Shell {
+        override fun write(frame: ByteArray) {
+            val t = connectedThread ?: return log("RUST: no link, frame dropped")
+            t.write(frame)
+        }
+        override fun log(line: String) = this@BudsConnectionManager.log(line)
+        override fun state(state: org.json.JSONObject) = applyRust(state)
+        override fun save(key: String, value: Any?) {
+            when (key) {
+                "product_id" -> (value as? String)?.let { onProductId(it) }
+                "model_manual" -> if (value == null) featurePrefs().edit().remove(ModelCatalog.KEY_MANUAL).apply()
+                "case_level" -> (value as? Int)?.let { l -> caseKey()?.let { featurePrefs().edit().putInt(it, l).apply() } }
+                else -> log("RUST: unknown setting $key")
+            }
+        }
+        override fun ready() { log("RUST: init done") }
+        override fun findPhone(ring: Boolean) {
+            if (ring) PhoneRinger.ring(context) else PhoneRinger.stop(context)
+        }
+        override fun hearing(event: org.json.JSONObject) {
+            val uid = event.optLong("uid").toInt()
+            fun floats(k: String) = event.optJSONArray(k)?.let { a -> FloatArray(a.length()) { a.getDouble(it).toFloat() } } ?: FloatArray(0)
+            fun bytes() = com.spizganed.quickbuds.protocol.RustDriver.unhex(event.optString("hex"))
+            handler.post {
+                listeners.forEach { l ->
+                    when (event.optString("t")) {
+                        "status" -> l.onGoldenStatus(event.optInt("kind"), event.optInt("status"))
+                        "refused" -> l.onGoldenRefused(event.optInt("status"))
+                        "earScan" -> l.onEarScan(uid, bytes())
+                        "filter" -> {
+                            l.onGoldenFilter(uid, event.optInt("enhance"))
+                            event.optJSONObject("curves")?.let { c ->
+                                val left = c.getJSONArray("left").let { a -> FloatArray(a.length()) { a.getDouble(it).toFloat() } }
+                                val right = c.getJSONArray("right").let { a -> FloatArray(a.length()) { a.getDouble(it).toFloat() } }
+                                l.onGoldenCurves(uid, false, c.getInt("fs"), left, right)
+                            }
+                        }
+                        "scanCurves" -> l.onGoldenCurves(uid, true, event.optInt("fs"), floats("left"), floats("right"))
+                        "active" -> l.onGoldenActive(uid, event.optString("name"),
+                            event.optJSONArray("values")?.let { a -> IntArray(a.length()) { a.getInt(it) } } ?: IntArray(0))
+                        "activeScan" -> l.onGoldenActiveScan(uid, bytes())
+                    }
+                }
+            }
+        }
+    }
+
+    /** The core's state into this class's fields, the saved settings and the listeners. Runs on the driver thread. */
+    private fun applyRust(st: org.json.JSONObject) {
+        val prev = rustLast
+        rustLast = st
+        fun changed(k: String) = prev == null || prev.opt(k)?.toString() != st.opt(k)?.toString()
+        fun ints(k: String): List<Int?> = st.optJSONArray(k)?.let { a -> (0 until a.length()).map { if (a.isNull(it)) null else a.getInt(it) } }.orEmpty()
+        fun intOrNull(k: String): Int? = if (st.isNull(k) || !st.has(k)) null else st.optInt(k)
+        val calls = mutableListOf<(Listener) -> Unit>()
+
+        if (changed("caps")) st.optJSONArray("caps")?.let { a ->
+            Capabilities.save(context, (0 until a.length()).map { a.getInt(it) }.toSet())
+            calls += { it.onCapabilities() }
+        }
+        if (changed("offered")) offeredEvents = st.optJSONArray("offered")?.let { a -> (0 until a.length()).map { a.getInt(it) }.toSet() }
+        if (changed("battery") || changed("charging")) {
+            val b = ints("battery").map { it?.takeIf { v -> v >= 0 } }
+            val c = st.optJSONArray("charging")
+            fun ch(i: Int) = c?.optBoolean(i) ?: false
+            // Core order: left, right, case. The listener's: left, case, right.
+            calls += { it.onBattery(b.getOrNull(0), b.getOrNull(2), b.getOrNull(1), ch(0), ch(2), ch(1)) }
+        }
+        if (changed("wearRaw")) {
+            val w = ints("wearRaw").map { it ?: -1 }
+            calls += { it.onWearState(w.getOrElse(0) { -1 }, w.getOrElse(1) { -1 }, w.getOrElse(2) { -1 }) }
+        }
+        if (changed("anc")) st.optString("anc").takeIf { !st.isNull("anc") }?.let { m -> calls += { it.onAncModeState(m) } }
+        if (changed("ancRefused") && prev != null && st.optInt("ancRefused") > prev.optInt("ancRefused"))
+            handler.post { Toast.makeText(context, R.string.anc_need_ear, Toast.LENGTH_SHORT).show() }
+        if (changed("switches")) {
+            val o = st.optJSONObject("switches")
+            val map = o?.keys()?.asSequence()?.associate { it.toInt() to o.getInt(it) }.orEmpty()
+            featureStates = map
+            val game = Capabilities.gameModeId(context)
+            calls += { l -> l.onFeatureStates(map); map[game]?.let { l.onGameModeState(it == 1) } }
+        }
+        if (changed("busy")) {
+            val now = ints("busy").filterNotNull().toSet()
+            val before = prev?.let { p -> p.optJSONArray("busy")?.let { a -> (0 until a.length()).map { a.getInt(it) }.toSet() } }.orEmpty()
+            for (k in now - before) calls += { it.onSettingBusy(k, true) }
+            for (k in before - now) calls += { it.onSettingBusy(k, false) }
+        }
+        if (changed("notice")) st.optJSONObject("notice")?.let { n ->
+            val kind = when (n.optString("kind")) {
+                "refused_missing" -> FeatureSync.ToastKind.REFUSED_MISSING
+                "refused_now" -> FeatureSync.ToastKind.REFUSED_NOW
+                "not_changed" -> FeatureSync.ToastKind.NOT_CHANGED
+                else -> FeatureSync.ToastKind.NO_ANSWER
+            }
+            val text = toastText(n.optInt("key"), kind)
+            handler.post { Toast.makeText(context, text, Toast.LENGTH_LONG).show() }
+        }
+        if (changed("eqPresets") || changed("eq") || changed("bass") || changed("bassBands")) {
+            val presets = st.optJSONArray("eqPresets")?.let { a ->
+                (0 until a.length()).map { i ->
+                    val p = a.getJSONObject(i)
+                    fun list(k: String) = p.getJSONArray(k).let { x -> (0 until x.length()).map { x.getInt(it) } }
+                    EqCodec.Preset(p.getInt("id"), p.getString("name"), list("freqs"), list("gains"), p.getBoolean("selected"),
+                        list("tag").map { it.toByte() }.toByteArray())
+                }
+            }.orEmpty()
+            val bands = ints("bassBands")
+            rustEq = EqState(intOrNull("eq"), intOrNull("bass"), presets, if (bands.size == 3) bands else com.spizganed.quickbuds.protocol.NO_BANDS)
+            calls += { it.onEqState() }
+        }
+        if (changed("tap")) st.optJSONArray("tap")?.let { t -> calls += { it.onTapLevel(t.getInt(0), t.getInt(1)) } }
+        if (changed("alert")) intOrNull("alert")?.let { v -> alertVolume = v; calls += { it.onAlertVolume(v) } }
+        if (changed("devices")) {
+            val list = st.optJSONArray("devices")?.let { a -> (0 until a.length()).map { i ->
+                val f = a.getString(i).split('|')
+                PairedDevice(f[0], f.getOrElse(1) { "" }, f.getOrNull(2) == "true", f.getOrNull(3) == "true")
+            } }.orEmpty()
+            devices = list
+            calls += { it.onDevices(list) }
+        }
+        if (changed("preferred")) { val m = st.optString("preferred").takeIf { !st.isNull("preferred") }; calls += { it.onPreferred(m) } }
+        if (changed("firmware")) st.optString("firmware").takeIf { !st.isNull("firmware") }?.let { v ->
+            Capabilities.saveFirmware(context, v)
+            calls += { it.onFirmware(v) }
+        }
+        spatialType = intOrNull("spatialType")
+        gameSoundType = intOrNull("gameSound")
+        gameSoundTypes = ints("gameSounds").filterNotNull()
+        headMotionType = intOrNull("head")
+        codec = intOrNull("codec")
+        codecs = ints("codecs").filterNotNull()
+        if (changed("smart")) { smartLevel = st.optString("smart").takeIf { !st.isNull("smart") }; calls += { it.onSmartLevel() } }
+        st.optJSONObject("holdMasks")?.let { o -> o.keys().forEach { lastHoldAncMasks[it.toInt()] = o.getInt(it) } }
+        if (changed("keyfn")) st.optJSONArray("keyfn")?.let { a ->
+            val entries = (0 until a.length()).map { i ->
+                val f = a.getString(i).split(':').map { it.toInt() }
+                KeyFunctionParser.Entry(f[0], f[1], f[2], f[3])
+            }
+            lastKeyFnTable = KeyFunctionParser.Table(0, entries.size, entries, ByteArray(0), false)
+        }
+        if (changed("fit")) st.optJSONArray("fit")?.let { f -> calls += { it.onFitResult(f.getInt(0), f.getInt(1)) } }
+        if (changed("pnc")) st.optJSONArray("pnc")?.let { p ->
+            val v = p.getInt(1)
+            when (p.getInt(0)) {
+                1 -> calls += { it.onPersonalNoiseStored(v == 1) }
+                2 -> calls += { it.onPersonalNoiseAck(v) }
+                3 -> calls += { it.onPersonalNoiseResult(v) }
+            }
+        }
+        if (calls.isNotEmpty()) handler.post { listeners.forEach { l -> calls.forEach { it(l) } } }
     }
 
     private fun log(msg: String) {

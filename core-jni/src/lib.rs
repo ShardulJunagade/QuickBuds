@@ -253,6 +253,8 @@ fn state_json(d: &Driver) -> String {
         "model": s.model.and_then(|m| m["id"].as_str()),
         "bassOn": s.bass_on,
         "bassBands": s.bass_bands,
+        "eqPresets": s.eq_custom.iter().map(|p| json!({ "id": p.id, "name": p.name, "freqs": p.freqs, "gains": p.gains,
+            "selected": p.selected, "tag": p.tag })).collect::<Vec<_>>(),
         "notice": s.notice.map(|n| json!({ "key": n.key, "kind": n.kind.name(), "seq": n.seq })),
     }).to_string()
 }
