@@ -271,6 +271,10 @@
     <string name="settings_general">Ogólne</string>
     <string name="settings_language_sub">Język aplikacji</string>
     <string name="settings_app">Aplikacja</string>
+    <string name="theme_row_desc">Wygląd aplikacji</string>
+    <string name="language_row_desc">Język aplikacji</string>
+    <string name="update_row_desc">Sprawdzaj i instaluj nowe wersje</string>
+    <string name="firmware_row_desc">Zaktualizuj je w oficjalnej aplikacji słuchawek</string>
     <string name="hires_sheet_body">Telefon też musi odtwarzać ten kodek</string>
     <string name="spatial_sheet_body">Stały: dźwięk porusza się razem z głową. Śledzenie głowy: dźwięk zostaje w miejscu, gdy obracasz głowę</string>
     <string name="head_motion_sheet_body">Drugi ruch odrzuca połączenie</string>

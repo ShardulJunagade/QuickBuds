@@ -271,6 +271,10 @@
     <string name="settings_general">Umum</string>
     <string name="settings_language_sub">Bahasa aplikasi</string>
     <string name="settings_app">Aplikasi</string>
+    <string name="theme_row_desc">Rupa apl</string>
+    <string name="language_row_desc">Bahasa apl</string>
+    <string name="update_row_desc">Semak dan pasang versi baharu</string>
+    <string name="firmware_row_desc">Kemas kini melalui apl rasmi fon telinga anda</string>
     <string name="hires_sheet_body">Telefon juga mesti memainkan codec itu</string>
     <string name="spatial_sheet_body">Tetap: bunyi bergerak bersama kepala anda. Penjejakan kepala: bunyi kekal di tempatnya apabila anda menoleh</string>
     <string name="head_motion_sheet_body">Gerakan yang satu lagi menolak panggilan</string>

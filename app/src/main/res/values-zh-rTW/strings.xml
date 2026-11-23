@@ -271,6 +271,10 @@
     <string name="settings_general">一般</string>
     <string name="settings_language_sub">應用程式語言</string>
     <string name="settings_app">應用程式</string>
+    <string name="theme_row_desc">應用程式的外觀</string>
+    <string name="language_row_desc">應用程式的語言</string>
+    <string name="update_row_desc">檢查並安裝新版本</string>
+    <string name="firmware_row_desc">請在耳機的官方應用程式中更新</string>
     <string name="hires_sheet_body">手機也必須支援播放該編解碼器</string>
     <string name="spatial_sheet_body">固定：聲音隨頭部移動。頭部追蹤：轉頭時聲音保持原位</string>
     <string name="head_motion_sheet_body">另一個動作會拒接來電</string>

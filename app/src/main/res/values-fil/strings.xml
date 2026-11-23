@@ -271,6 +271,10 @@
     <string name="settings_general">Pangkalahatan</string>
     <string name="settings_language_sub">Wika ng app</string>
     <string name="settings_app">App</string>
+    <string name="theme_row_desc">Ang itsura ng app</string>
+    <string name="language_row_desc">Ang wika ng app</string>
+    <string name="update_row_desc">Tingnan at i-install ang mga bagong bersyon</string>
+    <string name="firmware_row_desc">I-update ito mula sa opisyal na app ng iyong earbuds</string>
     <string name="hires_sheet_body">Dapat ding kayang i-play ng phone ang codec</string>
     <string name="spatial_sheet_body">Fixed: gumagalaw ang tunog kasama ng ulo mo. Head tracking: nananatili ang tunog sa lugar kapag ibinaling mo ang ulo</string>
     <string name="head_motion_sheet_body">Tinatanggihan ng isa pang galaw ang tawag</string>

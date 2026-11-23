@@ -271,6 +271,10 @@
     <string name="settings_general">Общие</string>
     <string name="settings_language_sub">Язык приложения</string>
     <string name="settings_app">Приложение</string>
+    <string name="theme_row_desc">Внешний вид приложения</string>
+    <string name="language_row_desc">Язык приложения</string>
+    <string name="update_row_desc">Проверка и установка новых версий</string>
+    <string name="firmware_row_desc">Обновляйте её через официальное приложение наушников</string>
     <string name="hires_sheet_body">Телефон тоже должен воспроизводить этот кодек</string>
     <string name="spatial_sheet_body">Фиксированный: звук движется вместе с головой. Отслеживание головы: звук остаётся на месте, когда вы поворачиваете голову</string>
     <string name="head_motion_sheet_body">Другое движение отклоняет вызов</string>

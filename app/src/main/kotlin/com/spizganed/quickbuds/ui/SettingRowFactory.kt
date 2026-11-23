@@ -132,6 +132,9 @@ object SettingRowFactory {
     /** Tag for the subtitle TextView, so callers can find and update it. */
     const val SUBTITLE_TAG = "setting_row_subtitle"
 
+    /** A subtitle that says what the row does, then its current value: "How the app looks · OLED Black". */
+    fun described(description: String, value: CharSequence): String = "${description.trimEnd('.')} · $value"
+
     /** A write shorter than this shows no "Applying…": most writes take about 0.4 s, and a swap would flash the row. */
     private const val APPLYING_DELAY_MS = 800L
 

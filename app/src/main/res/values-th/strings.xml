@@ -271,6 +271,10 @@
     <string name="settings_general">ทั่วไป</string>
     <string name="settings_language_sub">ภาษาของแอป</string>
     <string name="settings_app">แอป</string>
+    <string name="theme_row_desc">หน้าตาของแอป</string>
+    <string name="language_row_desc">ภาษาของแอป</string>
+    <string name="update_row_desc">ตรวจหาและติดตั้งเวอร์ชันใหม่</string>
+    <string name="firmware_row_desc">อัปเดตผ่านแอปทางการของหูฟัง</string>
     <string name="hires_sheet_body">โทรศัพท์ต้องเล่นโคเดกนั้นได้ด้วย</string>
     <string name="spatial_sheet_body">คงที่: เสียงเคลื่อนตามศีรษะ ติดตามศีรษะ: เสียงอยู่กับที่เมื่อคุณหันศีรษะ</string>
     <string name="head_motion_sheet_body">การเคลื่อนไหวอีกแบบจะปฏิเสธสาย</string>

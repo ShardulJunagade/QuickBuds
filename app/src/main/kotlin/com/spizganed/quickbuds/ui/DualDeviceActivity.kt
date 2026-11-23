@@ -169,8 +169,8 @@ class DualDeviceActivity : Activity(), BudsConnectionManager.Listener {
     }
 
     private fun paintPreferred() {
-        preferredText?.text = preferred?.let { mac -> manager?.devices?.firstOrNull { it.mac == mac }?.name ?: mac }
-            ?: getString(R.string.dual_preferred_auto)
+        preferredText?.text = SettingRowFactory.described(getString(R.string.dual_preferred_sub),
+            preferred?.let { mac -> manager?.devices?.firstOrNull { it.mac == mac }?.name ?: mac } ?: getString(R.string.dual_preferred_auto))
     }
 
     private fun preferredSheet() {

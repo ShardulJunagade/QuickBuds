@@ -271,6 +271,10 @@
     <string name="settings_general">Chung</string>
     <string name="settings_language_sub">Ngôn ngữ ứng dụng</string>
     <string name="settings_app">Ứng dụng</string>
+    <string name="theme_row_desc">Giao diện của ứng dụng</string>
+    <string name="language_row_desc">Ngôn ngữ của ứng dụng</string>
+    <string name="update_row_desc">Kiểm tra và cài đặt phiên bản mới</string>
+    <string name="firmware_row_desc">Hãy cập nhật từ ứng dụng chính thức của tai nghe</string>
     <string name="hires_sheet_body">Điện thoại cũng phải phát được codec đó</string>
     <string name="spatial_sheet_body">Cố định: âm thanh di chuyển theo đầu bạn. Theo dõi đầu: âm thanh giữ nguyên vị trí khi bạn quay đầu</string>
     <string name="head_motion_sheet_body">Cử động còn lại sẽ từ chối cuộc gọi</string>

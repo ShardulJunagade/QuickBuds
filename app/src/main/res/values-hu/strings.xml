@@ -271,6 +271,10 @@
     <string name="settings_general">Általános</string>
     <string name="settings_language_sub">Alkalmazás nyelve</string>
     <string name="settings_app">Alkalmazás</string>
+    <string name="theme_row_desc">Az alkalmazás megjelenése</string>
+    <string name="language_row_desc">Az alkalmazás nyelve</string>
+    <string name="update_row_desc">Új verziók keresése és telepítése</string>
+    <string name="firmware_row_desc">Frissítsd a fülhallgató hivatalos alkalmazásából</string>
     <string name="hires_sheet_body">A telefonnak is le kell játszania a kodeket</string>
     <string name="spatial_sheet_body">Rögzített: a hang a fejeddel együtt mozog. Fejkövetés: a hang a helyén marad, ha elfordítod a fejed</string>
     <string name="head_motion_sheet_body">A másik mozdulat elutasítja a hívást</string>

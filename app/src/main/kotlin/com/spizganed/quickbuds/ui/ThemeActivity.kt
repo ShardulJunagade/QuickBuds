@@ -173,7 +173,8 @@ class ThemeActivity : Activity() {
                     refresh()
                     sheet.show()
                 }
-                SettingRowFactory.subtitle(this@ThemeActivity, bgRow).text = getString(current.nameRes)
+                SettingRowFactory.subtitle(this@ThemeActivity, bgRow).text =
+                    SettingRowFactory.described(getString(R.string.glass_bg_sheet_body), getString(current.nameRes))
                 if (childCount == 0) addView(bgRow) else SettingRowFactory.addRow(this, bgRow)
             }
             if (childCount == 0) visibility = View.GONE

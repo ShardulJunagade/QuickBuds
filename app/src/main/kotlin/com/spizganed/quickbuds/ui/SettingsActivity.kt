@@ -84,7 +84,8 @@ class SettingsActivity : Activity() {
         val updateRow = link(R.drawable.ic_update, R.string.row_update_title, 0) {
             startActivity(Intent(this, UpdateActivity::class.java))
         }
-        SettingRowFactory.subtitle(this, updateRow).text = getString(R.string.settings_update_sub, version)
+        SettingRowFactory.subtitle(this, updateRow).text =
+            SettingRowFactory.described(getString(R.string.update_row_desc), getString(R.string.settings_update_sub, version))
         section(R.string.settings_app,
             updateRow,
             link(R.drawable.ic_info, R.string.settings_about_title, R.string.settings_about_sub) {
@@ -104,12 +105,13 @@ class SettingsActivity : Activity() {
 
     override fun onResume() {
         super.onResume()
-        themeSubtitle?.text = ThemeRes.palette(this).name
+        themeSubtitle?.text = SettingRowFactory.described(getString(R.string.theme_row_desc), ThemeRes.palette(this).name)
         // The current language by its own name, as the language list shows it.
         val tag = ThemeRes.language(this)
-        languageSubtitle?.text = ThemeRes.LANGUAGES.firstOrNull { it.first == tag }?.second
+        val language = ThemeRes.LANGUAGES.firstOrNull { it.first == tag }?.second
             ?: ThemeRes.LANGUAGES.firstOrNull { tag.isNotEmpty() && it.first == tag.substringBefore('-') }?.second
             ?: getString(R.string.language_system)
+        languageSubtitle?.text = SettingRowFactory.described(getString(R.string.language_row_desc), language)
     }
 
     companion object {

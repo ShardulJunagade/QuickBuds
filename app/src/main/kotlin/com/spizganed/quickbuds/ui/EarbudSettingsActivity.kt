@@ -134,7 +134,7 @@ class EarbudSettingsActivity : Activity(), BudsConnectionManager.Listener {
     }
 
     private fun paintFirmware(version: String? = Capabilities.firmware(this)) {
-        firmwareText?.text = version ?: "—"
+        firmwareText?.text = SettingRowFactory.described(getString(R.string.firmware_row_desc), version ?: "—")
     }
 
     /**
