@@ -274,7 +274,6 @@
     <string name="theme_row_desc">Η εμφάνιση της εφαρμογής</string>
     <string name="language_row_desc">Η γλώσσα της εφαρμογής</string>
     <string name="update_row_desc">Έλεγχος και εγκατάσταση νέων εκδόσεων</string>
-    <string name="firmware_row_desc">Ενημερώστε το από την επίσημη εφαρμογή των ακουστικών σας</string>
     <string name="hires_sheet_body">Το τηλέφωνο πρέπει επίσης να παίζει τον κωδικοποιητή</string>
     <string name="spatial_sheet_body">Σταθερό: ο ήχος κινείται με το κεφάλι σας. Παρακολούθηση κεφαλιού: ο ήχος μένει στη θέση του όταν γυρίζετε το κεφάλι</string>
     <string name="head_motion_sheet_body">Η άλλη κίνηση απορρίπτει την κλήση</string>

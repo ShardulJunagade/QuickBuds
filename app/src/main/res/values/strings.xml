@@ -357,7 +357,6 @@
     <string name="theme_row_desc">How the app looks</string>
     <string name="language_row_desc">The language of the app</string>
     <string name="update_row_desc">Check for and install new versions</string>
-    <string name="firmware_row_desc">Update it from the official app of your earbuds</string>
     <string name="hires_sheet_body">The phone must play the codec too</string>
     <string name="spatial_sheet_body">Fixed: the sound moves with your head. Head tracking: the sound stays in place when you turn your head</string>
     <string name="head_motion_sheet_body">The other movement declines the call</string>

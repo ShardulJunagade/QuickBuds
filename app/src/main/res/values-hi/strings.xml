@@ -274,7 +274,6 @@
     <string name="theme_row_desc">ऐप कैसा दिखता है</string>
     <string name="language_row_desc">ऐप की भाषा</string>
     <string name="update_row_desc">नए संस्करण देखें और इंस्टॉल करें</string>
-    <string name="firmware_row_desc">इसे अपने ईयरबड्स के आधिकारिक ऐप से अपडेट करें</string>
     <string name="hires_sheet_body">फ़ोन को भी कोडेक चलाना होगा</string>
     <string name="spatial_sheet_body">फ़िक्स्ड: आवाज़ आपके सिर के साथ चलती है। हेड ट्रैकिंग: सिर घुमाने पर आवाज़ अपनी जगह रहती है</string>
     <string name="head_motion_sheet_body">दूसरी हरकत कॉल अस्वीकार करती है</string>

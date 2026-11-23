@@ -274,7 +274,6 @@
     <string name="theme_row_desc">アプリの見た目</string>
     <string name="language_row_desc">アプリの言語</string>
     <string name="update_row_desc">新しいバージョンを確認してインストール</string>
-    <string name="firmware_row_desc">イヤホンの公式アプリから更新してください</string>
     <string name="hires_sheet_body">スマホもそのコーデックを再生できる必要があります</string>
     <string name="spatial_sheet_body">固定：音が頭と一緒に動きます。ヘッドトラッキング：頭を回しても音はその場に留まります</string>
     <string name="head_motion_sheet_body">もう一方の動作で着信を拒否します</string>

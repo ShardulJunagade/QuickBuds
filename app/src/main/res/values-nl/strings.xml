@@ -274,7 +274,6 @@
     <string name="theme_row_desc">Hoe de app eruitziet</string>
     <string name="language_row_desc">De taal van de app</string>
     <string name="update_row_desc">Nieuwe versies zoeken en installeren</string>
-    <string name="firmware_row_desc">Werk het bij via de officiële app van je oordopjes</string>
     <string name="hires_sheet_body">De telefoon moet de codec ook afspelen</string>
     <string name="spatial_sheet_body">Vast: het geluid beweegt met je hoofd mee. Hoofdvolging: het geluid blijft op zijn plek als je je hoofd draait</string>
     <string name="head_motion_sheet_body">De andere beweging weigert de oproep</string>

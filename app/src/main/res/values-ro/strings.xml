@@ -274,7 +274,6 @@
     <string name="theme_row_desc">Aspectul aplicației</string>
     <string name="language_row_desc">Limba aplicației</string>
     <string name="update_row_desc">Caută și instalează versiuni noi</string>
-    <string name="firmware_row_desc">Actualizează-l din aplicația oficială a căștilor</string>
     <string name="hires_sheet_body">Și telefonul trebuie să redea codecul</string>
     <string name="spatial_sheet_body">Fix: sunetul se mișcă odată cu capul. Urmărirea capului: sunetul rămâne pe loc când întorci capul</string>
     <string name="head_motion_sheet_body">Cealaltă mișcare respinge apelul</string>

@@ -274,7 +274,6 @@
     <string name="theme_row_desc">অ্যাপটি দেখতে কেমন</string>
     <string name="language_row_desc">অ্যাপের ভাষা</string>
     <string name="update_row_desc">নতুন সংস্করণ খুঁজুন ও ইনস্টল করুন</string>
-    <string name="firmware_row_desc">আপনার ইয়ারবাডের অফিশিয়াল অ্যাপ থেকে আপডেট করুন</string>
     <string name="hires_sheet_body">ফোনকেও কোডেকটি চালাতে হবে</string>
     <string name="spatial_sheet_body">স্থির: শব্দ আপনার মাথার সাথে নড়ে। হেড ট্র্যাকিং: মাথা ঘোরালেও শব্দ জায়গায় থাকে</string>
     <string name="head_motion_sheet_body">অন্য নড়াচড়াটি কল প্রত্যাখ্যান করে</string>

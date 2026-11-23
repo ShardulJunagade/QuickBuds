@@ -274,7 +274,6 @@
     <string name="theme_row_desc">Wie die App aussieht</string>
     <string name="language_row_desc">Die Sprache der App</string>
     <string name="update_row_desc">Neue Versionen suchen und installieren</string>
-    <string name="firmware_row_desc">Aktualisiere sie mit der offiziellen App deiner Kopfhörer</string>
     <string name="hires_sheet_body">Das Handy muss den Codec auch abspielen</string>
     <string name="spatial_sheet_body">Fest: Der Klang bewegt sich mit dem Kopf. Kopfverfolgung: Der Klang bleibt an seinem Platz, wenn du den Kopf drehst</string>
     <string name="head_motion_sheet_body">Die andere Bewegung lehnt den Anruf ab</string>

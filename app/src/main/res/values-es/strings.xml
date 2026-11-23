@@ -274,7 +274,6 @@
     <string name="theme_row_desc">El aspecto de la app</string>
     <string name="language_row_desc">El idioma de la app</string>
     <string name="update_row_desc">Buscar e instalar versiones nuevas</string>
-    <string name="firmware_row_desc">Actualízalo desde la app oficial de tus auriculares</string>
     <string name="hires_sheet_body">El teléfono también debe reproducir el códec</string>
     <string name="spatial_sheet_body">Fijo: el sonido se mueve con tu cabeza. Seguimiento de cabeza: el sonido se queda en su sitio al girar la cabeza</string>
     <string name="head_motion_sheet_body">El otro movimiento rechaza la llamada</string>

@@ -274,7 +274,6 @@
     <string name="theme_row_desc">Вигляд застосунку</string>
     <string name="language_row_desc">Мова застосунку</string>
     <string name="update_row_desc">Перевірка та встановлення нових версій</string>
-    <string name="firmware_row_desc">Оновлюйте її через офіційний застосунок навушників</string>
     <string name="hires_sheet_body">Телефон теж має відтворювати цей кодек</string>
     <string name="spatial_sheet_body">Фіксований: звук рухається разом із головою. Відстеження голови: звук лишається на місці, коли ви повертаєте голову</string>
     <string name="head_motion_sheet_body">Інший рух відхиляє виклик</string>

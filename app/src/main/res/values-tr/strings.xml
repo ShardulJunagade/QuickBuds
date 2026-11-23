@@ -274,7 +274,6 @@
     <string name="theme_row_desc">Uygulamanın görünümü</string>
     <string name="language_row_desc">Uygulamanın dili</string>
     <string name="update_row_desc">Yeni sürümleri denetle ve yükle</string>
-    <string name="firmware_row_desc">Kulaklığınızın resmi uygulamasından güncelleyin</string>
     <string name="hires_sheet_body">Telefonun da bu kodeki çalabilmesi gerekir</string>
     <string name="spatial_sheet_body">Sabit: ses başınızla birlikte hareket eder. Kafa takibi: başınızı çevirdiğinizde ses yerinde kalır</string>
     <string name="head_motion_sheet_body">Diğer hareket aramayı reddeder</string>

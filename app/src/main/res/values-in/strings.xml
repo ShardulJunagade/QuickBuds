@@ -274,7 +274,6 @@
     <string name="theme_row_desc">Tampilan aplikasi</string>
     <string name="language_row_desc">Bahasa aplikasi</string>
     <string name="update_row_desc">Periksa dan pasang versi baru</string>
-    <string name="firmware_row_desc">Perbarui dari aplikasi resmi earbud Anda</string>
     <string name="hires_sheet_body">Ponsel juga harus memutar codec tersebut</string>
     <string name="spatial_sheet_body">Tetap: suara bergerak bersama kepala Anda. Pelacakan kepala: suara tetap di tempat saat Anda menoleh</string>
     <string name="head_motion_sheet_body">Gerakan lainnya menolak panggilan</string>

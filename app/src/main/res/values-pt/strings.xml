@@ -274,7 +274,6 @@
     <string name="theme_row_desc">A aparência do app</string>
     <string name="language_row_desc">O idioma do app</string>
     <string name="update_row_desc">Procurar e instalar novas versões</string>
-    <string name="firmware_row_desc">Atualize-o pelo app oficial dos seus fones</string>
     <string name="hires_sheet_body">O telefone também precisa tocar o codec</string>
     <string name="spatial_sheet_body">Fixo: o som se move com a sua cabeça. Rastreamento da cabeça: o som fica no lugar quando você vira a cabeça</string>
     <string name="head_motion_sheet_body">O outro movimento recusa a chamada</string>
