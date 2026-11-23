@@ -269,7 +269,14 @@
     <string name="theme_title">Témák, színek és stílusok</string>
     <string name="settings_appearance">Megjelenés</string>
     <string name="settings_general">Általános</string>
+    <string name="settings_language_sub">Alkalmazás nyelve</string>
     <string name="settings_app">Alkalmazás</string>
+    <string name="settings_behavior">Működés</string>
+    <string name="settings_notif_widgets">Értesítések és widgetek</string>
+    <string name="settings_help">Súgó és visszajelzés</string>
+    <string name="settings_notif_sub">Akkumulátor-értesítés, állapotjelző és gombok</string>
+    <string name="settings_widgets_sub">Kezdőképernyő-widgetek és gyorsbeállítás-csempék</string>
+    <string name="settings_setup_sub">Engedélyek és első lépések</string>
     <string name="settings_layout_title">Kezdőképernyő elrendezése</string>
     <string name="settings_layout_sub">Sorok átrendezése és elrejtése</string>
     <string name="layout_title">Elrendezés szerkesztése</string>
@@ -369,7 +376,6 @@
     <string name="widget_battery_name">QuickBuds akkumulátor</string>
     <string name="widget_strip_name">QuickBuds akkumulátorsáv</string>
     <string name="settings_language_title">Nyelv</string>
-    <string name="settings_language_sub">Alkalmazás nyelve</string>
     <string name="language_system">Rendszer alapértelmezése</string>
 
     <!-- Model list (ModelActivity) -->

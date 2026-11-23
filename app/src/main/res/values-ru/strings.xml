@@ -269,7 +269,14 @@
     <string name="theme_title">Темы, цвета и стили</string>
     <string name="settings_appearance">Оформление</string>
     <string name="settings_general">Общие</string>
+    <string name="settings_language_sub">Язык приложения</string>
     <string name="settings_app">Приложение</string>
+    <string name="settings_behavior">Поведение</string>
+    <string name="settings_notif_widgets">Уведомления и виджеты</string>
+    <string name="settings_help">Помощь и отзывы</string>
+    <string name="settings_notif_sub">Уведомление о батарее, чип статуса и кнопки</string>
+    <string name="settings_widgets_sub">Виджеты главного экрана и плитки быстрых настроек</string>
+    <string name="settings_setup_sub">Разрешения и первые шаги</string>
     <string name="settings_layout_title">Макет главного экрана</string>
     <string name="settings_layout_sub">Порядок и скрытие строк</string>
     <string name="layout_title">Изменить макет</string>
@@ -369,7 +376,6 @@
     <string name="widget_battery_name">QuickBuds батарея</string>
     <string name="widget_strip_name">Полоса батареи QuickBuds</string>
     <string name="settings_language_title">Язык</string>
-    <string name="settings_language_sub">Язык приложения</string>
     <string name="language_system">Как в системе</string>
 
     <!-- Model list (ModelActivity) -->

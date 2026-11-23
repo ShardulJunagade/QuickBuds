@@ -269,7 +269,14 @@
     <string name="theme_title">Θέματα, χρώματα και στυλ</string>
     <string name="settings_appearance">Εμφάνιση</string>
     <string name="settings_general">Γενικά</string>
+    <string name="settings_language_sub">Γλώσσα εφαρμογής</string>
     <string name="settings_app">Εφαρμογή</string>
+    <string name="settings_behavior">Συμπεριφορά</string>
+    <string name="settings_notif_widgets">Ειδοποιήσεις και widget</string>
+    <string name="settings_help">Βοήθεια και σχόλια</string>
+    <string name="settings_notif_sub">Ειδοποίηση μπαταρίας, chip κατάστασης και κουμπιά</string>
+    <string name="settings_widgets_sub">Widget αρχικής οθόνης και πλακίδια Γρήγορων ρυθμίσεων</string>
+    <string name="settings_setup_sub">Άδειες και πρώτα βήματα</string>
     <string name="settings_layout_title">Διάταξη αρχικής οθόνης</string>
     <string name="settings_layout_sub">Αναδιάταξη και απόκρυψη γραμμών</string>
     <string name="layout_title">Επεξεργασία διάταξης</string>
@@ -369,7 +376,6 @@
     <string name="widget_battery_name">QuickBuds μπαταρία</string>
     <string name="widget_strip_name">Λωρίδα μπαταρίας QuickBuds</string>
     <string name="settings_language_title">Γλώσσα</string>
-    <string name="settings_language_sub">Γλώσσα εφαρμογής</string>
     <string name="language_system">Προεπιλογή συστήματος</string>
 
     <!-- Model list (ModelActivity) -->

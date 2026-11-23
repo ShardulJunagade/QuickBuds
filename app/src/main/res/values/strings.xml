@@ -349,7 +349,14 @@
     <string name="theme_title">Themes, colors &amp; styles</string>
     <string name="settings_appearance">Appearance</string>
     <string name="settings_general">General</string>
+    <string name="settings_language_sub">App language</string>
     <string name="settings_app">App</string>
+    <string name="settings_behavior">Behavior</string>
+    <string name="settings_notif_widgets">Notifications and widgets</string>
+    <string name="settings_help">Help and feedback</string>
+    <string name="settings_notif_sub">Battery notification, status chip and buttons</string>
+    <string name="settings_widgets_sub">Home screen widgets and Quick Settings tiles</string>
+    <string name="settings_setup_sub">Permissions and first steps</string>
     <string name="settings_layout_title">Home layout</string>
     <string name="settings_layout_sub">Reorder and hide rows</string>
     <string name="layout_title">Edit layout</string>
@@ -469,7 +476,6 @@
     <string name="widget_battery_name">QuickBuds battery</string>
     <string name="widget_strip_name">QuickBuds battery strip</string>
     <string name="settings_language_title">Language</string>
-    <string name="settings_language_sub">App language</string>
     <string name="language_system">System default</string>
 
     <!-- Model list (ModelActivity) -->

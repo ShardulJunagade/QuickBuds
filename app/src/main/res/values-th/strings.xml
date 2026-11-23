@@ -269,7 +269,14 @@
     <string name="theme_title">ธีม สี และสไตล์</string>
     <string name="settings_appearance">รูปลักษณ์</string>
     <string name="settings_general">ทั่วไป</string>
+    <string name="settings_language_sub">ภาษาของแอป</string>
     <string name="settings_app">แอป</string>
+    <string name="settings_behavior">การทำงาน</string>
+    <string name="settings_notif_widgets">การแจ้งเตือนและวิดเจ็ต</string>
+    <string name="settings_help">ความช่วยเหลือและความคิดเห็น</string>
+    <string name="settings_notif_sub">การแจ้งเตือนแบตเตอรี่ ชิปสถานะ และปุ่ม</string>
+    <string name="settings_widgets_sub">วิดเจ็ตหน้าจอหลักและไทล์การตั้งค่าด่วน</string>
+    <string name="settings_setup_sub">สิทธิ์และขั้นตอนแรก</string>
     <string name="settings_layout_title">เลย์เอาต์หน้าหลัก</string>
     <string name="settings_layout_sub">จัดลำดับและซ่อนแถว</string>
     <string name="layout_title">แก้ไขเลย์เอาต์</string>
@@ -371,7 +378,6 @@
     <string name="widget_battery_name">QuickBuds แบตเตอรี่</string>
     <string name="widget_strip_name">แถบแบตเตอรี่ QuickBuds</string>
     <string name="settings_language_title">ภาษา</string>
-    <string name="settings_language_sub">ภาษาของแอป</string>
     <string name="language_system">ค่าเริ่มต้นของระบบ</string>
 
     <!-- Model list (ModelActivity) -->

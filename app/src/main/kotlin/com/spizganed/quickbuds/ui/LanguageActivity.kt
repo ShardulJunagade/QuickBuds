@@ -11,7 +11,7 @@ import android.widget.TextView
 import com.spizganed.quickbuds.R
 
 /**
- * In-app language (Settings > General > Language): System default and one row per language we
+ * In-app language (Settings › Appearance › Language): System default and one row per language we
  * ship, instead of Android's per-app screen with every regional variant. Saved through [ThemeRes].
  *
  * The manifest gives this activity `configChanges="locale|layoutDirection"`: on Android 13+ a pick

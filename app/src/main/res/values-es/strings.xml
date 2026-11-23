@@ -269,7 +269,14 @@
     <string name="theme_title">Temas, colores y estilos</string>
     <string name="settings_appearance">Apariencia</string>
     <string name="settings_general">General</string>
+    <string name="settings_language_sub">Idioma de la app</string>
     <string name="settings_app">App</string>
+    <string name="settings_behavior">Comportamiento</string>
+    <string name="settings_notif_widgets">Notificaciones y widgets</string>
+    <string name="settings_help">Ayuda y comentarios</string>
+    <string name="settings_notif_sub">Notificación de batería, chip de estado y botones</string>
+    <string name="settings_widgets_sub">Widgets de inicio y mosaicos de ajustes rápidos</string>
+    <string name="settings_setup_sub">Permisos y primeros pasos</string>
     <string name="settings_layout_title">Diseño de inicio</string>
     <string name="settings_layout_sub">Reordena y oculta filas</string>
     <string name="layout_title">Editar diseño</string>
@@ -369,7 +376,6 @@
     <string name="widget_battery_name">QuickBuds batería</string>
     <string name="widget_strip_name">Tira de batería QuickBuds</string>
     <string name="settings_language_title">Idioma</string>
-    <string name="settings_language_sub">Idioma de la app</string>
     <string name="language_system">Predeterminado del sistema</string>
 
     <!-- Model list (ModelActivity) -->

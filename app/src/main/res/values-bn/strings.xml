@@ -269,7 +269,14 @@
     <string name="theme_title">থিম, রং ও স্টাইল</string>
     <string name="settings_appearance">চেহারা</string>
     <string name="settings_general">সাধারণ</string>
+    <string name="settings_language_sub">অ্যাপের ভাষা</string>
     <string name="settings_app">অ্যাপ</string>
+    <string name="settings_behavior">আচরণ</string>
+    <string name="settings_notif_widgets">বিজ্ঞপ্তি ও উইজেট</string>
+    <string name="settings_help">সাহায্য ও মতামত</string>
+    <string name="settings_notif_sub">ব্যাটারি বিজ্ঞপ্তি, স্ট্যাটাস চিপ ও বোতাম</string>
+    <string name="settings_widgets_sub">হোম স্ক্রিন উইজেট ও কুইক সেটিংস টাইল</string>
+    <string name="settings_setup_sub">অনুমতি ও প্রথম ধাপ</string>
     <string name="settings_layout_title">হোম লেআউট</string>
     <string name="settings_layout_sub">সারির ক্রম বদলান ও লুকান</string>
     <string name="layout_title">লেআউট সম্পাদনা</string>
@@ -369,7 +376,6 @@
     <string name="widget_battery_name">QuickBuds ব্যাটারি</string>
     <string name="widget_strip_name">QuickBuds ব্যাটারি স্ট্রিপ</string>
     <string name="settings_language_title">ভাষা</string>
-    <string name="settings_language_sub">অ্যাপের ভাষা</string>
     <string name="language_system">সিস্টেম ডিফল্ট</string>
 
     <!-- Model list (ModelActivity) -->

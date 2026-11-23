@@ -269,7 +269,14 @@
     <string name="theme_title">Teme, culori și stiluri</string>
     <string name="settings_appearance">Aspect</string>
     <string name="settings_general">General</string>
+    <string name="settings_language_sub">Limba aplicației</string>
     <string name="settings_app">Aplicație</string>
+    <string name="settings_behavior">Comportament</string>
+    <string name="settings_notif_widgets">Notificări și widgeturi</string>
+    <string name="settings_help">Ajutor și feedback</string>
+    <string name="settings_notif_sub">Notificarea bateriei, cipul de stare și butoanele</string>
+    <string name="settings_widgets_sub">Widgeturi pe ecranul de pornire și plăci de setări rapide</string>
+    <string name="settings_setup_sub">Permisiuni și primii pași</string>
     <string name="settings_layout_title">Aspectul ecranului principal</string>
     <string name="settings_layout_sub">Reordonează și ascunde rânduri</string>
     <string name="layout_title">Editează aspectul</string>
@@ -369,7 +376,6 @@
     <string name="widget_battery_name">QuickBuds baterie</string>
     <string name="widget_strip_name">Bandă baterie QuickBuds</string>
     <string name="settings_language_title">Limbă</string>
-    <string name="settings_language_sub">Limba aplicației</string>
     <string name="language_system">Implicit sistem</string>
 
     <!-- Model list (ModelActivity) -->
