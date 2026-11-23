@@ -287,7 +287,6 @@
     <string name="setup_pair_sub">Подключите там новые наушники и вернитесь</string>
     <string name="dual_add_sub">Подключите к наушникам другой телефон или компьютер</string>
     <string name="theme_accent_row_sub">Цвет переключателей, колец и выделений</string>
-    <string name="theme_new_sub">Ваши цвета на основе этой темы</string>
     <string name="panel_corner_title">Угол панели</string>
     <string name="panel_corner_sub">Где открывается панель трея. Автоматически: в углу рядом со значком</string>
     <string name="panel_corner_auto">Автоматически</string>

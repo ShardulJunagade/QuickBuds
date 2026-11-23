@@ -287,7 +287,6 @@
     <string name="setup_pair_sub">Mag-pair doon ng bagong earbuds, saka bumalik</string>
     <string name="dual_add_sub">Mag-pair ng ibang phone o computer sa earbuds</string>
     <string name="theme_accent_row_sub">Ang kulay ng mga switch, ring at highlight</string>
-    <string name="theme_new_sub">Sariling kulay mo, simula sa temang ito</string>
     <string name="panel_corner_title">Sulok ng panel</string>
     <string name="panel_corner_sub">Kung saan bubukas ang tray panel. Awtomatiko: sa sulok na pinakamalapit sa tray icon</string>
     <string name="panel_corner_auto">Awtomatiko</string>

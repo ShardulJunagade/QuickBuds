@@ -367,7 +367,6 @@
     <string name="setup_pair_sub">Pair new earbuds there, then come back</string>
     <string name="dual_add_sub">Pair another phone or computer with the earbuds</string>
     <string name="theme_accent_row_sub">The color of switches, rings and highlights</string>
-    <string name="theme_new_sub">Your own colors, starting from this theme</string>
     <string name="panel_corner_title">Panel corner</string>
     <string name="panel_corner_sub">Where the tray panel opens. Automatic: in the corner nearest the tray icon</string>
     <string name="panel_corner_auto">Automatic</string>

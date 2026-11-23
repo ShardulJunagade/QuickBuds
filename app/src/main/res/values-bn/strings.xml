@@ -287,7 +287,6 @@
     <string name="setup_pair_sub">সেখানে নতুন ইয়ারবাড পেয়ার করুন, তারপর ফিরে আসুন</string>
     <string name="dual_add_sub">ইয়ারবাডের সাথে আরেকটি ফোন বা কম্পিউটার পেয়ার করুন</string>
     <string name="theme_accent_row_sub">সুইচ, রিং ও হাইলাইটের রং</string>
-    <string name="theme_new_sub">আপনার নিজের রং, এই থিম থেকে শুরু</string>
     <string name="panel_corner_title">প্যানেলের কোণ</string>
     <string name="panel_corner_sub">ট্রে প্যানেল কোথায় খোলে। স্বয়ংক্রিয়: ট্রে আইকনের সবচেয়ে কাছের কোণে</string>
     <string name="panel_corner_auto">স্বয়ংক্রিয়</string>

@@ -287,7 +287,6 @@
     <string name="setup_pair_sub">Abbina lì nuovi auricolari, poi torna qui</string>
     <string name="dual_add_sub">Abbina un altro telefono o computer agli auricolari</string>
     <string name="theme_accent_row_sub">Il colore di interruttori, anelli ed evidenziazioni</string>
-    <string name="theme_new_sub">I tuoi colori, a partire da questo tema</string>
     <string name="panel_corner_title">Angolo del pannello</string>
     <string name="panel_corner_sub">Dove si apre il pannello dell\'area di notifica. Automatico: nell\'angolo più vicino all\'icona</string>
     <string name="panel_corner_auto">Automatico</string>

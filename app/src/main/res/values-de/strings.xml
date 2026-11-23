@@ -287,7 +287,6 @@
     <string name="setup_pair_sub">Dort neue Kopfhörer koppeln, dann zurückkommen</string>
     <string name="dual_add_sub">Ein weiteres Handy oder einen Computer mit den Kopfhörern koppeln</string>
     <string name="theme_accent_row_sub">Die Farbe von Schaltern, Ringen und Hervorhebungen</string>
-    <string name="theme_new_sub">Eigene Farben, ausgehend von diesem Design</string>
     <string name="panel_corner_title">Panel-Ecke</string>
     <string name="panel_corner_sub">Wo sich das Tray-Panel öffnet. Automatisch: in der Ecke nahe dem Tray-Symbol</string>
     <string name="panel_corner_auto">Automatisch</string>

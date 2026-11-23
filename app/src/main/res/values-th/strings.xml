@@ -287,7 +287,6 @@
     <string name="setup_pair_sub">จับคู่หูฟังใหม่ที่นั่น แล้วกลับมา</string>
     <string name="dual_add_sub">จับคู่โทรศัพท์หรือคอมพิวเตอร์อีกเครื่องกับหูฟัง</string>
     <string name="theme_accent_row_sub">สีของสวิตช์ วงแหวน และไฮไลต์</string>
-    <string name="theme_new_sub">สีของคุณเอง เริ่มจากธีมนี้</string>
     <string name="panel_corner_title">มุมของแผง</string>
     <string name="panel_corner_sub">ตำแหน่งที่แผงถาดเปิด อัตโนมัติ: ที่มุมใกล้ไอคอนถาดที่สุด</string>
     <string name="panel_corner_auto">อัตโนมัติ</string>

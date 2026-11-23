@@ -287,7 +287,6 @@
     <string name="setup_pair_sub">Parkoppla nya hörlurar där och kom tillbaka</string>
     <string name="dual_add_sub">Parkoppla en annan telefon eller dator med hörlurarna</string>
     <string name="theme_accent_row_sub">Färgen på reglage, ringar och markeringar</string>
-    <string name="theme_new_sub">Egna färger, utgående från detta tema</string>
     <string name="panel_corner_title">Panelens hörn</string>
     <string name="panel_corner_sub">Var fältpanelen öppnas. Automatiskt: i hörnet närmast ikonen</string>
     <string name="panel_corner_auto">Automatiskt</string>

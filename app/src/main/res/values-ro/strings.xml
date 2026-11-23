@@ -287,7 +287,6 @@
     <string name="setup_pair_sub">Asociază acolo căști noi, apoi revino</string>
     <string name="dual_add_sub">Asociază alt telefon sau computer cu căștile</string>
     <string name="theme_accent_row_sub">Culoarea comutatoarelor, inelelor și evidențierilor</string>
-    <string name="theme_new_sub">Culorile tale, pornind de la această temă</string>
     <string name="panel_corner_title">Colțul panoului</string>
     <string name="panel_corner_sub">Unde se deschide panoul din tavă. Automat: în colțul cel mai apropiat de pictogramă</string>
     <string name="panel_corner_auto">Automat</string>

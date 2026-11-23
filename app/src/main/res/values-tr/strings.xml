@@ -287,7 +287,6 @@
     <string name="setup_pair_sub">Yeni kulaklıkları orada eşleyin, sonra geri dönün</string>
     <string name="dual_add_sub">Kulaklıklarla başka bir telefon veya bilgisayar eşleyin</string>
     <string name="theme_accent_row_sub">Anahtarların, halkaların ve vurguların rengi</string>
-    <string name="theme_new_sub">Bu temadan başlayan kendi renkleriniz</string>
     <string name="panel_corner_title">Panel köşesi</string>
     <string name="panel_corner_sub">Tepsi panelinin açıldığı yer. Otomatik: tepsi simgesine en yakın köşede</string>
     <string name="panel_corner_auto">Otomatik</string>

@@ -287,7 +287,6 @@
     <string name="setup_pair_sub">Koppel daar nieuwe oordopjes en kom terug</string>
     <string name="dual_add_sub">Koppel nog een telefoon of computer aan de oordopjes</string>
     <string name="theme_accent_row_sub">De kleur van schakelaars, ringen en markeringen</string>
-    <string name="theme_new_sub">Je eigen kleuren, vanaf dit thema</string>
     <string name="panel_corner_title">Paneelhoek</string>
     <string name="panel_corner_sub">Waar het systeemvakpaneel opent. Automatisch: in de hoek het dichtst bij het pictogram</string>
     <string name="panel_corner_auto">Automatisch</string>

@@ -287,7 +287,6 @@
     <string name="setup_pair_sub">Sparuj tam nowe słuchawki i wróć</string>
     <string name="dual_add_sub">Sparuj ze słuchawkami inny telefon lub komputer</string>
     <string name="theme_accent_row_sub">Kolor przełączników, pierścieni i wyróżnień</string>
-    <string name="theme_new_sub">Własne kolory na bazie tego motywu</string>
     <string name="panel_corner_title">Róg panelu</string>
     <string name="panel_corner_sub">Gdzie otwiera się panel zasobnika. Automatycznie: w rogu najbliżej ikony</string>
     <string name="panel_corner_auto">Automatycznie</string>

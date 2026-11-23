@@ -287,7 +287,6 @@
     <string name="setup_pair_sub">在那里配对新耳机，然后返回</string>
     <string name="dual_add_sub">将另一部手机或电脑与耳机配对</string>
     <string name="theme_accent_row_sub">开关、圆环和高亮的颜色</string>
-    <string name="theme_new_sub">基于此主题的自定义颜色</string>
     <string name="panel_corner_title">面板位置</string>
     <string name="panel_corner_sub">托盘面板打开的位置。自动：在离托盘图标最近的角落</string>
     <string name="panel_corner_auto">自动</string>

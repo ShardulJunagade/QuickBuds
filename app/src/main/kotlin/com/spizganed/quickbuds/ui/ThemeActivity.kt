@@ -286,7 +286,7 @@ class ThemeActivity : Activity() {
                 }
             }
             val left = PaletteStore.MAX_CUSTOM - custom.size
-            val newRow = SettingRowFactory.build(this, R.drawable.ic_plus, R.string.theme_new, R.string.theme_new_sub, null) { createPreset() }
+            val newRow = SettingRowFactory.build(this, R.drawable.ic_plus, R.string.theme_new, 0, null) { createPreset() }
             SettingRowFactory.subtitle(this, newRow).text = when (left) {
                 0 -> getString(R.string.theme_new_full)
                 1 -> getString(R.string.theme_new_sub_one)
