@@ -69,9 +69,9 @@ a table in the core and no screen code.
 
 ### Later
 
-One model each, and more work than a byte: the A3876 lights, the A3954 case features, easy chat and air pressure,
-spatial audio (A3953, A3954, D1202), the D1301 alarms, timer and post-sleep audio, the A3116 speaker. They wait
-until owners ask.
+The D1301 alarms (OpenSCQ30 has no write for them) and the A3116 speaker. The groups (spatial audio, the A3954
+case, easy chat, the A3876 lights, the D1301 sleep timer and post-sleep audio) show as their own sections in
+Earbud settings.
 
 ### OPPO features that Soundcore does not have
 

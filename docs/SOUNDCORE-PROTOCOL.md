@@ -236,5 +236,19 @@ connection, earbud settings) show when the model has the key, and four screens: 
 lists, so they hold no model table. Dev tools › Soundcore demo shows each model's recorded state without buds.
 The desktop app does not connect to Soundcore buds yet.
 
-Not ported yet: the A3876 lights, the A3954 case features, easy chat and air pressure, spatial audio (A3953,
-A3954, D1202), the D1301 alarms, timer and post-sleep audio, and the A3116.
+### Groups
+
+A group is a setting of several parts, or one with its own write body (`models.rs` `Group`). `state_json` gives
+`groups`: per group its `key` and `parts` (`key`, `kind` switch, choice, range, info or color, `value`, and
+`values`, `labels` or `range`). A write is `{"part": value}` under the group key.
+
+| Group | Models | Write |
+|---|---|---|
+| `spatial` | A3953, A3954: on, effect (fixed, head tracking), content; D1202: on, content | `10 81`: on, effect, content (D1202: on, 0, content) |
+| `caseFeatures` | A3954: ambient light, remote camera, find device, the 3D audio button | `07 87`: the 4 bytes |
+| `easyChat` | A3954: on, wait time (5, 10, 15 s), air pressure (read only) | `10 9D`: on, wait time |
+| `lights` | A3876: on, brightness 1 to 10, off after 1 to 120 min, mode, color | `0E 87` on, `0E 82` brightness, `0E 84` off after, `0E 86` mode, `0E 85` red, green, blue |
+| `postSleep` | D1301: pause the audio or play the sleep sounds once you sleep | `15 85`: FF FF FF, the action |
+| `timer` | D1301: the sleep timer, on and 1 to 240 min. The driver asks for it with `15 03` after the state. | `15 85`: on, minutes (i16 LE), the kept byte |
+
+Not ported: the D1301 alarms (OpenSCQ30 reads them but has no write either) and the A3116 speaker.

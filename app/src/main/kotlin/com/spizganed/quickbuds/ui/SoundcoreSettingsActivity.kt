@@ -89,6 +89,10 @@ class SoundcoreSettingsActivity : SoundcoreScreen() {
     private lateinit var budsCard: LinearLayout
     private lateinit var volumeLabel: View
     private lateinit var volumeCard: LinearLayout
+    /** The groups of the model (spatial audio, case, easy chat, lights, sleep): built when the list changes. */
+    private lateinit var groupsBox: LinearLayout
+    private var groupShape: String? = null
+    private val groupRows = mutableMapOf<String, Pair<LinearLayout, View>>()
 
     override fun build() {
         root.addView(SettingRowFactory.title(this, R.string.row_earbuds_title))
@@ -136,6 +140,9 @@ class SoundcoreSettingsActivity : SoundcoreScreen() {
         }
         limitDb = choiceRow(volumeCard, R.string.sc_volume_limit_db_title) { pickLimitDb() }
         limitRate = choiceRow(volumeCard, R.string.sc_refresh_title) { pickLimitRate() }
+
+        groupsBox = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL }
+        root.addView(groupsBox)
 
         section(R.string.sc_section_about)
         val about = card()
@@ -274,6 +281,8 @@ class SoundcoreSettingsActivity : SoundcoreScreen() {
             tidy(volumeCard)
         }
 
+        renderGroups(list(s.optJSONArray("groups")))
+
         val fw = s.optJSONArray("firmware")
         firmware.second.text = when (fw?.length()) {
             2 -> getString(R.string.sc_firmware_lr, fw.getString(0), fw.getString(1))
@@ -283,6 +292,154 @@ class SoundcoreSettingsActivity : SoundcoreScreen() {
         show(firmware.first, (fw?.length() ?: 0) > 0)
         serial.second.text = s.optString("serial")
         show(serial.first, s.optString("serial").isNotEmpty() && !s.isNull("serial"))
+    }
+
+    private fun parts(g: JSONObject): List<JSONObject> = list(g.optJSONArray("parts"))
+
+    private fun renderGroups(groups: List<JSONObject>) {
+        val shape = groups.joinToString { g -> g.optString("key") + ":" + parts(g).joinToString("/") { it.optString("key") } }
+        if (shape != groupShape) buildGroups(groups, shape)
+        for (g in groups) for (p in parts(g)) {
+            val view = groupRows["${g.optString("key")}.${p.optString("key")}"]?.second ?: continue
+            when (view) {
+                is Switch -> view.paint(p.optBoolean("value"))
+                is TextView -> view.text = partValue(p)
+            }
+        }
+    }
+
+    private fun buildGroups(groups: List<JSONObject>, shape: String) {
+        groupShape = shape
+        groupsBox.removeAllViews()
+        groupRows.clear()
+        for (g in groups) {
+            val gk = g.optString("key")
+            groupsBox.addView(SettingRowFactory.sectionLabel(this, groupTitle(gk)))
+            val card = SettingRowFactory.card(this)
+            groupsBox.addView(card)
+            for (p in parts(g)) {
+                val pk = p.optString("key")
+                val (title, sub) = partTitle(gk, pk)
+                val pair: Pair<LinearLayout, View> = when (p.optString("kind")) {
+                    "switch" -> {
+                        val sw = SettingRowFactory.buildSwitch(this, false)
+                        sw.setOnCheckedChangeListener { _, on -> if (!painting) set(gk, JSONObject().put(pk, on)) }
+                        SettingRowFactory.build(this, 0, title, sub, sw) { sw.performClick() } to sw
+                    }
+                    "info" -> SettingRowFactory.build(this, 0, title, 0, null).let { it to SettingRowFactory.subtitle(this, it) }
+                    else -> SettingRowFactory.build(this, 0, title, 0, SettingRowFactory.buildChevron(this)) { pickPart(gk, pk, title) }
+                        .let { it to SettingRowFactory.subtitle(this, it) }
+                }
+                SettingRowFactory.addRow(card, pair.first)
+                groupRows["$gk.$pk"] = pair
+            }
+        }
+    }
+
+    private fun groupTitle(key: String): Int = when (key) {
+        "spatial" -> R.string.row_spatial_title
+        "caseFeatures" -> R.string.sc_group_case
+        "easyChat" -> R.string.sc_group_easy_chat
+        "lights" -> R.string.sc_group_lights
+        "postSleep" -> R.string.sc_group_sleep
+        "timer" -> R.string.sc_timer_title
+        else -> R.string.sc_unknown
+    }
+
+    /** The title and subtitle of a group part. The "on" switch takes the group's own name. */
+    private fun partTitle(group: String, part: String): Pair<Int, Int> = when ("$group.$part") {
+        "spatial.on" -> R.string.row_spatial_title to R.string.row_spatial_sub
+        "easyChat.on" -> R.string.sc_group_easy_chat to R.string.sc_easy_chat_sub
+        "lights.on" -> R.string.sc_group_lights to R.string.sc_lights_sub
+        "timer.on" -> R.string.sc_timer_title to R.string.sc_timer_sub
+        "spatial.effect" -> R.string.sc_part_effect to 0
+        "spatial.content" -> R.string.sc_part_content to 0
+        "caseFeatures.atmospheric" -> R.string.sc_part_atmospheric to 0
+        "caseFeatures.remoteCamera" -> R.string.sc_part_remote_camera to 0
+        "caseFeatures.findDevice" -> R.string.sc_part_find_device to 0
+        "caseFeatures.caseSpatial" -> R.string.sc_part_case_spatial to 0
+        "easyChat.wait" -> R.string.sc_part_wait to 0
+        "easyChat.airPressure" -> R.string.sc_part_air_pressure to 0
+        "lights.brightness" -> R.string.sc_part_brightness to 0
+        "lights.autoOff" -> R.string.sc_part_lights_off to 0
+        "lights.mode" -> R.string.sc_part_lights_mode to 0
+        "lights.color" -> R.string.sc_part_color to 0
+        "postSleep.action" -> R.string.sc_part_sleep_action to 0
+        "timer.minutes" -> R.string.sc_part_minutes to 0
+        else -> R.string.sc_unknown to 0
+    }
+
+    /** The colors the lights offer: red, orange, yellow, green, cyan, blue, purple, white. */
+    private val colors = listOf(
+        R.string.sc_color_red to intArrayOf(255, 0, 0), R.string.sc_color_orange to intArrayOf(255, 128, 0),
+        R.string.sc_color_yellow to intArrayOf(255, 255, 0), R.string.sc_color_green to intArrayOf(0, 255, 0),
+        R.string.sc_color_cyan to intArrayOf(0, 255, 255), R.string.sc_color_blue to intArrayOf(0, 0, 255),
+        R.string.sc_color_purple to intArrayOf(160, 0, 255), R.string.sc_color_white to intArrayOf(255, 255, 255),
+    )
+
+    private fun partValue(p: JSONObject): String = when (p.optString("kind")) {
+        "color" -> p.optJSONArray("value")?.let { a ->
+            val rgb = IntArray(3) { a.optInt(it) }
+            colors.firstOrNull { it.second.contentEquals(rgb) }?.let { getString(it.first) } ?: "#%02X%02X%02X".format(rgb[0], rgb[1], rgb[2])
+        }.orEmpty()
+        "range" -> rangeLabel(p, p.optInt("value"))
+        else -> partLabel(p, p.optInt("value"))
+    }
+
+    private fun rangeLabel(p: JSONObject, v: Int): String = when (p.optString("key")) {
+        "autoOff", "minutes" -> getString(R.string.sc_minutes, v)
+        else -> v.toString()
+    }
+
+    private fun partLabel(p: JSONObject, v: Int): String {
+        val name = p.optJSONObject("labels")?.optString(v.toString()).orEmpty()
+        if (name.isEmpty()) return v.toString()
+        return when (name) {
+            "s5" -> getString(R.string.sc_seconds, 5)
+            "s10" -> getString(R.string.sc_seconds, 10)
+            "s15" -> getString(R.string.sc_seconds, 15)
+            else -> getString(when (name) {
+                "fixed" -> R.string.sc_val_fixed
+                "headTracking" -> R.string.sc_val_head_tracking
+                "music" -> R.string.sc_val_music
+                "movie" -> R.string.sc_val_movie
+                "podcast" -> R.string.sc_eq_podcast
+                "gaming" -> R.string.sc_val_gaming
+                "lightOn" -> R.string.sc_val_light_on
+                "breathing" -> R.string.sc_val_breathing
+                "flash" -> R.string.sc_val_flash
+                "musicFollows" -> R.string.sc_val_music_follows
+                "pause" -> R.string.sc_val_pause
+                "playLocal" -> R.string.sc_val_play_local
+                else -> R.string.sc_unknown
+            })
+        }
+    }
+
+    private fun pickPart(group: String, part: String, title: Int) {
+        val g = state?.optJSONArray("groups")?.let { list(it) }?.firstOrNull { it.optString("key") == group } ?: return
+        val p = parts(g).firstOrNull { it.optString("key") == part } ?: return
+        when (p.optString("kind")) {
+            "choice" -> {
+                val vals = p.optJSONArray("values") ?: return
+                val l = (0 until vals.length()).map { vals.getInt(it) }
+                choose(title, l.map { partLabel(p, it) to (p.optInt("value") == it) }) { set(group, JSONObject().put(part, l[it])) }
+            }
+            "range" -> {
+                val r = p.optJSONArray("range") ?: return
+                val (lo, hi) = r.optInt(0) to r.optInt(1)
+                // A long range offers about 24 steps, with both ends.
+                val step = maxOf(1, (hi - lo) / 24)
+                val l = ((lo..hi step step).toList() + hi).distinct()
+                choose(title, l.map { rangeLabel(p, it) to (p.optInt("value") == it) }) { set(group, JSONObject().put(part, l[it])) }
+            }
+            "color" -> {
+                val cur = partValue(p)
+                choose(title, colors.map { getString(it.first) to (getString(it.first) == cur) }) { i ->
+                    set(group, JSONObject().put(part, JSONArray(colors[i].second.toList())))
+                }
+            }
+        }
     }
 
     private fun rateLabel(v: Int) = when (v) { 1 -> R.string.sc_refresh_10s; 2 -> R.string.sc_refresh_1m; else -> R.string.sc_refresh_realtime }

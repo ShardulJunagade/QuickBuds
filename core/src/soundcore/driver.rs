@@ -8,7 +8,7 @@
 //! bytes: a write changes its field there and sends the model's command, so every other field keeps its value.
 //! Pushes update the bytes after that. docs/SOUNDCORE-PROTOCOL.md has every field and command.
 
-use super::models::{self, Act, Bat, Buttons, Cycle, En, EqW, Hid, Kind, Model, Off, Scale, Sk};
+use super::models::{self, Act, Bat, Buttons, Cycle, En, EqW, Group, Hid, Kind, Model, Off, PartKind, Scale, Sk, Src};
 use super::msg::{self, ambient, Msg};
 use super::packet::{encode, encode_in, Frame, Packet, Reader};
 use crate::model::{Common, Level};
@@ -78,6 +78,8 @@ pub struct Driver {
     /// A button reset waits for its answer, then the driver reads the state again.
     reset_pending: bool,
     retry_at: Option<u64>,
+    /// The D1301 sleep timer (`15 03`): on, minutes (i16 LE), a byte the write keeps, seconds left (i32 LE).
+    timer: Option<[u8; 8]>,
     out: Vec<Effect>,
 }
 
@@ -270,6 +272,10 @@ impl Driver {
                 self.refresh();
                 return true;
             }
+            ([0x15, 0x03], n) if n >= 8 && m.timer => {
+                self.timer = p.body[..8].try_into().ok();
+                return true;
+            }
             ([0x0B, 0x01], _) => {
                 let Some((total, index, list)) = devices(&p.body) else { return false };
                 if index <= 1 { self.devices.clear(); }
@@ -348,6 +354,7 @@ impl Driver {
         }
         self.refresh();
         if m.dual && self.key_byte("dual").is_some_and(|d| d != 0) { self.send([0x0B, 0x01], &[]); }
+        if m.timer { self.send([0x15, 0x03], &[]); }
         if !self.ready {
             self.ready = true;
             self.out.push(Effect::Ready);
@@ -702,7 +709,9 @@ impl Driver {
             self.refresh();
             return;
         }
+        if let Some(g) = m.groups.iter().find(|g| g.key == key) { return self.set_group(g, v); }
         match key {
+            "timer" if m.timer => self.set_timer(v),
             "dual" if m.dual => {
                 let (Some((at, _)), Some(on)) = (self.field("dual"), v.as_bool()) else { return self.note(format!("dual {v}")) };
                 self.state[at] = on as u8;
@@ -748,6 +757,53 @@ impl Driver {
             "eq" => self.set_eq(v),
             _ => self.note(format!("setting {key} = {v} unknown")),
         }
+    }
+
+    /// The byte offset of a group part.
+    fn part_at(&self, g: &Group, key: &str) -> Option<(usize, &'static models::Part)> {
+        let p = g.parts.iter().find(|p| p.key == key)?;
+        Some((self.field(p.field)? .0 + p.at, p))
+    }
+
+    /// Writes the parts of a group that `v` names (`{"on": true}`), then each write that lists a changed part.
+    fn set_group(&mut self, g: &'static Group, v: &Value) {
+        let Some(o) = v.as_object() else { return self.note(format!("{} {v}: not an object", g.key)) };
+        let mut changed = Vec::new();
+        for (k, x) in o {
+            let Some((at, p)) = self.part_at(g, k) else { return self.note(format!("{}.{k}: no such part", g.key)) };
+            let bytes: Vec<u8> = match (p.kind, x) {
+                (PartKind::Switch, Value::Bool(on)) => vec![*on as u8],
+                (PartKind::Choice(vals), _) if x.as_u64().is_some_and(|n| vals.contains(&(n as u8))) => vec![x.as_u64().unwrap_or(0) as u8],
+                (PartKind::Range(lo, hi), _) if x.as_u64().is_some_and(|n| (lo as u64..=hi as u64).contains(&n)) => vec![x.as_u64().unwrap_or(0) as u8],
+                (PartKind::Color, Value::Array(a)) if a.len() == 3 => a.iter().map(|c| c.as_u64().unwrap_or(0).min(255) as u8).collect(),
+                _ => return self.note(format!("{}.{k} = {x} not offered", g.key)),
+            };
+            self.state[at..at + bytes.len()].copy_from_slice(&bytes);
+            changed.push(p.key);
+        }
+        for w in g.writes.iter().filter(|w| w.when.iter().any(|k| changed.contains(k))) {
+            let mut body = Vec::new();
+            for src in w.body {
+                match *src {
+                    Src::Byte(b) => body.push(b),
+                    Src::Part(k) => body.push(self.part_at(g, k).map_or(0, |(at, _)| self.byte(at))),
+                    Src::Rgb(k) => if let Some((at, _)) = self.part_at(g, k) { body.extend((0..3).map(|i| self.byte(at + i))) },
+                }
+            }
+            self.send(w.cmd, &body);
+        }
+    }
+
+    /// The D1301 sleep timer: on, minutes 1 to 240 (OpenSCQ30). The write leaves out the time left.
+    fn set_timer(&mut self, v: &Value) {
+        let Some(mut t) = self.timer else { return self.note("timer before its answer".into()) };
+        if let Some(on) = v["on"].as_bool() { t[0] = on as u8; }
+        if let Some(min) = v["minutes"].as_u64() {
+            if !(1..=240).contains(&min) { return self.note(format!("timer minutes {min} out of range")) }
+            t[1..3].copy_from_slice(&(min as i16).to_le_bytes());
+        }
+        self.timer = Some(t);
+        self.send([0x15, 0x85], &t[..4]);
     }
 
     fn device(&mut self, action: &str, mac: &str) {
@@ -829,6 +885,28 @@ impl Driver {
         }
         o.insert("switches".into(), json!(switches));
         o.insert("choices".into(), json!(choices));
+        let mut groups = Vec::new();
+        for g in m.groups {
+            let parts: Vec<Value> = g.parts.iter().filter_map(|p| {
+                let (at, _) = self.part_at(g, p.key)?;
+                let labels: serde_json::Map<String, Value> = p.labels.iter().map(|(v, n)| (v.to_string(), json!(n))).collect();
+                Some(match p.kind {
+                    PartKind::Switch => json!({"key": p.key, "kind": "switch", "value": self.byte(at) != 0}),
+                    PartKind::Choice(vals) => json!({"key": p.key, "kind": "choice", "value": self.byte(at), "values": vals, "labels": labels}),
+                    PartKind::Range(lo, hi) => json!({"key": p.key, "kind": "range", "value": self.byte(at), "range": [lo, hi]}),
+                    PartKind::Info => json!({"key": p.key, "kind": "info", "value": self.byte(at)}),
+                    PartKind::Color => json!({"key": p.key, "kind": "color", "value": [self.byte(at), self.byte(at + 1), self.byte(at + 2)]}),
+                })
+            }).collect();
+            if !parts.is_empty() { groups.push(json!({"key": g.key, "parts": parts})); }
+        }
+        if let Some(t) = self.timer {
+            groups.push(json!({"key": "timer", "parts": [
+                {"key": "on", "kind": "switch", "value": t[0] != 0},
+                {"key": "minutes", "kind": "range", "value": i16::from_le_bytes([t[1], t[2]]), "range": [1, 240]},
+            ]}));
+        }
+        o.insert("groups".into(), json!(groups));
         if m.dual {
             if let Some(d) = self.key_byte("dual") {
                 o.insert("dual".into(), json!(d != 0));
@@ -1185,6 +1263,35 @@ mod tests {
         // OpenSCQ30 `set_equalizer_with_drc` test: -60 60 23 120 22 -120 -4 16 gives these DRC bytes.
         let v: Vec<u8> = apply_drc(&[-60, 60, 23, 120, 22, -120, -4, 16]).iter().map(|&x| Driver::eq_byte(false, x)).collect();
         assert_eq!(v, [0x6d, 0x86, 0x70, 0x88, 0x7b, 0x66, 0x7e, 0x79]);
+    }
+
+    #[test]
+    fn groups_write_their_own_body() {
+        let f = super::super::demo::FAKERS.iter().find(|f| f.0 == "d1202").unwrap();
+        let mut d = driver(f.2);
+        // D1202 spatial audio: the write puts a 0 between on and the mode.
+        assert_eq!(set(&mut d, "spatial", json!({"on": true, "content": 2})), [encode([0x10, 0x81], &[1, 0, 2], true)]);
+        assert!(set(&mut d, "spatial", json!({"content": 1})).is_empty());
+        let f = super::super::demo::FAKERS.iter().find(|f| f.0 == "a3876").unwrap();
+        let mut d = driver(f.2);
+        assert_eq!(set(&mut d, "lights", json!({"color": [255, 0, 16]})), [encode([0x0E, 0x85], &[255, 0, 16], true)]);
+        assert_eq!(set(&mut d, "lights", json!({"brightness": 10})), [encode([0x0E, 0x82], &[10], true)]);
+        assert!(set(&mut d, "lights", json!({"brightness": 11})).is_empty());
+        let g = d.state_json()["groups"][0].clone();
+        assert_eq!(g["key"], "lights");
+        assert_eq!(g["parts"][4]["value"], json!([255, 0, 16]));
+    }
+
+    #[test]
+    fn the_d1301_timer_is_asked_and_written() {
+        let f = super::super::demo::FAKERS.iter().find(|f| f.0 == "d1301").unwrap();
+        let mut d = Driver::new();
+        d.connected(0, "x".into());
+        let e = d.on_bytes(5, &inbound(msg::REQUEST_STATE, &unhex(f.2)));
+        assert!(sent(&e).contains(&encode([0x15, 0x03], &[], true)));
+        d.on_bytes(6, &inbound([0x15, 0x03], &[1, 30, 0, 7, 0, 0, 0, 0]));
+        assert_eq!(set(&mut d, "timer", json!({"minutes": 60})), [encode([0x15, 0x85], &[1, 60, 0, 7], true)]);
+        assert_eq!(set(&mut d, "postSleep", json!({"action": 1})), [encode([0x15, 0x85], &[0xFF, 0xFF, 0xFF, 1], true)]);
     }
 
     #[test]

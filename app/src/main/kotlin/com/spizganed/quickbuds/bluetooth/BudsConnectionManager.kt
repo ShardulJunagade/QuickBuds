@@ -2376,9 +2376,11 @@ class BudsConnectionManager(private val context: Context) {
         }
         if (changed("sc")) st.optJSONObject("sc")?.takeIf { it.length() > 0 }?.let { sc ->
             Soundcore.save(context, sc)
-            // The home rows read the shared switch map: game mode and LDAC (the Hi-Res row) come from Soundcore.
+            // The home rows, the widget buttons and the tiles read the shared switch map: game mode, LDAC (the
+            // Hi-Res row) and dual connection come from Soundcore.
             val map = mapOf(Capabilities.gameModeId(context) to if (sc.optBoolean("gaming")) 1 else 0,
-                Feature.HIRES_CODEC to if (sc.optBoolean("ldac")) 1 else 0)
+                Feature.HIRES_CODEC to if (sc.optBoolean("ldac")) 1 else 0,
+                Feature.DUAL_DEVICE to if (sc.optBoolean("dual")) 1 else 0)
             featureStates = map
             calls += { l -> l.onSoundcore(sc); l.onFeatureStates(map); l.onGameModeState(sc.optBoolean("gaming")) }
         }

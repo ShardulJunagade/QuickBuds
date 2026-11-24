@@ -494,6 +494,130 @@ const LOW_BATTERY_AF: Set = sw("lowBattery", [0x01, 0xAF]);
 const LDAC: Set = sw("ldac", [0x01, 0xFF]);
 const BUTTONS_OFF: Set = Set { key: "buttonsOff", cmd: [0x10, 0x94], kind: Kind::Inverted };
 
+/// A setting of several parts, or with its own write body (spatial audio, the case features, easy chat, lights).
+#[derive(Clone, Copy, Debug)]
+pub struct Group {
+    pub key: &'static str,
+    pub parts: &'static [Part],
+    /// The writes: a part change sends each write that lists the part.
+    pub writes: &'static [GroupWrite],
+}
+
+/// One part of a group: a byte of a field.
+#[derive(Clone, Copy, Debug)]
+pub struct Part {
+    pub key: &'static str,
+    pub field: &'static str,
+    pub at: usize,
+    pub kind: PartKind,
+    pub labels: &'static [(u8, &'static str)],
+}
+
+#[derive(Clone, Copy, PartialEq, Debug)]
+pub enum PartKind {
+    Switch,
+    Choice(&'static [u8]),
+    /// A number from min to max.
+    Range(u8, u8),
+    /// Read only.
+    Info,
+    /// 3 bytes: red, green, blue.
+    Color,
+}
+
+#[derive(Clone, Copy, Debug)]
+pub struct GroupWrite {
+    pub cmd: [u8; 2],
+    pub when: &'static [&'static str],
+    pub body: &'static [Src],
+}
+
+/// A byte of a group write body.
+#[derive(Clone, Copy, Debug)]
+pub enum Src {
+    Part(&'static str),
+    /// The 3 color bytes of a part.
+    Rgb(&'static str),
+    Byte(u8),
+}
+
+const fn part(key: &'static str, field: &'static str, at: usize, kind: PartKind) -> Part { Part { key, field, at, kind, labels: &[] } }
+const fn partl(key: &'static str, field: &'static str, at: usize, kind: PartKind, labels: &'static [(u8, &'static str)]) -> Part {
+    Part { key, field, at, kind, labels }
+}
+
+const N_EFFECT: &[(u8, &str)] = &[(1, "fixed"), (2, "headTracking")];
+const SPATIAL_A3953: Group = Group {
+    key: "spatial",
+    parts: &[
+        part("on", "spatial", 0, PartKind::Switch),
+        partl("effect", "spatial", 1, PartKind::Choice(&[1, 2]), N_EFFECT),
+        partl("content", "spatial", 2, PartKind::Choice(&[0, 1]), &[(0, "music"), (1, "movie")]),
+    ],
+    writes: &[GroupWrite { cmd: [0x10, 0x81], when: &["on", "effect", "content"], body: &[Src::Part("on"), Src::Part("effect"), Src::Part("content")] }],
+};
+const SPATIAL_A3954: Group = Group {
+    key: "spatial",
+    parts: &[
+        part("on", "spatial", 0, PartKind::Switch),
+        partl("effect", "spatial", 1, PartKind::Choice(&[1, 2]), N_EFFECT),
+        partl("content", "spatial", 2, PartKind::Choice(&[0, 1, 2, 3]), &[(0, "music"), (1, "podcast"), (2, "movie"), (3, "gaming")]),
+    ],
+    writes: &[GroupWrite { cmd: [0x10, 0x81], when: &["on", "effect", "content"], body: &[Src::Part("on"), Src::Part("effect"), Src::Part("content")] }],
+};
+/// D1202: the state holds on and the mode; the write puts a 0 between them.
+const SPATIAL_D1202: Group = Group {
+    key: "spatial",
+    parts: &[
+        part("on", "spatial", 0, PartKind::Switch),
+        partl("content", "spatial", 1, PartKind::Choice(&[0, 2, 3]), &[(0, "music"), (2, "movie"), (3, "gaming")]),
+    ],
+    writes: &[GroupWrite { cmd: [0x10, 0x81], when: &["on", "content"], body: &[Src::Part("on"), Src::Byte(0), Src::Part("content")] }],
+};
+const CASE_A3954: Group = Group {
+    key: "caseFeatures",
+    parts: &[
+        part("atmospheric", "caseFeatures", 0, PartKind::Switch),
+        part("remoteCamera", "caseFeatures", 1, PartKind::Switch),
+        part("findDevice", "caseFeatures", 2, PartKind::Switch),
+        part("caseSpatial", "caseFeatures", 3, PartKind::Switch),
+    ],
+    writes: &[GroupWrite { cmd: [0x07, 0x87], when: &["atmospheric", "remoteCamera", "findDevice", "caseSpatial"],
+        body: &[Src::Part("atmospheric"), Src::Part("remoteCamera"), Src::Part("findDevice"), Src::Part("caseSpatial")] }],
+};
+const EASY_CHAT_A3954: Group = Group {
+    key: "easyChat",
+    parts: &[
+        part("on", "easyChat", 0, PartKind::Switch),
+        partl("wait", "easyChatWait", 0, PartKind::Choice(&[0, 1, 2]), &[(0, "s5"), (1, "s10"), (2, "s15")]),
+        part("airPressure", "airPressure", 0, PartKind::Info),
+    ],
+    writes: &[GroupWrite { cmd: [0x10, 0x9D], when: &["on", "wait"], body: &[Src::Part("on"), Src::Part("wait")] }],
+};
+const LIGHTS_A3876: Group = Group {
+    key: "lights",
+    parts: &[
+        part("on", "lights", 0, PartKind::Switch),
+        part("brightness", "lights", 1, PartKind::Range(1, 10)),
+        part("autoOff", "lights", 2, PartKind::Range(1, 120)),
+        partl("mode", "lights", 3, PartKind::Choice(&[0, 1, 2, 3]), &[(0, "lightOn"), (1, "breathing"), (2, "flash"), (3, "musicFollows")]),
+        part("color", "lights", 4, PartKind::Color),
+    ],
+    writes: &[
+        GroupWrite { cmd: [0x0E, 0x87], when: &["on"], body: &[Src::Part("on")] },
+        GroupWrite { cmd: [0x0E, 0x82], when: &["brightness"], body: &[Src::Part("brightness")] },
+        GroupWrite { cmd: [0x0E, 0x84], when: &["autoOff"], body: &[Src::Part("autoOff")] },
+        GroupWrite { cmd: [0x0E, 0x86], when: &["mode"], body: &[Src::Part("mode")] },
+        GroupWrite { cmd: [0x0E, 0x85], when: &["color"], body: &[Src::Rgb("color")] },
+    ],
+};
+/// D1301: what the earbuds do once you sleep. The official app fills the timer bytes of `15 85` with 0xFF.
+const POST_SLEEP_D1301: Group = Group {
+    key: "postSleep",
+    parts: &[partl("action", "postSleep", 0, PartKind::Choice(&[0, 1]), &[(0, "pause"), (1, "playLocal")])],
+    writes: &[GroupWrite { cmd: [0x15, 0x85], when: &["action"], body: &[Src::Byte(0xFF), Src::Byte(0xFF), Src::Byte(0xFF), Src::Part("action")] }],
+};
+
 /// Minutes of each auto power off index.
 const HALF_HOURS: &[u16] = &[30, 60, 90, 120];
 const TENS: &[u16] = &[10, 20, 30, 60];
@@ -516,10 +640,13 @@ pub struct Model {
     pub sets: &'static [Set],
     /// Dual connection (`dual` field): `0b 84` and the device list.
     pub dual: bool,
+    pub groups: &'static [Group],
+    /// The D1301 sleep timer: asked with `15 03`, written with `15 85`.
+    pub timer: bool,
 }
 
 const fn model(ids: &'static [&'static str], names: &'static [&'static str], fields: &'static [Fd], battery: (Bat, Scale)) -> Model {
-    Model { ids, names, fields, battery, case: None, eq: None, buttons: &[], modes: None, cycle: Cycle::No, auto_off: &[], sets: &[], dual: false }
+    Model { ids, names, fields, battery, case: None, eq: None, buttons: &[], modes: None, cycle: Cycle::No, auto_off: &[], sets: &[], dual: false, groups: &[], timer: false }
 }
 
 const SINGLE5: (Bat, Scale) = (Bat::Single, S5);
@@ -645,6 +772,7 @@ pub const MODELS: &[Model] = &[
         auto_off: TENS,
         sets: &[VOICE, GAMING, choice("volumeBalance", [0x10, 0x8C], &[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12])],
         dual: true,
+        groups: &[LIGHTS_A3876],
         ..model(&["3876"], &["Soundcore V20i"],
             &[f("tws", 2), f("battery", 2), f("fw", 10), f("serial", 16), skip(6), f("eq", eq(2, 10)), skip(1), f("buttons", 8),
               f("lights", 7), skip(1), f("voicePrompt", 1), f("autoOff", 2), skip(1), f("gaming", 1), f("volumeBalance", 1), f("dual", 1)],
@@ -827,6 +955,7 @@ pub const MODELS: &[Model] = &[
         auto_off: TENS,
         sets: &[WEAR, LDAC, WEARING_TONE, LOW_BATTERY, sw("ambientPrompt", [0x10, 0x83]), choice("pressSensitivity", [0x04, 0x85], &[0, 1, 2])],
         dual: true,
+        groups: &[SPATIAL_A3953],
         ..model(&["3953"], &["Soundcore Liberty 4"],
             &[f("tws", 2), f("battery", 4), f("fw", 10), f("serial", 16), f("eq", eq(2, 10)), f("hidStatus", 1), f("hearId", hid_end(20).len),
               f("gapBase", 1), f("buttons", 8), skip(4), f("buttons", 4), f("gap", GAP), f("cycle", 1), f("modes", 6), skip(6),
@@ -845,6 +974,7 @@ pub const MODELS: &[Model] = &[
         auto_off: TENS,
         sets: &[LOW_BATTERY, LDAC, LEAK, WEAR, choice("caseLanguage", [0x07, 0x8A], &[0, 1, 2])],
         dual: true,
+        groups: &[SPATIAL_A3954, CASE_A3954, EASY_CHAT_A3954],
         ..model(&["3954"], &["Soundcore Liberty 4 Pro"],
             &[f("tws", 2), f("battery", 4), f("fw", 10), f("serial", 16), f("caseFw", 5), f("case", 1), f("caseSerial", 6),
               f("eq", eq(2, 10)), skip(1), f("hearId", hid_end(20).len), skip(1), f("buttons", 8), f("cycle", 1), f("modes", 4), skip(3),
@@ -940,6 +1070,7 @@ pub const MODELS: &[Model] = &[
         auto_off: TENS,
         sets: &[TOUCH, LOW_BATTERY, LDAC],
         dual: true,
+        groups: &[SPATIAL_D1202],
         ..model(&["1202"], &["Soundcore P31i", "Soundcore R60i NC"],
             &[f("tws", 2), f("battery", 4), f("fw", 10), f("serial", 16), skip(5), f("case", 1), f("eq", eq(2, 10)), skip(1),
               f("hearId", hid_end(20).len), skip(1), f("buttons", 8), skip(1), f("modes", 8), skip(1), f("touchTone", 1),
@@ -954,6 +1085,8 @@ pub const MODELS: &[Model] = &[
             sw("incomingCalls", [0x10, 0x75]), Set { key: "tapOff", cmd: [0x10, 0x94], kind: Kind::Inverted },
             sw("autoSwitchAsleep", [0x15, 0x8F]),
         ],
+        groups: &[POST_SLEEP_D1301],
+        timer: true,
         ..model(&["1301"], &["Soundcore Sleep A30"],
             &[f("tws", 2), f("battery", 2), f("fw", 10), f("serial", 16), skip(6), f("caseFw", 5), skip(4), skip(1), f("buttons", 4),
               skip(15), f("listeningMode", 1), f("defaultListeningMode", 1), skip(2), f("lowBattery", 1), skip(67), f("autoOffPrompt", 1),
@@ -1061,6 +1194,19 @@ mod tests {
         }
         for m in MODELS {
             for n in m.names { assert!(list.iter().any(|e| e["name"] == *n), "{n} missing from models.json"); }
+        }
+    }
+
+    #[test]
+    fn every_group_part_has_its_field() {
+        for m in MODELS {
+            for g in m.groups {
+                for p in g.parts {
+                    let f = m.fields.iter().find(|f| f.key == p.field).unwrap_or_else(|| panic!("A{} {}", m.ids[0], p.field));
+                    let need = if p.kind == PartKind::Color { 3 } else { 1 };
+                    assert!(p.at + need <= f.len, "A{} {}", m.ids[0], p.key);
+                }
+            }
         }
     }
 }
