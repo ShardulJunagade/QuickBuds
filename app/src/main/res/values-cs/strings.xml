@@ -738,4 +738,6 @@
     <string name="sc_eq_spoken_word">Mluvené slovo</string>
     <string name="sc_eq_treble_booster">Zesílení výšek</string>
     <string name="sc_eq_treble_reducer">Potlačení výšek</string>
+    <string name="sc_noise_hint">Na hlavní obrazovce vyberte potlačení hluku nebo průchodnost a uvidíte jejich nastavení.</string>
+    <string name="sc_forget_q">Zapomenout %1$s?</string>
 </resources>

@@ -839,4 +839,6 @@
     <string name="sc_eq_spoken_word">Spoken Word</string>
     <string name="sc_eq_treble_booster">Treble Booster</string>
     <string name="sc_eq_treble_reducer">Treble Reducer</string>
+    <string name="sc_noise_hint">Pick noise cancelling or transparency on the home screen to see their settings.</string>
+    <string name="sc_forget_q">Forget %1$s?</string>
 </resources>

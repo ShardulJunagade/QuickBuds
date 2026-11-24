@@ -738,4 +738,6 @@
     <string name="sc_eq_spoken_word">Gesprochenes Wort</string>
     <string name="sc_eq_treble_booster">Höhen-Booster</string>
     <string name="sc_eq_treble_reducer">Höhen-Reduzierer</string>
+    <string name="sc_noise_hint">Wählen Sie auf dem Startbildschirm Geräuschunterdrückung oder Transparenz, um deren Einstellungen zu sehen.</string>
+    <string name="sc_forget_q">%1$s entfernen?</string>
 </resources>

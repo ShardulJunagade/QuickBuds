@@ -738,4 +738,6 @@
     <string name="sc_eq_spoken_word">Pertuturan</string>
     <string name="sc_eq_treble_booster">Penguat trebel</string>
     <string name="sc_eq_treble_reducer">Pengurang trebel</string>
+    <string name="sc_noise_hint">Pilih pembatalan hingar atau ketelusan pada skrin utama untuk melihat tetapannya.</string>
+    <string name="sc_forget_q">Lupakan %1$s?</string>
 </resources>

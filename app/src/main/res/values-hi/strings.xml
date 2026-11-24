@@ -740,4 +740,6 @@
     <string name="sc_eq_spoken_word">बोले गए शब्द</string>
     <string name="sc_eq_treble_booster">ट्रेबल बूस्टर</string>
     <string name="sc_eq_treble_reducer">ट्रेबल रिड्यूसर</string>
+    <string name="sc_noise_hint">इनकी सेटिंग देखने के लिए होम स्क्रीन पर नॉइज़ कैंसलिंग या ट्रांसपेरेंसी चुनें।</string>
+    <string name="sc_forget_q">%1$s भूल जाएं?</string>
 </resources>

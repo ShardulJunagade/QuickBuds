@@ -738,4 +738,6 @@
     <string name="sc_eq_spoken_word">Pananalita</string>
     <string name="sc_eq_treble_booster">Treble Booster</string>
     <string name="sc_eq_treble_reducer">Treble Reducer</string>
+    <string name="sc_noise_hint">Pumili ng noise cancelling o transparency sa home screen para makita ang mga setting nila.</string>
+    <string name="sc_forget_q">Kalimutan ang %1$s?</string>
 </resources>

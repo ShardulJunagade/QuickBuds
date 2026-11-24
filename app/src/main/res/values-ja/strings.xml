@@ -738,4 +738,6 @@
     <string name="sc_eq_spoken_word">話し声</string>
     <string name="sc_eq_treble_booster">高音強調</string>
     <string name="sc_eq_treble_reducer">高音抑制</string>
+    <string name="sc_noise_hint">設定を表示するには、ホーム画面でノイズキャンセリングか外音取り込みを選んでください。</string>
+    <string name="sc_forget_q">%1$s を削除しますか？</string>
 </resources>

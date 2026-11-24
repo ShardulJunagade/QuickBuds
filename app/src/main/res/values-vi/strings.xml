@@ -740,4 +740,6 @@
     <string name="sc_eq_spoken_word">Giọng nói</string>
     <string name="sc_eq_treble_booster">Tăng âm cao</string>
     <string name="sc_eq_treble_reducer">Giảm âm cao</string>
+    <string name="sc_noise_hint">Chọn chống ồn hoặc xuyên âm trên màn hình chính để xem cài đặt.</string>
+    <string name="sc_forget_q">Quên %1$s?</string>
 </resources>

@@ -738,4 +738,6 @@
     <string name="sc_eq_spoken_word">Tal</string>
     <string name="sc_eq_treble_booster">Diskantförstärkning</string>
     <string name="sc_eq_treble_reducer">Diskantreducering</string>
+    <string name="sc_noise_hint">Välj brusreducering eller transparens på startskärmen för att se deras inställningar.</string>
+    <string name="sc_forget_q">Glöm %1$s?</string>
 </resources>

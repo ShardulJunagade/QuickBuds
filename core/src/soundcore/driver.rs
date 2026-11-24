@@ -8,7 +8,7 @@
 //! the bytes after that. docs/SOUNDCORE-PROTOCOL.md has every field and command.
 
 use super::msg::{self, ambient, Msg};
-use super::packet::{encode, Frame, Packet, Reader};
+use super::packet::{encode, encode_in, Frame, Packet, Reader};
 use crate::model::{Common, Level};
 use serde_json::{json, Value};
 
@@ -86,6 +86,9 @@ pub struct Layout {
     pub leak: Option<usize>,
     /// Limit high volume: on, the limit in dB, the reading refresh rate.
     pub volume_limit: Option<usize>,
+    /// A sound mode field changes only while its parent mode is on (OpenSCQ30 `MigrationSteps`, A3957):
+    /// transparency mode in transparency, the noise cancelling fields in noise cancelling, wind in either.
+    pub modes_need_parent: bool,
     /// The shortest state packet this layout reads.
     pub min_len: usize,
 }
@@ -111,7 +114,8 @@ pub const LAYOUTS: &[Layout] = &[
         age: 54, hear_id: 55, buttons: 104, presses: PRESSES_A3936, button_on_byte: true, button_pair_off: true,
         cycle: 116, sound_modes: (117, Modes::A3936), touch_tone: 123, ldac: 126, dual: 127,
         auto_off: (128, &[30, 60, 90, 120]), gaming: (130, [0x01, 0x87]),
-        wearing_tone: None, low_battery: None, wear_detection: None, leak: None, volume_limit: None, min_len: 131,
+        wearing_tone: None, low_battery: None, wear_detection: None, leak: None, volume_limit: None,
+        modes_need_parent: false, min_len: 131,
     },
     // Liberty 5: tws 0, battery 2, firmware 6, serial 16, "00.00" 32, case 37, EQ 38, age 60, HearID 61, unknown 109,
     // 8 buttons 110, cycle 118, sound modes 119 (7), unknown 126, wearing tone 127, low battery 128, LDAC 129,
@@ -122,7 +126,7 @@ pub const LAYOUTS: &[Layout] = &[
         cycle: 118, sound_modes: (119, Modes::A3957), touch_tone: 145, ldac: 129, dual: 130,
         auto_off: (131, &[10, 20, 30, 60]), gaming: (146, [0x10, 0x85]),
         wearing_tone: Some(127), low_battery: Some(128), wear_detection: Some(144), leak: Some(143), volume_limit: Some(133),
-        min_len: 148,
+        modes_need_parent: true, min_len: 148,
     },
 ];
 
@@ -211,6 +215,8 @@ pub struct Driver {
     tws: bool,
     pub devices: Vec<Device>,
     ready: bool,
+    /// A button reset waits for its answer, then the driver reads the state again.
+    reset_pending: bool,
     retry_at: Option<u64>,
     out: Vec<Effect>,
 }
@@ -306,9 +312,10 @@ impl Driver {
             Cmd::Anc(key) => self.set_noise(&key),
             Cmd::Set(key, v) => self.set(&key, &v),
             Cmd::ResetButtons => {
-                // The buds answer with no state: ask for it again (OpenSCQ30 `reset_button_configuration`).
+                // The buds answer with an empty `04 82` and no state: the answer asks for it again
+                // (OpenSCQ30 `reset_button_configuration`).
                 self.send([0x04, 0x82], &[]);
-                self.send(msg::REQUEST_STATE, &[]);
+                self.reset_pending = true;
             }
             Cmd::Device(action, mac) => self.device(&action, &mac),
         }
@@ -323,7 +330,8 @@ impl Driver {
             match f {
                 Frame::Bad(b) => self.out.push(Effect::Log { dir: "DISCARDED RX", bytes: b, human: None }),
                 Frame::Packet(p) => {
-                    self.out.push(Effect::Log { dir: "RX", bytes: p.body.clone(), human: Some(format!("{:02X} {:02X}", p.cmd[0], p.cmd[1])) });
+                    // The whole frame, as the OPPO log has it: the report Worker and the log decoder look for the header.
+                    self.out.push(Effect::Log { dir: "RX", bytes: encode_in(p.cmd, &p.body), human: Some(format!("{:02X} {:02X}", p.cmd[0], p.cmd[1])) });
                     changed |= self.packet(p);
                 }
             }
@@ -333,8 +341,9 @@ impl Driver {
     }
 
     fn send(&mut self, cmd: [u8; 2], body: &[u8]) {
-        self.out.push(Effect::Log { dir: "TX", bytes: body.to_vec(), human: Some(format!("{:02X} {:02X}", cmd[0], cmd[1])) });
-        self.out.push(Effect::Send(encode(cmd, body, true)));
+        let frame = encode(cmd, body, true);
+        self.out.push(Effect::Log { dir: "TX", bytes: frame.clone(), human: Some(format!("{:02X} {:02X}", cmd[0], cmd[1])) });
+        self.out.push(Effect::Send(frame));
     }
 
     fn note(&mut self, text: String) {
@@ -350,11 +359,18 @@ impl Driver {
         let (modes_at, kind) = l.sound_modes;
         let modes_len = modes_len(kind);
         match (p.cmd, p.body.len()) {
-            // A model with a longer sound mode group pushes all of it.
+            // The model pushes its whole sound mode group. Another length has another layout: OpenSCQ30's parser
+            // refuses it too.
             (msg::SOUND_MODES, n) if n == modes_len => {
                 self.state[modes_at..modes_at + n].copy_from_slice(&p.body);
                 self.refresh();
                 return true;
+            }
+            (msg::SOUND_MODES, n) => { self.note(format!("sound modes push of {n} bytes, the model has {modes_len}")); return false; }
+            ([0x04, 0x82], 0) if self.reset_pending => {
+                self.reset_pending = false;
+                self.send(msg::REQUEST_STATE, &[]);
+                return false;
             }
             ([0x01, 0x11], 1) => { self.state[l.gaming.0] = p.body[0]; self.refresh(); return true; }
             ([0x0B, 0x01], _) => {
@@ -375,10 +391,8 @@ impl Driver {
             Msg::Charging(v) => for (i, c) in v.into_iter().take(2).enumerate() {
                 if let Some(b) = self.common.battery[i].as_mut() { b.charging = c; }
             },
-            Msg::SoundModes(m) => {
-                self.state[modes_at..modes_at + 4].copy_from_slice(&m.bytes());
-                self.refresh();
-            }
+            // Handled above: every known model pushes its own length.
+            Msg::SoundModes(_) => return false,
             Msg::Ldac(on) => self.state[l.ldac] = on as u8,
             Msg::Firmware { versions, serial } => { self.firmware = versions; self.serial = Some(serial); }
             Msg::Tws { both, .. } => self.tws = both,
@@ -461,6 +475,7 @@ impl Driver {
             "name": l.name,
             "serial": self.serial,
             "firmware": self.firmware,
+            "noise": self.byte(m),
             "transparencyMode": self.byte(m + 2),
             "ancMode": self.byte(m + 3),
             "ancModes": match kind { Modes::A3936 => json!([0, 1]), Modes::A3957 => json!([0, 2]) },
@@ -550,6 +565,17 @@ impl Driver {
             d.send(msg::SET_SOUND_MODES, &body);
             d.refresh();
         };
+        // A3957: a sound mode field needs its parent mode (see `Layout::modes_need_parent`).
+        let ambient = self.byte(m);
+        let parent_ok = !l.modes_need_parent || match key {
+            "transparencyMode" => ambient == ambient::TRANSPARENCY,
+            "ancMode" => ambient == ambient::NOISE_CANCELING,
+            "ancLevel" => ambient == ambient::NOISE_CANCELING && self.byte(m + 3) == 0,
+            "transport" => ambient == ambient::NOISE_CANCELING && self.byte(m + 3) == 2,
+            "windNoise" => ambient == ambient::NOISE_CANCELING || ambient == ambient::TRANSPARENCY,
+            _ => true,
+        };
+        if !parent_ok { return self.note(format!("{key}: its noise control mode is not on")); }
         let flag = |d: &mut Self, at: Option<usize>, cmd: [u8; 2]| match (at, on) {
             (Some(at), Some(on)) => { d.state[at] = on as u8; d.send(cmd, &[on as u8]); d.refresh(); }
             _ => d.note(format!("{key}: no such setting or not a switch")),
@@ -592,7 +618,8 @@ impl Driver {
             "volumeLimit" => {
                 let Some(at) = l.volume_limit else { return self.note("volumeLimit: no such setting".into()) };
                 let on = v["on"].as_bool().unwrap_or(self.byte(at) != 0);
-                let db = v["db"].as_u64().map_or(self.byte(at + 1), |x| x as u8).clamp(VOLUME_LIMIT_DB.0, VOLUME_LIMIT_DB.1);
+                // OpenSCQ30 allows steps of 5 dB only.
+                let db = (v["db"].as_u64().map_or(self.byte(at + 1), |x| x as u8).clamp(VOLUME_LIMIT_DB.0, VOLUME_LIMIT_DB.1) + 2) / 5 * 5;
                 if on != (self.byte(at) != 0) || db != self.byte(at + 1) {
                     self.state[at] = on as u8;
                     self.state[at + 1] = db;
@@ -756,19 +783,12 @@ fn noise_key(ambient_byte: u8) -> &'static str {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use super::super::packet::IN;
 
     const A3936: &str = DEMO[0].1;
     const A3957: &str = DEMO[1].1;
 
 
-    fn inbound(cmd: [u8; 2], body: &[u8]) -> Vec<u8> {
-        let mut f = encode(cmd, body, true);
-        f[..5].copy_from_slice(&IN);
-        let n = f.len() - 1;
-        f[n] = f[..n].iter().fold(0u8, |a, x| a.wrapping_add(*x));
-        f
-    }
+    fn inbound(cmd: [u8; 2], body: &[u8]) -> Vec<u8> { encode_in(cmd, body) }
 
     fn sent(e: &[Effect]) -> Vec<Vec<u8>> { e.iter().filter_map(|e| match e { Effect::Send(b) => Some(b.clone()), _ => None }).collect() }
 
@@ -882,10 +902,31 @@ mod tests {
         assert_eq!(set(&mut d, "ancMode", json!(2)), [encode(msg::SET_SOUND_MODES, &[0, 0x30, 0, 2, 0, 0, 0], true)]);
         assert_eq!(set(&mut d, "transport", json!(3)), [encode(msg::SET_SOUND_MODES, &[0, 0x30, 0, 2, 0, 0, 3], true)]);
         assert_eq!(set(&mut d, "windNoise", json!(true)), [encode(msg::SET_SOUND_MODES, &[0, 0x30, 0, 2, 1, 0, 3], true)]);
-        assert_eq!(set(&mut d, "transparencyMode", json!(1)), [encode(msg::SET_SOUND_MODES, &[0, 0x30, 1, 2, 1, 0, 3], true)]);
         // Adaptive is not offered on the A3957; level 6 is out of range.
         assert!(set(&mut d, "ancMode", json!(1)).is_empty());
         assert!(set(&mut d, "ancLevel", json!(6)).is_empty());
+        d.command(7, Cmd::Anc(NOISE_TRANSPARENCY.into()));
+        assert_eq!(set(&mut d, "transparencyMode", json!(1)), [encode(msg::SET_SOUND_MODES, &[1, 0x30, 1, 2, 1, 0, 3], true)]);
+    }
+
+    #[test]
+    fn a3957_fields_need_their_mode() {
+        let mut d = driver(A3957);
+        // Noise cancelling is on: transparency mode waits, the noise cancelling fields write.
+        assert!(set(&mut d, "transparencyMode", json!(1)).is_empty());
+        assert_eq!(set(&mut d, "ancLevel", json!(2)).len(), 1);
+        d.command(7, Cmd::Anc(NOISE_TRANSPARENCY.into()));
+        assert_eq!(set(&mut d, "transparencyMode", json!(1)).len(), 1);
+        assert!(set(&mut d, "ancLevel", json!(3)).is_empty());
+        d.command(8, Cmd::Anc(NOISE_OFF.into()));
+        assert!(set(&mut d, "windNoise", json!(true)).is_empty());
+    }
+
+    #[test]
+    fn reset_reads_the_state_after_the_answer() {
+        let mut d = driver(A3936);
+        assert_eq!(sent(&d.command(6, Cmd::ResetButtons)), [encode([0x04, 0x82], &[], true)]);
+        assert_eq!(sent(&d.on_bytes(7, &inbound([0x04, 0x82], &[]))), [encode(msg::REQUEST_STATE, &[], true)]);
     }
 
     #[test]
@@ -895,7 +936,7 @@ mod tests {
         assert_eq!(set(&mut d, "gaming", json!(true)), [encode([0x10, 0x85], &[1], true)]);
         assert_eq!(d.common().low_latency, Some(true));
         assert_eq!(set(&mut d, "leak", json!(true)), [encode([0x10, 0x86], &[1], true)]);
-        assert_eq!(set(&mut d, "volumeLimit", json!({"on": true, "db": 85})), [encode([0x20, 0x82], &[1, 85], true)]);
+        assert_eq!(set(&mut d, "volumeLimit", json!({"on": true, "db": 83})), [encode([0x20, 0x82], &[1, 85], true)]);
         assert_eq!(set(&mut d, "volumeLimit", json!({"rate": 2})), [encode([0x20, 0x81], &[2], true)]);
         assert_eq!(set(&mut d, "autoOff", json!({"on": true, "index": 3})), [encode([0x01, 0x86], &[1, 3], true)]);
         let mut a = driver(A3936);
@@ -989,10 +1030,13 @@ mod tests {
     fn pushes_update_battery_and_noise() {
         let mut d = driver(A3936);
         d.on_bytes(6, &inbound(msg::BATTERY_LEVEL, &[2, 4]));
-        d.on_bytes(7, &inbound(msg::SOUND_MODES, &[1, 0x30, 0, 1]));
+        d.on_bytes(7, &inbound(msg::SOUND_MODES, &[1, 0x30, 0, 1, 0, 0]));
         let c = d.common();
         assert_eq!(c.battery[0].map(|b| (b.value, b.charging)), Some((2, true)));
         assert_eq!(c.noise.as_deref(), Some(NOISE_TRANSPARENCY));
+        // A push of another length is refused, as OpenSCQ30 does.
+        d.on_bytes(8, &inbound(msg::SOUND_MODES, &[0, 0x30, 0, 1]));
+        assert_eq!(d.common().noise.as_deref(), Some(NOISE_TRANSPARENCY));
         d.on_bytes(8, &inbound(msg::SOUND_MODES, &[0, 0x20, 1, 0, 1, 0]));
         assert_eq!(d.state_json()["ancLevel"], 2);
         assert_eq!(d.state_json()["windNoise"], true);

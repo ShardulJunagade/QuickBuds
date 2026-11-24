@@ -32,8 +32,11 @@ object ProblemReport {
     fun header(c: Context): String {
         val p = c.getSharedPreferences(ThemeRes.PREFS_NAME, Context.MODE_PRIVATE)
         val model = ModelCatalog.reportModel(c)?.second ?: p.getString(ModelCatalog.KEY_DEVICE_NAME, null) ?: "unknown buds"
-        val id = Capabilities.productId(c) ?: "?"
-        val fw = Capabilities.firmware(c) ?: "?"
+        // A Soundcore link has no OPPO product id or firmware value: the saved ones belong to the last OPPO buds.
+        val sc = com.spizganed.quickbuds.protocol.Soundcore.state(c)?.takeIf { com.spizganed.quickbuds.protocol.Soundcore.active(c) }
+        val id = sc?.optString("model") ?: Capabilities.productId(c) ?: "?"
+        val fw = sc?.optJSONArray("firmware")?.let { a -> (0 until a.length()).joinToString("/") { a.getString(it) } }
+            ?: Capabilities.firmware(c) ?: "?"
         return "QuickBuds ${UpdateChecker.installed(c)} | ${Build.MANUFACTURER} ${Build.MODEL} | " +
             "Android ${Build.VERSION.RELEASE} (API ${Build.VERSION.SDK_INT}) | $model ($id) firmware $fw"
     }

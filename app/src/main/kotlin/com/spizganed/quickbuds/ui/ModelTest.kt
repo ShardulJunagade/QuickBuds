@@ -78,9 +78,10 @@ object ModelTest {
     fun jsonLine(c: Context, s: State, features: List<Feature>, log: String): String = jsonLine(
         id = ModelCatalog.current(c)?.let { Capabilities.productId(c) } ?: ModelCatalog.reportModel(c)?.first.orEmpty(),
         name = ModelCatalog.reportModel(c)?.second ?: "unknown model",
-        firmware = Capabilities.firmware(c).orEmpty(),
-        caps = Capabilities.commands(c).orEmpty(),
-        status = Capabilities.reply(c).orEmpty(),
+        // A Soundcore link has no OPPO bitmap or status reply: the saved ones belong to the last OPPO buds.
+        firmware = if (Soundcore.active(c)) Soundcore.state(c)?.optJSONArray("firmware")?.optString(0).orEmpty() else Capabilities.firmware(c).orEmpty(),
+        caps = if (Soundcore.active(c)) emptySet() else Capabilities.commands(c).orEmpty(),
+        status = if (Soundcore.active(c)) emptyMap() else Capabilities.reply(c).orEmpty(),
         shown = features.map { it.key },
         expected = MainActivity.rowsOf(c),
         marks = features.mapNotNull { f -> s.marks[f.key]?.let { f.key to it } }.toMap(),

@@ -738,4 +738,6 @@
     <string name="sc_eq_spoken_word">Konuşma</string>
     <string name="sc_eq_treble_booster">Tiz güçlendirici</string>
     <string name="sc_eq_treble_reducer">Tiz azaltıcı</string>
+    <string name="sc_noise_hint">Ayarlarını görmek için ana ekranda gürültü engelleme veya şeffaflığı seçin.</string>
+    <string name="sc_forget_q">%1$s unutulsun mu?</string>
 </resources>

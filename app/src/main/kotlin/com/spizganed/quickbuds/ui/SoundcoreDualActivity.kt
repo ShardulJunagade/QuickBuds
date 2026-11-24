@@ -50,9 +50,21 @@ class SoundcoreDualActivity : SoundcoreScreen() {
         val sheet = BottomSheetDialog(this)
         sheet.title(name).items(listOf(
             BottomSheetDialog.Item(getString(if (connected) R.string.conn_action_disconnect else R.string.conn_action_connect), false) {
-                manager?.soundcoreDevice(if (connected) "disconnect" else "connect", mac)
+                if (connected) confirm(getString(R.string.dual_disconnect_q, name), R.string.conn_action_disconnect) { manager?.soundcoreDevice("disconnect", mac) }
+                else manager?.soundcoreDevice("connect", mac)
             },
-            BottomSheetDialog.Item(getString(R.string.sc_device_forget), false) { manager?.soundcoreDevice("forget", mac) },
+            BottomSheetDialog.Item(getString(R.string.sc_device_forget), false) {
+                confirm(getString(R.string.sc_forget_q, name), R.string.sc_device_forget) { manager?.soundcoreDevice("forget", mac) }
+            },
         )).show()
+    }
+
+    /** Disconnect and forget can cut this phone's own link: they ask first. */
+    private fun confirm(question: String, label: Int, action: () -> Unit) {
+        val sheet = BottomSheetDialog(this)
+        sheet.title(question)
+            .confirm(getString(label)) { action(); sheet.close() }
+            .cancel(getString(R.string.dialog_cancel)) { sheet.close() }
+            .show()
     }
 }

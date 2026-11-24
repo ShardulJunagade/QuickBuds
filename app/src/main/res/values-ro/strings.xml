@@ -738,4 +738,6 @@
     <string name="sc_eq_spoken_word">Vorbire</string>
     <string name="sc_eq_treble_booster">Amplificare înalte</string>
     <string name="sc_eq_treble_reducer">Reducere înalte</string>
+    <string name="sc_noise_hint">Alegeți anularea zgomotului sau transparența pe ecranul principal pentru a vedea setările lor.</string>
+    <string name="sc_forget_q">Eliminați %1$s?</string>
 </resources>

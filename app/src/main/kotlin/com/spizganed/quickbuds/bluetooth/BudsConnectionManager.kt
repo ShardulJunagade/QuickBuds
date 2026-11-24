@@ -398,11 +398,15 @@ class BudsConnectionManager(private val context: Context) {
                 val offered = device.uuids?.map { it.uuid.toString() }.orEmpty()
                 log("Cached service UUIDs: ${ConnectDiagnostics.formatUuids(offered)}")
                 linkBrand = ConnectPolicy.brand(offered, deviceName(device))
-                Soundcore.setActive(context, linkBrand == ConnectPolicy.Brand.SOUNDCORE)
                 rustLink = linkBrand == ConnectPolicy.Brand.SOUNDCORE ||
                     com.spizganed.quickbuds.protocol.RustDriver.enabled(context)
                 log("BRAND: $linkBrand, engine: ${if (rustLink) "Rust" else "Kotlin"}")
                 if (rustLink && rustEngine == null) log("RUST ENGINE: the native library is missing")
+                // Only the core speaks Soundcore: without it, the Kotlin layer would send OPPO frames to the buds.
+                if (linkBrand == ConnectPolicy.Brand.SOUNDCORE && rustEngine == null) {
+                    log("Soundcore buds need the Rust engine; the native library is missing. No connect.")
+                    return@Thread
+                }
                 val uuids = if (linkBrand == ConnectPolicy.Brand.SOUNDCORE) ConnectPolicy.soundcoreUuids(offered)
                     else ConnectPolicy.connectUuids(offered)
                 // Secure first, then insecure: a stale bond or a firmware that refuses an
@@ -579,6 +583,10 @@ class BudsConnectionManager(private val context: Context) {
         reconnectAttempts = 0
         connectedAt = System.currentTimeMillis()
         caseClosing = false
+        // An OPPO link ends a Soundcore one; a Soundcore link counts when the driver knows the model (ready()).
+        if (linkBrand == ConnectPolicy.Brand.OPPO) Soundcore.setActive(context, false)
+        // The core's EQ of an earlier link must not cover the Kotlin layer's.
+        rustEq = null
         equalizer.onLinkUp(audioDevice?.address)
         if (audioDevice != null && audioAfterRestart) { audioAfterRestart = false; setPhoneAudio(audioDevice, on = true) }
         (audioDevice ?: lastDevice)?.let { audioCheck(it, connectGeneration) }
@@ -2224,7 +2232,10 @@ class BudsConnectionManager(private val context: Context) {
                 else -> log("RUST: unknown setting $key")
             }
         }
-        override fun ready() { log("RUST: init done") }
+        override fun ready() {
+            log("RUST: init done")
+            if (linkBrand == ConnectPolicy.Brand.SOUNDCORE) Soundcore.setActive(context, true)
+        }
         override fun findPhone(ring: Boolean) {
             if (ring) PhoneRinger.ring(context) else PhoneRinger.stop(context)
         }
@@ -2331,7 +2342,7 @@ class BudsConnectionManager(private val context: Context) {
             calls += { it.onDevices(list) }
         }
         if (changed("preferred")) { val m = st.optString("preferred").takeIf { !st.isNull("preferred") }; calls += { it.onPreferred(m) } }
-        if (changed("firmware")) st.optString("firmware").takeIf { !st.isNull("firmware") }?.let { v ->
+        if (changed("firmware") && linkBrand == ConnectPolicy.Brand.OPPO) st.optString("firmware").takeIf { !st.isNull("firmware") }?.let { v ->
             Capabilities.saveFirmware(context, v)
             calls += { it.onFirmware(v) }
         }
@@ -2371,7 +2382,8 @@ class BudsConnectionManager(private val context: Context) {
     }
 
     /** The last Soundcore state on this link, or null on an OPPO link. */
-    val soundcore: org.json.JSONObject? get() = rustLast?.optJSONObject("sc")?.takeIf { linkBrand == ConnectPolicy.Brand.SOUNDCORE }
+    val soundcore: org.json.JSONObject? get() = rustLast?.optJSONObject("sc")
+        ?.takeIf { it.length() > 0 && linkBrand == ConnectPolicy.Brand.SOUNDCORE }
 
     /** One Soundcore setting by its state key (docs/SOUNDCORE-PROTOCOL.md). [value]: a Boolean, a number or a JSON object. */
     fun soundcoreSet(key: String, value: Any) { rust?.command("sc", "k" to key, "v" to value) }

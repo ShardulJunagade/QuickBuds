@@ -738,4 +738,6 @@
     <string name="sc_eq_spoken_word">Voz falada</string>
     <string name="sc_eq_treble_booster">Reforço de agudos</string>
     <string name="sc_eq_treble_reducer">Redução de agudos</string>
+    <string name="sc_noise_hint">Escolha cancelamento de ruído ou transparência na tela inicial para ver os ajustes.</string>
+    <string name="sc_forget_q">Esquecer %1$s?</string>
 </resources>

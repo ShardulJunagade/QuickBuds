@@ -38,6 +38,15 @@ pub fn encode(cmd: [u8; 2], body: &[u8], checksum: bool) -> Vec<u8> {
     b
 }
 
+/// The bytes of an inbound frame, as the buds send it: for the log and for tests.
+pub fn encode_in(cmd: [u8; 2], body: &[u8]) -> Vec<u8> {
+    let mut b = encode(cmd, body, true);
+    b[..5].copy_from_slice(&IN);
+    let n = b.len() - 1;
+    b[n] = sum(&b[..n]);
+    b
+}
+
 /// Joins socket reads into inbound frames. A frame can arrive in parts, and one read can hold many frames.
 #[derive(Default)]
 pub struct Reader {

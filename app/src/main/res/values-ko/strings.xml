@@ -738,4 +738,6 @@
     <string name="sc_eq_spoken_word">말소리</string>
     <string name="sc_eq_treble_booster">고음 강조</string>
     <string name="sc_eq_treble_reducer">고음 감소</string>
+    <string name="sc_noise_hint">설정을 보려면 홈 화면에서 노이즈 캔슬링 또는 주변 소리 듣기를 고르세요.</string>
+    <string name="sc_forget_q">%1$s을(를) 삭제할까요?</string>
 </resources>

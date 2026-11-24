@@ -11,8 +11,9 @@ const CATEGORIES = new Set(["UI", "Lag", "Connection", "Feature not working", "B
 const MAX_LOG = 1_000_000; // characters; a D1 value holds up to 2 MB
 const MAX_TEXT = 5_000;
 const PER_HOUR = 5; // reports per sender
-// An RX frame line, as the Android and desktop packet logs write it.
-const RX_FRAME = /\bRX(\[batch\])?:?\s+AA\b/i;
+// An RX frame line, as the Android and desktop packet logs write it: an OPPO frame starts with AA, a Soundcore
+// frame with 09 FF.
+const RX_FRAME = /\bRX(\[batch\])?:?\s+(AA|09 FF)\b/i;
 
 export default {
   // The cron fills the digest queue, and this handler posts each report to Discord.

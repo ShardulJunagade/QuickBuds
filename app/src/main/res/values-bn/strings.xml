@@ -738,4 +738,6 @@
     <string name="sc_eq_spoken_word">কথ্য শব্দ</string>
     <string name="sc_eq_treble_booster">ট্রেবল বুস্টার</string>
     <string name="sc_eq_treble_reducer">ট্রেবল রিডিউসার</string>
+    <string name="sc_noise_hint">এদের সেটিংস দেখতে হোম স্ক্রিনে নয়েজ ক্যান্সেলিং বা ট্রান্সপারেন্সি বেছে নিন।</string>
+    <string name="sc_forget_q">%1$s ভুলে যাবেন?</string>
 </resources>

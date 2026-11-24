@@ -12,7 +12,7 @@ import com.spizganed.quickbuds.ui.ThemeRes
  * Which paired device is "the buds": the paired device named like the model picked by hand, else the address saved last (the buds
  * whose audio connected most recently, see [KeepAliveReceiver]), else the first bonded device that
  * offers one of the OPPO SPP UUIDs, carries a model name from `models.json`, or is a Soundcore device
- * ([ConnectPolicy.brand]: its vendor service UUID or its name).
+ * ([ConnectPolicy.brand]) with the name of a known Soundcore model.
  */
 @SuppressLint("MissingPermission")
 object BudsDevice {
@@ -24,8 +24,18 @@ object BudsDevice {
         val uuids = device.uuids?.map { it.uuid.toString() }.orEmpty()
         uuids.any { it.uppercase() in SPP_UUIDS } ||
             ModelCatalog.all(context).any { it.name == device.name } ||
-            ConnectPolicy.brand(uuids, device.name) == ConnectPolicy.Brand.SOUNDCORE
+            ConnectPolicy.brand(uuids, device.name) == ConnectPolicy.Brand.SOUNDCORE && soundcoreModel(context, device.name)
     }.getOrDefault(false)
+
+    /**
+     * A Soundcore device counts as the buds only with the name of a model the driver knows (`soundcore` in
+     * models.json, "soundcore Liberty 5" matches "Soundcore Liberty 5"). Other Soundcore devices (speakers,
+     * unsupported earbuds) stay out of the auto-connect.
+     */
+    private fun soundcoreModel(context: Context, name: String?): Boolean {
+        val n = name?.trim()?.lowercase() ?: return false
+        return ModelCatalog.soundcore(context).any { (_, m) -> n == m.lowercase() || n.endsWith(m.lowercase().removePrefix("soundcore ")) }
+    }
 
     fun remember(context: Context, device: BluetoothDevice) {
         prefs(context).edit().putString(KEY_ADDRESS, device.address).apply()

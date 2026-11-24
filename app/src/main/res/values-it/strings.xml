@@ -738,4 +738,6 @@
     <string name="sc_eq_spoken_word">Parlato</string>
     <string name="sc_eq_treble_booster">Potenziamento acuti</string>
     <string name="sc_eq_treble_reducer">Riduzione acuti</string>
+    <string name="sc_noise_hint">Scegli cancellazione del rumore o trasparenza nella schermata principale per vederne le impostazioni.</string>
+    <string name="sc_forget_q">Dimenticare %1$s?</string>
 </resources>

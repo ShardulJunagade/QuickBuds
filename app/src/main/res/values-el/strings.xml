@@ -738,4 +738,6 @@
     <string name="sc_eq_spoken_word">Ομιλία</string>
     <string name="sc_eq_treble_booster">Ενίσχυση πρίμων</string>
     <string name="sc_eq_treble_reducer">Μείωση πρίμων</string>
+    <string name="sc_noise_hint">Επιλέξτε ακύρωση θορύβου ή διαφάνεια στην αρχική οθόνη για να δείτε τις ρυθμίσεις τους.</string>
+    <string name="sc_forget_q">Διαγραφή %1$s;</string>
 </resources>

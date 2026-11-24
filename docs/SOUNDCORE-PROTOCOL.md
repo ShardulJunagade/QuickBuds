@@ -25,6 +25,8 @@ GPL-3.0-or-later".
 - The answer's serial number (bytes 16 to 31) starts with the model number, for example `3936`. That picks the layout.
   A serial of an unknown model, or a short packet, gives a `NOTE` log line and no state.
 - Dual connection on: the driver asks for the device list (`0b 01`).
+- Android saves the brand only when the driver knows the model (its `Ready`); an OPPO link clears it.
+  A Soundcore device counts as the buds for the auto-connect only with the name of a known model.
 
 ## 2. Framing
 
@@ -37,7 +39,8 @@ GPL-3.0-or-later".
 | Checksum | 1 byte: the sum of all bytes before it, mod 256 |
 
 The reader joins reads into frames and skips bytes up to the next header. A bad checksum discards the frame
-(`DISCARDED RX` in the log) `[OPENSCQ30]`.
+(`DISCARDED RX` in the log) `[OPENSCQ30]`. The log has whole frames, `TX: 08 EE …` and `RX: 09 FF …`, with the
+command in brackets. The report Worker accepts a log that holds an `RX: 09 FF` line.
 
 The buds answer each write with an empty packet of the same command. The driver changes its copy of the state when it
 sends the write, as OpenSCQ30 does after the answer. A write that the buds refuse is not seen `[GUESS]`.
@@ -108,7 +111,7 @@ them, so the driver does not show them.
 | Noise control cycle `cycle` | `06 82` | bit 0 noise cancelling, bit 1 transparency, bit 2 normal |
 | Button action `button` | `04 81` | side (0 left, 1 right), button id, action byte |
 | Button on or off (A3936) | `04 83` | side, button id, on byte |
-| Reset the buttons | `04 82` | empty; then the driver sends `01 01` again |
+| Reset the buttons | `04 82` | empty; the buds answer with an empty `04 82`, then the driver sends `01 01` |
 | Equalizer `eq` | `03 87` | see section 7 |
 | Dual connection `dual` | `0b 84` | 0 or 1 |
 | Connect, disconnect, forget a device | `0b 82`, `0b 81`, `0b 83` | the 6-byte address |
@@ -125,9 +128,12 @@ them, so the driver does not show them.
 | 5 | adaptive sensitivity | kept as it is |
 | 6 | transport (A3957) | 0 plane, 3 car |
 
-The apps show a sub-setting only while its mode is on: the strength in manual mode, the transport type in transport
-mode. A write then never needs a mode change first. OpenSCQ30 plans such changes in steps (`MigrationSteps`); the
-driver does not need them `[OPENSCQ30]`.
+The A3957 takes a field only while its parent mode is on: transparency mode in transparency, the noise cancelling
+mode in noise cancelling, the strength in manual noise cancelling, the transport type in transport mode, wind in
+noise cancelling or transparency. OpenSCQ30 plans such changes in steps (`MigrationSteps`) `[OPENSCQ30]`.
+The driver refuses a field whose parent mode is off (a `NOTE` line), and the apps show each sub-setting only while
+its parent mode is on, for every model. So no write needs a mode change first.
+A `06 01` push of another length than the model's group is refused, as OpenSCQ30's parser does.
 
 ### Auto power off
 

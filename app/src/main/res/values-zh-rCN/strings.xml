@@ -740,4 +740,6 @@
     <string name="sc_eq_spoken_word">人声</string>
     <string name="sc_eq_treble_booster">高音增强</string>
     <string name="sc_eq_treble_reducer">高音减弱</string>
+    <string name="sc_noise_hint">在主屏幕上选择降噪或通透模式，即可查看其设置。</string>
+    <string name="sc_forget_q">忽略 %1$s？</string>
 </resources>

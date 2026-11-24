@@ -738,4 +738,6 @@
     <string name="sc_eq_spoken_word">Beszéd</string>
     <string name="sc_eq_treble_booster">Magaskiemelés</string>
     <string name="sc_eq_treble_reducer">Magascsökkentés</string>
+    <string name="sc_noise_hint">A beállítások megjelenítéséhez válaszd a kezdőképernyőn a zajszűrést vagy az átlátszó módot.</string>
+    <string name="sc_forget_q">Elfelejted ezt: %1$s?</string>
 </resources>

@@ -738,4 +738,6 @@
     <string name="sc_eq_spoken_word">Gesproken woord</string>
     <string name="sc_eq_treble_booster">Hogetonenversterker</string>
     <string name="sc_eq_treble_reducer">Hogetonenverminderaar</string>
+    <string name="sc_noise_hint">Kies ruisonderdrukking of transparantie op het startscherm om hun instellingen te zien.</string>
+    <string name="sc_forget_q">%1$s vergeten?</string>
 </resources>

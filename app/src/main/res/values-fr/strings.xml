@@ -738,4 +738,6 @@
     <string name="sc_eq_spoken_word">Voix parlée</string>
     <string name="sc_eq_treble_booster">Amplificateur d\'aigus</string>
     <string name="sc_eq_treble_reducer">Réducteur d\'aigus</string>
+    <string name="sc_noise_hint">Choisissez la réduction du bruit ou la transparence sur l\'écran d\'accueil pour voir leurs réglages.</string>
+    <string name="sc_forget_q">Oublier %1$s ?</string>
 </resources>

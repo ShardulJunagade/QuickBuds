@@ -738,4 +738,6 @@
     <string name="sc_eq_spoken_word">Мовлення</string>
     <string name="sc_eq_treble_booster">Підсилення високих</string>
     <string name="sc_eq_treble_reducer">Послаблення високих</string>
+    <string name="sc_noise_hint">Виберіть шумозаглушення або прозорість на головному екрані, щоб побачити їхні налаштування.</string>
+    <string name="sc_forget_q">Забути %1$s?</string>
 </resources>

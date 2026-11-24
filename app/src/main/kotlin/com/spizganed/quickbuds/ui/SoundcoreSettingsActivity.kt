@@ -29,6 +29,8 @@ class SoundcoreSettingsActivity : SoundcoreScreen() {
     private lateinit var limitRate: Pair<LinearLayout, TextView>
     private lateinit var firmware: Pair<LinearLayout, TextView>
     private lateinit var serial: Pair<LinearLayout, TextView>
+    private lateinit var noiseHint: View
+    private lateinit var noiseCard: View
     private lateinit var volumeLabel: View
     private lateinit var volumeCard: View
 
@@ -36,7 +38,15 @@ class SoundcoreSettingsActivity : SoundcoreScreen() {
         root.addView(SettingRowFactory.title(this, R.string.row_earbuds_title))
 
         section(R.string.anc_section)
-        val noise = card()
+        noiseHint = TextView(this).apply {
+            setText(R.string.sc_noise_hint)
+            setTextColor(ThemeRes.color(this@SoundcoreSettingsActivity, R.attr.appColorTextSecondary))
+            textSize = 13f
+            val dp = ThemeRes.dp(this@SoundcoreSettingsActivity, 16f)
+            setPadding(dp, 0, dp, dp / 2)
+        }
+        root.addView(noiseHint)
+        val noise = card().also { noiseCard = it }
         transparency = choiceRow(noise, R.string.sc_transparency_title) { pickTransparency() }
         ancMode = choiceRow(noise, R.string.sc_anc_mode_title) { pickAncMode() }
         ancLevel = choiceRow(noise, R.string.sc_anc_level_title) { pickAncLevel() }
@@ -85,24 +95,37 @@ class SoundcoreSettingsActivity : SoundcoreScreen() {
         }
     }
 
-    /** Shows or hides a row, and the divider that [SettingRowFactory.addRow] put before it. A card's first row never hides. */
-    private fun show(row: View, on: Boolean) {
-        val v = if (on) View.VISIBLE else View.GONE
-        row.visibility = v
-        val parent = row.parent as? android.view.ViewGroup ?: return
-        val i = parent.indexOfChild(row)
-        if (i > 0) parent.getChildAt(i - 1).takeIf { it !is LinearLayout }?.visibility = v
+    private fun show(row: View, on: Boolean) { row.visibility = if (on) View.VISIBLE else View.GONE }
+
+    /** A divider ([SettingRowFactory.addRow]) shows only between two shown rows. */
+    private fun tidy(card: LinearLayout) {
+        var rowBefore = false
+        for (i in 0 until card.childCount) {
+            val v = card.getChildAt(i)
+            if (v is LinearLayout) { if (v.visibility == View.VISIBLE) rowBefore = true; continue }
+            val next = (i + 1 until card.childCount).map { card.getChildAt(it) }.firstOrNull { it is LinearLayout }
+            v.visibility = if (rowBefore && next?.visibility == View.VISIBLE) View.VISIBLE else View.GONE
+        }
     }
 
     override fun render(s: JSONObject) {
         transparency.second.text = getString(transparencyLabel(s.optInt("transparencyMode")))
         ancMode.second.text = getString(ancModeLabel(s.optInt("ancMode")))
         ancLevel.second.text = levelLabel(s, s.optInt("ancLevel"))
-        // A sub-setting shows only when its mode applies, so a write never needs a mode change first.
-        show(ancLevel.first, s.optInt("ancMode") == 0)
-        show(transport.first, s.has("transport") && s.optInt("ancMode") == 2)
+        // A sub-setting shows only while its noise control mode is on (0 noise cancelling, 1 transparency, 2 normal):
+        // some models take the write only then (docs/SOUNDCORE-PROTOCOL.md, section 5).
+        val nc = s.optInt("noise") == 0
+        val tr = s.optInt("noise") == 1
+        show(transparency.first, tr)
+        show(ancMode.first, nc)
+        show(ancLevel.first, nc && s.optInt("ancMode") == 0)
+        show(transport.first, nc && s.has("transport") && s.optInt("ancMode") == 2)
         transport.second.text = getString(if (s.optInt("transport") == 3) R.string.sc_transport_car else R.string.sc_transport_plane)
-        show(adaptive.first, s.has("adaptiveLevel") && s.optInt("ancMode") == 1)
+        show(adaptive.first, nc && s.has("adaptiveLevel") && s.optInt("ancMode") == 1)
+        show(wind.first, nc || tr)
+        show(noiseCard, nc || tr)
+        show(noiseHint, !nc && !tr)
+        tidy(noiseCard as LinearLayout)
         adaptive.second.text = getString(adaptiveLabel(s.optInt("adaptiveLevel")))
         wind.second.paint(s.optBoolean("windNoise"))
         SettingRowFactory.subtitle(this, wind.first).setText(if (s.optBoolean("windDetected")) R.string.sc_wind_detected else R.string.sc_wind_sub)
@@ -118,6 +141,7 @@ class SoundcoreSettingsActivity : SoundcoreScreen() {
             show(pair.first, s.has(key))
             pair.second.paint(s.optBoolean(key))
         }
+        (switches.values.first().first.parent as? LinearLayout)?.let { tidy(it) }
         autoOff.second.text = autoOffLabel(s)
 
         val v = s.optJSONObject("volumeLimit")
@@ -128,6 +152,7 @@ class SoundcoreSettingsActivity : SoundcoreScreen() {
             limitDb.second.text = getString(R.string.sc_db, v.optInt("db"))
             limitRate.second.text = getString(rateLabel(v.optInt("rate")))
             show(limitDb.first, v.optBoolean("on"))
+            tidy(volumeCard as LinearLayout)
         }
 
         val fw = s.optJSONArray("firmware")

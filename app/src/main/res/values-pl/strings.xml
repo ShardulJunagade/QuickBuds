@@ -738,4 +738,6 @@
     <string name="sc_eq_spoken_word">Mowa</string>
     <string name="sc_eq_treble_booster">Wzmocnienie sopranów</string>
     <string name="sc_eq_treble_reducer">Redukcja sopranów</string>
+    <string name="sc_noise_hint">Wybierz redukcję szumów lub przezroczystość na ekranie głównym, aby zobaczyć ich ustawienia.</string>
+    <string name="sc_forget_q">Zapomnieć %1$s?</string>
 </resources>
