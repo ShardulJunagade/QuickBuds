@@ -863,4 +863,6 @@
     <string name="sc_color_blue">น้ำเงิน</string>
     <string name="sc_color_purple">ม่วง</string>
     <string name="sc_color_white">ขาว</string>
+    <string name="settings_engine_title">เอนจินใหม่</string>
+    <string name="settings_engine_sub">เอนจินใหม่ควบคุมหูฟัง ปิดหากมีบางอย่างทำงานแย่ลง แอปจะใช้เอนจินเดิม มีผลเมื่อเชื่อมต่อครั้งถัดไป หูฟัง Soundcore ใช้เอนจินนี้เสมอ</string>
 </resources>

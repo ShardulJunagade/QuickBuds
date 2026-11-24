@@ -863,4 +863,6 @@
     <string name="sc_color_blue">Biru</string>
     <string name="sc_color_purple">Ungu</string>
     <string name="sc_color_white">Putih</string>
+    <string name="settings_engine_title">Mesin baru</string>
+    <string name="settings_engine_sub">Mesin baru mengendalikan earbud. Matikan jika ada yang bekerja lebih buruk; aplikasi lalu memakai yang lama. Berlaku pada koneksi berikutnya. Earbud Soundcore selalu memakainya.</string>
 </resources>

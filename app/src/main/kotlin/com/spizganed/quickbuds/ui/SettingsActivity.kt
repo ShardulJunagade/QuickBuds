@@ -91,6 +91,9 @@ class SettingsActivity : Activity() {
             link(R.drawable.ic_info, R.string.settings_about_title, R.string.settings_about_sub) {
                 startActivity(Intent(this, AboutActivity::class.java))
             },
+            // The engine of the next connect (protocol/RustDriver.kt): the Rust core, or the Kotlin layer as the fallback.
+            toggle(R.drawable.ic_info, R.string.settings_engine_title, R.string.settings_engine_sub,
+                com.spizganed.quickbuds.protocol.RustDriver.PREF, com.spizganed.quickbuds.protocol.RustDriver.DEFAULT),
             toggle(R.drawable.ic_eye, R.string.settings_ping_title, R.string.settings_ping_sub, UsagePing.KEY_ENABLED, true),
             toggle(R.drawable.ic_dev_tools, R.string.settings_devtools_title, R.string.settings_devtools_sub, KEY_DEV_TOOLS_BUTTON, false))
 

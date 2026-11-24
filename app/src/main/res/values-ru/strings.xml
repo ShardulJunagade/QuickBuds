@@ -861,4 +861,6 @@
     <string name="sc_color_blue">Синий</string>
     <string name="sc_color_purple">Фиолетовый</string>
     <string name="sc_color_white">Белый</string>
+    <string name="settings_engine_title">Новый движок</string>
+    <string name="settings_engine_sub">Новый движок управляет наушниками. Выключите его, если что-то работает хуже; тогда приложение использует старый. Действует со следующего подключения. Наушники Soundcore используют его всегда.</string>
 </resources>

@@ -246,8 +246,6 @@
     <string name="update_auto_title">Check for updates</string>
     <string name="update_auto_sub">Every 6 hours, and when the app opens</string>
     <!-- Dev tools: English only by design. -->
-    <string name="dev_rust_engine_title" translatable="false">Rust engine</string>
-    <string name="dev_rust_engine_sub" translatable="false">The Rust core drives the buds. Applies on the next connect.</string>
     <string name="dev_soundcore_demo_title" translatable="false">Soundcore demo</string>
     <string name="dev_soundcore_demo_sub" translatable="false">Show the Soundcore screens with a recorded state. A connect ends it.</string>
     <string name="update_beta_title">Beta versions</string>
@@ -962,4 +960,6 @@
     <string name="sc_color_blue">Blue</string>
     <string name="sc_color_purple">Purple</string>
     <string name="sc_color_white">White</string>
+    <string name="settings_engine_title">New engine</string>
+    <string name="settings_engine_sub">The new engine drives the earbuds. Turn it off if something works worse; the app then uses the old one. Applies on the next connect. Soundcore earbuds always use it.</string>
 </resources>

@@ -861,4 +861,6 @@
     <string name="sc_color_blue">Azul</string>
     <string name="sc_color_purple">Morado</string>
     <string name="sc_color_white">Blanco</string>
+    <string name="settings_engine_title">Motor nuevo</string>
+    <string name="settings_engine_sub">El motor nuevo controla los auriculares. Desactívalo si algo funciona peor; la app usará el anterior. Se aplica en la próxima conexión. Los auriculares Soundcore siempre lo usan.</string>
 </resources>

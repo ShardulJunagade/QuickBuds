@@ -861,4 +861,6 @@
     <string name="sc_color_blue">Asul</string>
     <string name="sc_color_purple">Lila</string>
     <string name="sc_color_white">Puti</string>
+    <string name="settings_engine_title">Bagong engine</string>
+    <string name="settings_engine_sub">Ang bagong engine ang kumokontrol sa earbuds. I-off ito kung may gumagana nang mas malala; gagamitin ng app ang luma. Epektibo sa susunod na connect. Laging ginagamit ito ng Soundcore earbuds.</string>
 </resources>

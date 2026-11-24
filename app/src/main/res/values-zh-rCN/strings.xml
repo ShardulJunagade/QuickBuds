@@ -863,4 +863,6 @@
     <string name="sc_color_blue">蓝色</string>
     <string name="sc_color_purple">紫色</string>
     <string name="sc_color_white">白色</string>
+    <string name="settings_engine_title">新引擎</string>
+    <string name="settings_engine_sub">新引擎控制耳机。如有功能变差，请关闭，应用将改用旧引擎。下次连接时生效。Soundcore 耳机始终使用新引擎。</string>
 </resources>

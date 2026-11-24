@@ -863,4 +863,6 @@
     <string name="sc_color_blue">नीला</string>
     <string name="sc_color_purple">बैंगनी</string>
     <string name="sc_color_white">सफ़ेद</string>
+    <string name="settings_engine_title">नया इंजन</string>
+    <string name="settings_engine_sub">नया इंजन ईयरबड चलाता है। कुछ खराब चले तो इसे बंद करें; ऐप तब पुराना इस्तेमाल करता है। अगले कनेक्शन पर लागू। Soundcore ईयरबड हमेशा इसे इस्तेमाल करते हैं।</string>
 </resources>

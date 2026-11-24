@@ -861,4 +861,6 @@
     <string name="sc_color_blue">파랑</string>
     <string name="sc_color_purple">보라</string>
     <string name="sc_color_white">흰색</string>
+    <string name="settings_engine_title">새 엔진</string>
+    <string name="settings_engine_sub">새 엔진이 이어버드를 제어합니다. 문제가 생기면 끄세요. 앱이 이전 엔진을 사용합니다. 다음 연결부터 적용됩니다. Soundcore 이어버드는 항상 이 엔진을 사용합니다.</string>
 </resources>

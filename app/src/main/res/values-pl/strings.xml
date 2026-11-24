@@ -861,4 +861,6 @@
     <string name="sc_color_blue">Niebieski</string>
     <string name="sc_color_purple">Fioletowy</string>
     <string name="sc_color_white">Biały</string>
+    <string name="settings_engine_title">Nowy silnik</string>
+    <string name="settings_engine_sub">Nowy silnik steruje słuchawkami. Wyłącz go, jeśli coś działa gorzej; aplikacja użyje wtedy starego. Działa od następnego połączenia. Słuchawki Soundcore zawsze go używają.</string>
 </resources>

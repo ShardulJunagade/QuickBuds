@@ -861,4 +861,6 @@
     <string name="sc_color_blue">Albastru</string>
     <string name="sc_color_purple">Mov</string>
     <string name="sc_color_white">Alb</string>
+    <string name="settings_engine_title">Motor nou</string>
+    <string name="settings_engine_sub">Motorul nou controlează căștile. Opriți-l dacă ceva merge mai rău; aplicația folosește atunci motorul vechi. Se aplică la următoarea conectare. Căștile Soundcore îl folosesc mereu.</string>
 </resources>

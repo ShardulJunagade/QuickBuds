@@ -861,4 +861,6 @@
     <string name="sc_color_blue">Bleu</string>
     <string name="sc_color_purple">Violet</string>
     <string name="sc_color_white">Blanc</string>
+    <string name="settings_engine_title">Nouveau moteur</string>
+    <string name="settings_engine_sub">Le nouveau moteur pilote les écouteurs. Désactivez-le si quelque chose marche moins bien ; l\'app utilise alors l\'ancien. S\'applique à la prochaine connexion. Les écouteurs Soundcore l\'utilisent toujours.</string>
 </resources>

@@ -128,18 +128,6 @@ class DevToolsActivity : Activity() {
         })
         root.addView(actions, spaced(dp(12f)))
 
-        // Driver mode of the Rust core (protocol/RustDriver.kt). The next connect reads it.
-        val prefs = getSharedPreferences(ThemeRes.PREFS_NAME, MODE_PRIVATE)
-        val rustSwitch = SettingRowFactory.buildSwitch(this, prefs.getBoolean(com.spizganed.quickbuds.protocol.RustDriver.PREF, com.spizganed.quickbuds.protocol.RustDriver.DEFAULT))
-        rustSwitch.setOnCheckedChangeListener { _, on ->
-            prefs.edit().putBoolean(com.spizganed.quickbuds.protocol.RustDriver.PREF, on).apply()
-            showInLog("Rust engine ${if (on) "on" else "off"}: applies on the next connect (Disconnect, then Reconnect)")
-        }
-        root.addView(SettingRowFactory.card(this).apply {
-            addView(SettingRowFactory.build(this@DevToolsActivity, R.drawable.ic_info, R.string.dev_rust_engine_title,
-                R.string.dev_rust_engine_sub, rustSwitch) { rustSwitch.performClick() })
-        }, spaced(dp(12f)))
-
         // Soundcore demo: a recorded state packet fills the Soundcore screens, so they can be checked without buds.
         // A real connect replaces it. Writes go nowhere: there is no link.
         root.addView(SettingRowFactory.card(this).apply {

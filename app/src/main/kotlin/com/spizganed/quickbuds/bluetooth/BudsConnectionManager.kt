@@ -2178,7 +2178,7 @@ class BudsConnectionManager(private val context: Context) {
     @Volatile private var linkBrand = ConnectPolicy.Brand.OPPO
 
     /**
-     * The core drives this link: Soundcore buds always (no Kotlin path), OPPO buds when Dev tools › Rust engine is on.
+     * The core drives this link: Soundcore buds always (no Kotlin path), OPPO buds when Settings › New engine is on.
      * Else the Kotlin layer drives and the core shadows it.
      */
     @Volatile private var rustLink = false

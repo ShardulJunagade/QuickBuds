@@ -861,4 +861,6 @@
     <string name="sc_color_blue">Blå</string>
     <string name="sc_color_purple">Lila</string>
     <string name="sc_color_white">Vit</string>
+    <string name="settings_engine_title">Ny motor</string>
+    <string name="settings_engine_sub">Den nya motorn styr öronsnäckorna. Stäng av den om något fungerar sämre; appen använder då den gamla. Gäller från nästa anslutning. Soundcore-öronsnäckor använder den alltid.</string>
 </resources>

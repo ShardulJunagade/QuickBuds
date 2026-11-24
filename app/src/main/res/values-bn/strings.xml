@@ -861,4 +861,6 @@
     <string name="sc_color_blue">নীল</string>
     <string name="sc_color_purple">বেগুনি</string>
     <string name="sc_color_white">সাদা</string>
+    <string name="settings_engine_title">নতুন ইঞ্জিন</string>
+    <string name="settings_engine_sub">নতুন ইঞ্জিন ইয়ারবাড চালায়। কিছু খারাপ কাজ করলে এটি বন্ধ করুন; অ্যাপ তখন পুরোনোটি ব্যবহার করে। পরের সংযোগে প্রযোজ্য। Soundcore ইয়ারবাড সবসময় এটি ব্যবহার করে।</string>
 </resources>

@@ -861,4 +861,6 @@
     <string name="sc_color_blue">Kék</string>
     <string name="sc_color_purple">Lila</string>
     <string name="sc_color_white">Fehér</string>
+    <string name="settings_engine_title">Új motor</string>
+    <string name="settings_engine_sub">Az új motor vezérli a fülhallgatót. Kapcsolja ki, ha valami rosszabbul működik; az alkalmazás ekkor a régit használja. A következő csatlakozáskor lép életbe. A Soundcore fülhallgatók mindig ezt használják.</string>
 </resources>

@@ -861,4 +861,6 @@
     <string name="sc_color_blue">Синій</string>
     <string name="sc_color_purple">Фіолетовий</string>
     <string name="sc_color_white">Білий</string>
+    <string name="settings_engine_title">Новий рушій</string>
+    <string name="settings_engine_sub">Новий рушій керує навушниками. Вимкніть його, якщо щось працює гірше; тоді застосунок використає старий. Діє з наступного підключення. Навушники Soundcore завжди його використовують.</string>
 </resources>
