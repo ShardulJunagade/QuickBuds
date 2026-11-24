@@ -34,14 +34,32 @@ object Soundcore {
         prefs(c).edit().putString(KEY_STATE, state.toString()).apply()
     }
 
-    /** The noise modes of every Soundcore model this app knows: Off, Transparency and noise cancelling. */
-    val ANC_MODES = """[{"mode":1,"slot":0},{"mode":2,"slot":1},{"mode":5,"slot":2}]"""
+    /**
+     * The noise modes of the home noise control: Off, Transparency and noise cancelling, as far as the model has
+     * them (the values of the `noise` field: 2 normal, 1 transparency, 0 noise cancelling).
+     */
+    fun ancModes(c: Context): String {
+        val modes = state(c)?.optJSONArray("modes")
+        val noise = (0 until (modes?.length() ?: 0)).map { modes!!.getJSONObject(it) }.firstOrNull { it.optString("key") == "noise" }
+        val values = noise?.optJSONArray("values")?.let { a -> (0 until a.length()).map { a.getInt(it) } } ?: listOf(0, 1, 2)
+        return listOfNotNull(
+            """{"mode":1,"slot":0}""".takeIf { 2 in values },
+            """{"mode":2,"slot":1}""".takeIf { 1 in values },
+            """{"mode":5,"slot":2}""".takeIf { 0 in values },
+        ).joinToString(",", "[", "]")
+    }
 
     /** The home rows of a Soundcore model ([RowRules] keys). */
     fun rows(c: Context): Set<String> {
         val out = linkedSetOf(RowRules.EARBUDS)
-        if (state(c) == null) return out
-        out += listOf(RowRules.ANC, RowRules.GAME, RowRules.HIRES, RowRules.EQ, RowRules.DUAL)
+        val s = state(c) ?: return out
+        // A row shows when the model has its setting (docs/SOUNDCORE-PROTOCOL.md section 8).
+        val modes = s.optJSONArray("modes")
+        if (modes != null && (0 until modes.length()).any { modes.getJSONObject(it).optString("key") == "noise" }) out += RowRules.ANC
+        if (s.has("gaming")) out += RowRules.GAME
+        if (s.has("ldac")) out += RowRules.HIRES
+        if (s.has("eqPresets")) out += RowRules.EQ
+        if (s.has("dual")) out += RowRules.DUAL
         return out
     }
 

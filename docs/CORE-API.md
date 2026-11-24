@@ -41,58 +41,37 @@ Rules:
 
 ## Mapping: Soundcore
 
-Source: OpenSCQ30 (`lib/src/devices/soundcore/`, read on 2026-11-22). The count is the number of its 41 models
-with the module. A model-specific module (for example `a3947_sound_modes`) counts for the shared feature.
+Source: OpenSCQ30 (`lib/src/devices/soundcore/`). Each model is a table in `core/src/soundcore/models.rs`.
 
 ### Where the controls are
 
-Android has 4 Soundcore screens: `SoundcoreSettingsActivity` (noise control details, gestures, the cycle, the
-switches, auto power off, volume limit, firmware), `SoundcoreButtonsActivity`, `SoundcoreEqActivity` and
+Android has 4 Soundcore screens: `SoundcoreSettingsActivity` (noise control details, the cycle, the switches and
+choices, auto power off, volume limit, firmware), `SoundcoreButtonsActivity`, `SoundcoreEqActivity` and
 `SoundcoreDualActivity`. They use the same row, card and sheet parts as the OPPO screens, so they look the same.
 The home screen keeps its rows: noise control, low latency (gaming mode), high-quality audio (LDAC), the equalizer,
-dual connection and earbud settings open the Soundcore screens.
+dual connection and earbud settings open the Soundcore screens. Each row shows only when the model has its key.
 Why not the OPPO screens: they read OPPO model data (the `models.json` gesture tables, `EqCodec`, the `0x8100`
-bitmap). The Soundcore driver gives its own data (`state_json`), so a screen per brand is smaller than one screen
-with two data models. A third brand with the same features can take these screens over.
+bitmap). The Soundcore driver gives its own data (`state_json`): lists of sound mode fields, switches, choices and
+buttons, each with its values and value names. The screens build their rows from these lists, so a new model needs
+a table in the core and no screen code.
 
-The table names each feature's control:
+| Feature | Control |
+|---|---|
+| Battery, case battery | Battery rings, widgets, notification. Levels in steps (0 to 5, 1 to 10) or percent. |
+| Firmware, serial | Earbud settings, About. |
+| Noise control and its fields | Home noise control (the modes the model has); the fields in Earbud settings. |
+| Equalizer | EQ screen: the model's presets and, on most models, a custom curve of 8 bands. |
+| Gestures | Gesture screen: per group and side; reset; the noise control cycle in Earbud settings. |
+| Dual connection | Dual connection screen. |
+| LDAC, gaming mode | High-quality audio and low latency rows. |
+| One-byte settings | Earbud settings: a switch or a choice each (prompts and tones, wear detection, auto play, leak compensation, surround, touch lock, touch controls, Dolby, side tone, press sensitivity, volume balance, case language, the D1301 sleep settings). |
+| Auto power off, volume limit | Earbud settings. |
 
-| Feature | Soundcore module | Models | QuickBuds control | Gap to close |
-|---|---|---|---|---|
-| Battery | `single_battery`, `dual_battery`, `case_battery_level` and the `_custom` variants | 41 | Battery rings, widgets, notification | Some models give a level from 0 to 5, not a percent. The rings and the widgets show steps. |
-| Firmware | `serial_number_and_(dual_)firmware_version` | 36 | Earbud settings, firmware row | Add the serial number. A firmware for each bud. |
-| Noise control | `sound_modes` and the model-specific ones | 24 | Noise control on the home screen | Modes Normal, Transparency, Noise cancelling. Variants: Transport, Indoor, Outdoor, Custom, Adaptive. Transparency has Fully and Vocal. A custom level is a new slider under the modes. |
-| Equalizer | `equalizer`, `equalizer_tws`, `equalizer_with_drc` and the model-specific ones | 35 | EQ screen | 8 bands (100 Hz to 12.8 kHz). The driver gives the band frequencies, the dB range and the presets. HearID is a later item. |
-| Gestures | `button_configuration` | 26 | Gesture screen | Gestures: single, double, triple, long press, slide up and down, double and long press on a call. The actions come from the driver's table. |
-| Reset the gestures | `reset_button_configuration` | 21 | Gesture screen | A new "Reset" button. |
-| Touch controls on or off | `disable_all_buttons`, `touch_lock`, `d1301_tap_controls_disabled` | 5 | Gesture screen | A new switch at the top. |
-| Noise cycle of a gesture | `ambient_sound_mode_cycle` (and `_tws`) | 14 | Gesture screen, noise cycle | The modes in the cycle are switches, as on OPPO. |
-| Dual connection | `dual_connections` | 17 | Dual connection screen | The switch and the device list exist. |
-| High-quality audio | `ldac`, `d1402_ldac_and_three_d_sound` | 13 | High-quality audio switch | LDAC only. |
-| Low latency | `gaming_mode` and the model-specific one | 7 | Low latency switch | None. |
-| Wear detection | `wearing_detection` | 9 | Earbud settings | None. |
-| 3D audio | `spatial_audio`, `surround_sound` | 7 | 3D audio switch and type | The spatial modes map to the 3D audio type. |
-| Tap sensitivity | `a3953_press_sensitivity` | 1 | Tap sensitivity slider | None. |
-| Personalized noise cancelling | `a3955_sound_modes` | 1 | Noise control screen | A switch only: the buds keep their own ear canal result. |
-| Each bud connected | `tws_status` | 24 | No control | It feeds the battery and wear display. |
+### Later
 
-### New hand-made controls
-
-| Feature | Soundcore module | Models | Place |
-|---|---|---|---|
-| Auto power off | `auto_power_off` | 21 | Earbud settings: a choice of times. |
-| Touch tone | `touch_tone` | 18 | Earbud settings: a switch. |
-| Prompts and tones | `low_battery_prompt`, `voice_prompt`, `ambient_sound_mode_voice_prompt`, `wearing_tone`, `battery_alert` | 17 | Earbud settings: one "Prompts and tones" group, one switch each. OPPO's alert volume moves into this group. |
-| Volume limit | `limit_high_volume` | 9 | A new screen: the switch, the dB limit, the check interval. |
-| Pause when a bud comes out | `auto_play_pause` | 3 | Earbud settings: a switch. The buds pause; this is not the phone's Smart pause. |
-| Sound leak compensation | `sound_leak_compensation` | 3 | EQ screen: a switch. |
-
-### Later or never
-
-One model each, or not about earbud control. They wait until owners ask:
-volume and volume balance (A3116, A3876), side tone and Dolby (A3062), immersive experience (A3955), easy chat,
-air pressure, case language and the case screen (A3954), lights (A3876), the sleep features and alarms (D1301),
-the wake word (D1402), power off (A3116).
+One model each, and more work than a byte: the A3876 lights, the A3954 case features, easy chat and air pressure,
+spatial audio (A3953, A3954, D1202), the D1301 alarms, timer and post-sleep audio, the A3116 speaker. They wait
+until owners ask.
 
 ### OPPO features that Soundcore does not have
 

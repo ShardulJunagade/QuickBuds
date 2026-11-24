@@ -10,7 +10,7 @@ import org.json.JSONObject
 import java.util.Locale
 
 /**
- * The equalizer of Soundcore buds: the 22 Soundcore presets and a custom curve of 8 bands. A slider writes the
+ * The equalizer of Soundcore buds: the model's presets and, on most models, a custom curve of 8 bands. A slider writes the
  * custom curve when it is let go; the first change starts from the bands of the preset in use. The state lists
  * the presets, the band frequencies and the range (`eqPresets`, `eqHz`, `eqRange`).
  */
@@ -19,13 +19,14 @@ class SoundcoreEqActivity : SoundcoreScreen() {
     private lateinit var presetCard: LinearLayout
     private val presetRows = mutableMapOf<Int, LinearLayout>()
     private lateinit var customCard: LinearLayout
+    private lateinit var customLabel: android.view.View
     private val sliders = mutableListOf<Pair<SeekBar, TextView>>()
     /** A slider is held: the state does not move it. */
     private var dragging = false
 
     override fun build() {
         root.addView(SettingRowFactory.title(this, R.string.row_eq_title))
-        section(R.string.sc_eq_custom)
+        customLabel = section(R.string.sc_eq_custom)
         customCard = card()
         section(R.string.sc_eq_presets)
         presetCard = card()
@@ -35,6 +36,10 @@ class SoundcoreEqActivity : SoundcoreScreen() {
         val presets = s.optJSONArray("eqPresets") ?: return
         if (presetRows.isEmpty()) buildPresets(presets)
         if (sliders.isEmpty()) buildSliders(s)
+        // Some models take only the presets (`eqCustom` false).
+        val custom = s.optBoolean("eqCustom", true)
+        customLabel.visibility = if (custom) android.view.View.VISIBLE else android.view.View.GONE
+        customCard.visibility = customLabel.visibility
         val current = s.optInt("eqPreset")
         for ((id, row) in presetRows) {
             row.findViewWithTag<TextView>(SettingRowFactory.TITLE_TAG)?.setTextColor(ThemeRes.color(this,
@@ -138,7 +143,7 @@ class SoundcoreEqActivity : SoundcoreScreen() {
         fun toProgress(tenths: Int) = ((tenths.coerceIn(MIN, -MIN) - MIN) / STEP)
         fun fromProgress(p: Int) = MIN + p * STEP
 
-        /** `soundcore::driver::PRESETS` names. */
+        /** The preset names of `soundcore::presets`. */
         val PRESET_NAMES = mapOf(
             "SoundcoreSignature" to R.string.sc_eq_signature, "Acoustic" to R.string.sc_eq_acoustic,
             "BassBooster" to R.string.sc_eq_bass_booster, "BassReducer" to R.string.sc_eq_bass_reducer,
@@ -148,7 +153,8 @@ class SoundcoreEqActivity : SoundcoreScreen() {
             "Lounge" to R.string.sc_eq_lounge, "Piano" to R.string.sc_eq_piano, "Pop" to R.string.sc_eq_pop,
             "RnB" to R.string.sc_eq_rnb, "Rock" to R.string.sc_eq_rock, "SmallSpeakers" to R.string.sc_eq_small_speakers,
             "SpokenWord" to R.string.sc_eq_spoken_word, "TrebleBooster" to R.string.sc_eq_treble_booster,
-            "TrebleReducer" to R.string.sc_eq_treble_reducer,
+            "TrebleReducer" to R.string.sc_eq_treble_reducer, "Balanced" to R.string.sc_eq_balanced,
+            "VolumeBooster" to R.string.sc_eq_volume_booster,
         )
     }
 }

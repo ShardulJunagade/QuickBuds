@@ -401,13 +401,15 @@ class DevToolsActivity : Activity() {
 
     private fun soundcoreDemo() {
         val sc = com.spizganed.quickbuds.protocol.Soundcore
-        val options = listOf("Off" to null, "Space A40 (A3936)" to "A3936", "Liberty 5 (A3957)" to "A3957")
+        // Every Soundcore model of models.json; the core has a recorded state for most of them.
+        val options = listOf("Off" to null) + com.spizganed.quickbuds.protocol.ModelCatalog.soundcore(this)
+            .distinctBy { it.first }.map { (id, name) -> "$name ($id)" to id }
         BottomSheetDialog(this).title(getString(R.string.dev_soundcore_demo_title))
             .items(options.map { (label, model) ->
                 BottomSheetDialog.Item(label, model == null && !sc.active(this)) {
                     if (model == null) { sc.setActive(this, false); showInLog("Soundcore demo off"); return@Item }
                     val st = com.spizganed.quickbuds.protocol.RustDriver.soundcoreDemo(model)
-                        ?: return@Item showInLog("Soundcore demo: the native library is missing")
+                        ?: return@Item showInLog("Soundcore demo: no recorded state for $model, or the native library is missing")
                     sc.save(this, st)
                     sc.setActive(this, true)
                     showInLog("Soundcore demo: $label. Open the home screen.")

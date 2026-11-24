@@ -6,38 +6,94 @@ import android.widget.LinearLayout
 import android.widget.Switch
 import android.widget.TextView
 import com.spizganed.quickbuds.R
+import org.json.JSONArray
 import org.json.JSONObject
 
 /**
- * Earbud settings of Soundcore buds: the noise control details, the gestures, the switches, auto power off, the
- * volume limit and the firmware. A row shows only when the model has the setting (its key is in the state).
- * Keys and values: docs/SOUNDCORE-PROTOCOL.md.
+ * Earbud settings of Soundcore buds. The core gives each model's settings as lists (`modes`, `switches`,
+ * `choices`; docs/SOUNDCORE-PROTOCOL.md section 8), so one screen serves every model: a row shows only when
+ * its key is in the state, and a noise control row only while its parent mode is on (`shown`).
  */
 class SoundcoreSettingsActivity : SoundcoreScreen() {
 
-    private lateinit var transparency: Pair<LinearLayout, TextView>
-    private lateinit var ancMode: Pair<LinearLayout, TextView>
-    private lateinit var ancLevel: Pair<LinearLayout, TextView>
-    private lateinit var transport: Pair<LinearLayout, TextView>
-    private lateinit var adaptive: Pair<LinearLayout, TextView>
-    private lateinit var wind: Pair<LinearLayout, Switch>
-    private lateinit var cycle: Pair<LinearLayout, TextView>
+    /** A sound mode field: its title, and for a switch its subtitle. Order = screen order. */
+    private class ModeRow(val key: String, val title: Int, val sub: Int = 0, val switch: Boolean = false)
+
+    private val modeRows = listOf(
+        ModeRow("transparencyMode", R.string.sc_transparency_title),
+        ModeRow("transparencyLevel", R.string.sc_transparency_level_title),
+        ModeRow("ancMode", R.string.sc_anc_mode_title),
+        ModeRow("ancLevel", R.string.sc_anc_level_title),
+        ModeRow("customAnc", R.string.sc_anc_level_title),
+        ModeRow("adaptiveLevel", R.string.sc_adaptive_title),
+        ModeRow("sensitivity", R.string.sc_sensitivity_title),
+        ModeRow("environmentDetection", R.string.sc_environment_title, R.string.sc_environment_sub, switch = true),
+        ModeRow("realTimeAdaptive", R.string.sc_realtime_title, R.string.sc_realtime_sub, switch = true),
+        ModeRow("transport", R.string.sc_transport_title),
+        ModeRow("multiScene", R.string.sc_multi_scene_title),
+        ModeRow("airplane", R.string.sc_airplane_title),
+        ModeRow("windNoise", R.string.row_wind_noise_title, R.string.sc_wind_sub, switch = true),
+    )
+
+    /** The one-byte switches: key, title, subtitle. Order = screen order. */
+    private val switchKeys = listOf(
+        Triple("touchTone", R.string.sc_touch_tone_title, R.string.sc_touch_tone_sub),
+        Triple("wearingTone", R.string.sc_wearing_tone_title, R.string.sc_wearing_tone_sub),
+        Triple("lowBattery", R.string.sc_low_battery_title, R.string.sc_low_battery_sub),
+        Triple("voicePrompt", R.string.sc_voice_prompt_title, R.string.sc_voice_prompt_sub),
+        Triple("ambientPrompt", R.string.sc_ambient_prompt_title, R.string.sc_ambient_prompt_sub),
+        Triple("wearDetection", R.string.row_wear_title, R.string.row_wear_sub),
+        Triple("autoPlay", R.string.sc_auto_play_title, R.string.sc_auto_play_sub),
+        Triple("leak", R.string.sc_leak_title, R.string.sc_leak_sub),
+        Triple("surround", R.string.sc_surround_title, R.string.sc_surround_sub),
+        Triple("dolby", R.string.sc_dolby_title, R.string.sc_dolby_sub),
+        Triple("sideTone", R.string.sc_side_tone_title, R.string.sc_side_tone_sub),
+        Triple("personalizedAnc", R.string.sc_personal_anc_title, R.string.sc_personal_anc_sub),
+        Triple("touchLock", R.string.sc_touch_lock_title, R.string.sc_touch_lock_sub),
+        Triple("buttonsOff", R.string.sc_controls_on_title, R.string.sc_controls_on_sub),
+        Triple("tapOff", R.string.sc_controls_on_title, R.string.sc_controls_on_sub),
+        Triple("heyAnka", R.string.sc_hey_anka_title, R.string.sc_hey_anka_sub),
+        Triple("sleepAnc", R.string.sc_sleep_anc_title, R.string.sc_sleep_anc_sub),
+        Triple("incomingCalls", R.string.sc_incoming_calls_title, R.string.sc_incoming_calls_sub),
+        Triple("autoSwitchAsleep", R.string.sc_auto_switch_title, R.string.sc_auto_switch_sub),
+        Triple("autoOffPrompt", R.string.sc_auto_off_prompt_title, R.string.sc_auto_off_prompt_sub),
+        Triple("listeningModePrompt", R.string.sc_mode_prompt_title, R.string.sc_mode_prompt_sub),
+    )
+
+    /** The one-byte choices: key, title. */
+    private val choiceKeys = listOf(
+        "pressSensitivity" to R.string.sc_press_title,
+        "volumeBalance" to R.string.sc_balance_title,
+        "listeningMode" to R.string.sc_listening_title,
+        "defaultListeningMode" to R.string.sc_default_listening_title,
+        "caseLanguage" to R.string.sc_case_language_title,
+    )
+
+    private val modes = mutableMapOf<String, Pair<LinearLayout, View>>()
     private val switches = mutableMapOf<String, Pair<LinearLayout, Switch>>()
+    private val choices = mutableMapOf<String, Pair<LinearLayout, TextView>>()
+    private lateinit var gestures: LinearLayout
+    private lateinit var cycle: Pair<LinearLayout, TextView>
+    private lateinit var reset: LinearLayout
     private lateinit var autoOff: Pair<LinearLayout, TextView>
     private lateinit var limit: Pair<LinearLayout, Switch>
     private lateinit var limitDb: Pair<LinearLayout, TextView>
     private lateinit var limitRate: Pair<LinearLayout, TextView>
     private lateinit var firmware: Pair<LinearLayout, TextView>
     private lateinit var serial: Pair<LinearLayout, TextView>
+    private lateinit var noiseLabel: View
     private lateinit var noiseHint: View
-    private lateinit var noiseCard: View
+    private lateinit var noiseCard: LinearLayout
+    private lateinit var controlsLabel: View
+    private lateinit var controlsCard: LinearLayout
+    private lateinit var budsCard: LinearLayout
     private lateinit var volumeLabel: View
-    private lateinit var volumeCard: View
+    private lateinit var volumeCard: LinearLayout
 
     override fun build() {
         root.addView(SettingRowFactory.title(this, R.string.row_earbuds_title))
 
-        section(R.string.anc_section)
+        noiseLabel = section(R.string.anc_section)
         noiseHint = TextView(this).apply {
             setText(R.string.sc_noise_hint)
             setTextColor(ThemeRes.color(this@SoundcoreSettingsActivity, R.attr.appColorTextSecondary))
@@ -46,44 +102,40 @@ class SoundcoreSettingsActivity : SoundcoreScreen() {
             setPadding(dp, 0, dp, dp / 2)
         }
         root.addView(noiseHint)
-        val noise = card().also { noiseCard = it }
-        transparency = choiceRow(noise, R.string.sc_transparency_title) { pickTransparency() }
-        ancMode = choiceRow(noise, R.string.sc_anc_mode_title) { pickAncMode() }
-        ancLevel = choiceRow(noise, R.string.sc_anc_level_title) { pickAncLevel() }
-        transport = choiceRow(noise, R.string.sc_transport_title) { pickTransport() }
-        adaptive = SettingRowFactory.build(this, 0, R.string.sc_adaptive_title, 0, null).let { row ->
-            SettingRowFactory.addRow(noise, row)
-            row to SettingRowFactory.subtitle(this, row)
+        noiseCard = card()
+        for (m in modeRows) {
+            modes[m.key] = if (m.switch) switchRow(noiseCard, m.title, m.sub, m.key)
+            else if (m.key == "adaptiveLevel") SettingRowFactory.build(this, 0, m.title, 0, null).let { row ->
+                SettingRowFactory.addRow(noiseCard, row); row to SettingRowFactory.subtitle(this, row)
+            }
+            else choiceRow(noiseCard, m.title) { pickMode(m.key, m.title) }
         }
-        wind = switchRow(noise, R.string.row_wind_noise_title, R.string.sc_wind_sub, "windNoise")
 
-        section(R.string.sc_section_controls)
-        val controls = card()
-        SettingRowFactory.addRow(controls, SettingRowFactory.build(this, 0, R.string.gesture_title, R.string.sc_buttons_sub,
-            SettingRowFactory.buildChevron(this)) { startActivity(Intent(this, SoundcoreButtonsActivity::class.java)) })
-        cycle = choiceRow(controls, R.string.sc_cycle_title) { pickCycle() }
-        SettingRowFactory.addRow(controls, SettingRowFactory.build(this, 0, R.string.sc_reset_buttons_title, R.string.sc_reset_buttons_sub,
-            null) { confirmReset() })
+        controlsLabel = section(R.string.sc_section_controls)
+        controlsCard = card()
+        gestures = SettingRowFactory.build(this, 0, R.string.gesture_title, R.string.sc_buttons_sub,
+            SettingRowFactory.buildChevron(this)) { startActivity(Intent(this, SoundcoreButtonsActivity::class.java)) }
+        SettingRowFactory.addRow(controlsCard, gestures)
+        cycle = choiceRow(controlsCard, R.string.sc_cycle_title) { pickCycle() }
+        reset = SettingRowFactory.build(this, 0, R.string.sc_reset_buttons_title, R.string.sc_reset_buttons_sub, null) { confirmReset() }
+        SettingRowFactory.addRow(controlsCard, reset)
 
         section(R.string.sc_section_earbuds)
-        val buds = card()
-        switches["touchTone"] = switchRow(buds, R.string.sc_touch_tone_title, R.string.sc_touch_tone_sub, "touchTone")
-        switches["wearingTone"] = switchRow(buds, R.string.sc_wearing_tone_title, R.string.sc_wearing_tone_sub, "wearingTone")
-        switches["lowBattery"] = switchRow(buds, R.string.sc_low_battery_title, R.string.sc_low_battery_sub, "lowBattery")
-        switches["wearDetection"] = switchRow(buds, R.string.row_wear_title, R.string.row_wear_sub, "wearDetection")
-        switches["leak"] = switchRow(buds, R.string.sc_leak_title, R.string.sc_leak_sub, "leak")
-        autoOff = choiceRow(buds, R.string.sc_auto_off_title) { pickAutoOff() }
+        budsCard = card()
+        for ((key, title, sub) in switchKeys) switches[key] = switchRow(budsCard, title, sub, key)
+        for ((key, title) in choiceKeys) choices[key] = choiceRow(budsCard, title) { pickChoice(key, title) }
+        autoOff = choiceRow(budsCard, R.string.sc_auto_off_title) { pickAutoOff() }
 
         volumeLabel = section(R.string.sc_section_volume)
-        val volume = card().also { volumeCard = it }
+        volumeCard = card()
         limit = SettingRowFactory.buildSwitch(this, false).let { sw ->
             sw.setOnCheckedChangeListener { _, on -> if (!painting) set("volumeLimit", JSONObject().put("on", on)) }
             val row = SettingRowFactory.build(this, 0, R.string.sc_volume_limit_title, R.string.sc_volume_limit_sub, sw) { sw.performClick() }
-            SettingRowFactory.addRow(volume, row)
+            SettingRowFactory.addRow(volumeCard, row)
             row to sw
         }
-        limitDb = choiceRow(volume, R.string.sc_volume_limit_db_title) { pickLimitDb() }
-        limitRate = choiceRow(volume, R.string.sc_refresh_title) { pickLimitRate() }
+        limitDb = choiceRow(volumeCard, R.string.sc_volume_limit_db_title) { pickLimitDb() }
+        limitRate = choiceRow(volumeCard, R.string.sc_refresh_title) { pickLimitRate() }
 
         section(R.string.sc_section_about)
         val about = card()
@@ -108,41 +160,108 @@ class SoundcoreSettingsActivity : SoundcoreScreen() {
         }
     }
 
+    private fun list(a: JSONArray?): List<JSONObject> = (0 until (a?.length() ?: 0)).map { a!!.getJSONObject(it) }
+
+    private fun mode(s: JSONObject, key: String): JSONObject? = list(s.optJSONArray("modes")).firstOrNull { it.optString("key") == key }
+
+    /** The text of a value: its name ([valueLabel]), else its number. */
+    private fun label(field: JSONObject, value: Int): String =
+        field.optJSONObject("labels")?.optString(value.toString())?.takeIf { it.isNotEmpty() }?.let { valueLabel(it) }
+            ?: getString(R.string.sc_level_n, value)
+
+    private fun valueLabel(name: String): String = getString(when (name) {
+        "transport" -> R.string.sc_anc_transport
+        "outdoor" -> R.string.sc_anc_outdoor
+        "indoor" -> R.string.sc_anc_indoor
+        "custom" -> R.string.sc_anc_custom
+        "manual" -> R.string.sc_anc_manual
+        "adaptive" -> R.string.sc_anc_adaptive
+        "multiScene" -> R.string.sc_anc_multi_scene
+        "full" -> R.string.sc_transparency_full
+        "vocal" -> R.string.sc_transparency_vocal
+        "talk" -> R.string.sc_transparency_talk
+        "plane" -> R.string.sc_transport_plane
+        "train" -> R.string.sc_transport_train
+        "bus" -> R.string.sc_transport_bus
+        "car" -> R.string.sc_transport_car
+        "weak" -> R.string.sc_level_weak
+        "moderate" -> R.string.sc_level_moderate
+        "strong" -> R.string.sc_level_strong
+        "lowNoise" -> R.string.sc_noise_low
+        "mediumNoise" -> R.string.sc_noise_medium
+        "highNoise" -> R.string.sc_noise_high
+        "manualUpdate" -> R.string.sc_airplane_manual
+        "automaticUpdate" -> R.string.sc_airplane_auto
+        else -> R.string.sc_unknown
+    })
+
+    /** The text of a choice value. */
+    private fun choiceLabel(key: String, v: Int): String = when (key) {
+        "pressSensitivity" -> getString(when (v) { 0 -> R.string.sc_press_soft; 2 -> R.string.sc_press_firm; else -> R.string.sc_press_medium })
+        "listeningMode", "defaultListeningMode" -> getString(if (v == 1) R.string.sc_listening_local else R.string.sc_listening_bluetooth)
+        "caseLanguage" -> getString(when (v) { 0 -> R.string.sc_lang_japanese; 2 -> R.string.sc_lang_chinese; else -> R.string.sc_lang_english })
+        // 0 to 12, 6 is the middle: left below, right above.
+        "volumeBalance" -> when {
+            v < 6 -> getString(R.string.sc_balance_left, 6 - v)
+            v > 6 -> getString(R.string.sc_balance_right, v - 6)
+            else -> getString(R.string.sc_balance_center)
+        }
+        else -> v.toString()
+    }
+
     override fun render(s: JSONObject) {
-        transparency.second.text = getString(transparencyLabel(s.optInt("transparencyMode")))
-        ancMode.second.text = getString(ancModeLabel(s.optInt("ancMode")))
-        ancLevel.second.text = levelLabel(s, s.optInt("ancLevel"))
-        // A sub-setting shows only while its noise control mode is on (0 noise cancelling, 1 transparency, 2 normal):
-        // some models take the write only then (docs/SOUNDCORE-PROTOCOL.md, section 5).
-        val nc = s.optInt("noise") == 0
-        val tr = s.optInt("noise") == 1
-        show(transparency.first, tr)
-        show(ancMode.first, nc)
-        show(ancLevel.first, nc && s.optInt("ancMode") == 0)
-        show(transport.first, nc && s.has("transport") && s.optInt("ancMode") == 2)
-        transport.second.text = getString(if (s.optInt("transport") == 3) R.string.sc_transport_car else R.string.sc_transport_plane)
-        show(adaptive.first, nc && s.has("adaptiveLevel") && s.optInt("ancMode") == 1)
-        show(wind.first, nc || tr)
-        show(noiseCard, nc || tr)
-        show(noiseHint, !nc && !tr)
-        tidy(noiseCard as LinearLayout)
-        adaptive.second.text = getString(adaptiveLabel(s.optInt("adaptiveLevel")))
-        wind.second.paint(s.optBoolean("windNoise"))
-        SettingRowFactory.subtitle(this, wind.first).setText(if (s.optBoolean("windDetected")) R.string.sc_wind_detected else R.string.sc_wind_sub)
+        var anyMode = false
+        for (m in modeRows) {
+            val (row, view) = modes.getValue(m.key)
+            val f = mode(s, m.key)
+            val on = f != null && f.optBoolean("shown")
+            show(row, on)
+            if (!on || f == null) continue
+            anyMode = true
+            val v = f.optInt("value")
+            when (view) {
+                is Switch -> view.paint(v != 0)
+                is TextView -> view.text = label(f, v)
+            }
+        }
+        modes["windNoise"]?.first?.let { row ->
+            val detected = mode(s, "windDetected")?.optInt("value") == 1
+            SettingRowFactory.subtitle(this, row).setText(if (detected) R.string.sc_wind_detected else R.string.sc_wind_sub)
+        }
+        val hasModes = s.has("modes") && list(s.optJSONArray("modes")).any { it.optString("key") != "noise" }
+        show(noiseLabel, hasModes)
+        show(noiseCard, anyMode)
+        show(noiseHint, hasModes && !anyMode)
+        tidy(noiseCard)
 
         val c = s.optJSONObject("cycle")
+        show(gestures, s.has("buttons"))
+        show(cycle.first, c != null)
+        show(reset, s.optBoolean("buttonsReset"))
         cycle.second.text = listOfNotNull(
             getString(R.string.sc_mode_anc).takeIf { c?.optBoolean("anc") == true },
             getString(R.string.anc_seg_trans).takeIf { c?.optBoolean("transparency") == true },
             getString(R.string.sc_mode_normal).takeIf { c?.optBoolean("normal") == true },
         ).joinToString(" · ")
+        val controls = s.has("buttons") || c != null
+        show(controlsLabel, controls)
+        show(controlsCard, controls)
+        tidy(controlsCard)
 
+        val sw = list(s.optJSONArray("switches")).associate { it.optString("key") to it.optBoolean("on") }
         for ((key, pair) in switches) {
-            show(pair.first, s.has(key))
-            pair.second.paint(s.optBoolean(key))
+            show(pair.first, key in sw)
+            pair.second.paint(sw[key] == true)
         }
-        (switches.values.first().first.parent as? LinearLayout)?.let { tidy(it) }
+        val ch = list(s.optJSONArray("choices")).associateBy { it.optString("key") }
+        for ((key, pair) in choices) {
+            val o = ch[key]
+            show(pair.first, o != null)
+            if (o != null) pair.second.text = choiceLabel(key, o.optInt("value"))
+        }
+        show(autoOff.first, s.has("autoOff"))
         autoOff.second.text = autoOffLabel(s)
+        tidy(budsCard)
 
         val v = s.optJSONObject("volumeLimit")
         show(volumeLabel, v != null)
@@ -152,7 +271,7 @@ class SoundcoreSettingsActivity : SoundcoreScreen() {
             limitDb.second.text = getString(R.string.sc_db, v.optInt("db"))
             limitRate.second.text = getString(rateLabel(v.optInt("rate")))
             show(limitDb.first, v.optBoolean("on"))
-            tidy(volumeCard as LinearLayout)
+            tidy(volumeCard)
         }
 
         val fw = s.optJSONArray("firmware")
@@ -161,18 +280,12 @@ class SoundcoreSettingsActivity : SoundcoreScreen() {
             1 -> fw.getString(0)
             else -> ""
         }
+        show(firmware.first, (fw?.length() ?: 0) > 0)
         serial.second.text = s.optString("serial")
+        show(serial.first, s.optString("serial").isNotEmpty() && !s.isNull("serial"))
     }
 
-    private fun transparencyLabel(v: Int) = if (v == 1) R.string.sc_transparency_vocal else R.string.sc_transparency_full
-    private fun ancModeLabel(v: Int) = when (v) { 1 -> R.string.sc_anc_adaptive; 2 -> R.string.sc_anc_transport; else -> R.string.sc_anc_manual }
-    private fun adaptiveLabel(v: Int) = when (v) { 1 -> R.string.sc_noise_medium; 2 -> R.string.sc_noise_high; else -> R.string.sc_noise_low }
     private fun rateLabel(v: Int) = when (v) { 1 -> R.string.sc_refresh_10s; 2 -> R.string.sc_refresh_1m; else -> R.string.sc_refresh_realtime }
-
-    /** The A3936 names its 3 strengths; the A3957 has 5 numbered ones. */
-    private fun levelLabel(s: JSONObject, v: Int): String = if (s.optInt("ancLevels") == 3)
-        getString(when (v) { 1 -> R.string.sc_level_weak; 2 -> R.string.sc_level_moderate; else -> R.string.sc_level_strong })
-        else getString(R.string.sc_level_n, v)
 
     private fun autoOffLabel(s: JSONObject): String {
         val a = s.optJSONObject("autoOff") ?: return ""
@@ -181,32 +294,18 @@ class SoundcoreSettingsActivity : SoundcoreScreen() {
         return getString(R.string.sc_minutes, m.optInt(a.optInt("index")))
     }
 
-    private fun pickTransparency() {
-        val s = state ?: return
-        choose(R.string.sc_transparency_title, listOf(0, 1).map { getString(transparencyLabel(it)) to (s.optInt("transparencyMode") == it) }) {
-            set("transparencyMode", it)
-        }
+    private fun pickMode(key: String, title: Int) {
+        val f = state?.let { mode(it, key) } ?: return
+        val vals = f.optJSONArray("values") ?: return
+        val list = (0 until vals.length()).map { vals.getInt(it) }
+        choose(title, list.map { label(f, it) to (f.optInt("value") == it) }) { set(key, list[it]) }
     }
 
-    private fun pickAncMode() {
-        val s = state ?: return
-        val modes = s.optJSONArray("ancModes") ?: return
-        val list = (0 until modes.length()).map { modes.getInt(it) }
-        choose(R.string.sc_anc_mode_title, list.map { getString(ancModeLabel(it)) to (s.optInt("ancMode") == it) }) { set("ancMode", list[it]) }
-    }
-
-    private fun pickAncLevel() {
-        val s = state ?: return
-        val levels = (1..s.optInt("ancLevels", 3)).toList()
-        choose(R.string.sc_anc_level_title, levels.map { levelLabel(s, it) to (s.optInt("ancLevel") == it) }) { set("ancLevel", levels[it]) }
-    }
-
-    private fun pickTransport() {
-        val s = state ?: return
-        val list = listOf(0, 3)
-        choose(R.string.sc_transport_title, list.map {
-            getString(if (it == 3) R.string.sc_transport_car else R.string.sc_transport_plane) to (s.optInt("transport") == it)
-        }) { set("transport", list[it]) }
+    private fun pickChoice(key: String, title: Int) {
+        val o = state?.optJSONArray("choices")?.let { list(it) }?.firstOrNull { it.optString("key") == key } ?: return
+        val vals = o.optJSONArray("values") ?: return
+        val list = (0 until vals.length()).map { vals.getInt(it) }
+        choose(title, list.map { choiceLabel(key, it) to (o.optInt("value") == it) }) { set(key, list[it]) }
     }
 
     /** The cycle is a set: the sheet stays open, and the buds need at least 2 modes. */

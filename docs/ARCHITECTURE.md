@@ -45,6 +45,10 @@ run in driver mode, with the Soundcore driver (`core/src/soundcore/driver.rs`), 
 The connect saves the brand (`protocol/Soundcore.kt`). On a Soundcore link, `ModelCatalog.current` is null, and
 `Rows`, `AncModes`, reports and the model test read the Soundcore state instead. The Soundcore driver keeps the raw
 state packet and gives every setting as one JSON object (`state_json`, the `sc` key of the bridge state).
+Each model is a table in `core/src/soundcore/models.rs`: the state packet field by field, the buttons, the sound
+modes, the equalizer write and the settings. The driver adds the field lengths up for the offsets.
+Why a table: OpenSCQ30 has 36 model files with the same parts in other orders; one generic driver and a table per
+model keep each model to about 20 lines, and a test parses every recorded packet (`demo.rs`) with its table.
 `applyRust` saves it and calls `onSoundcore`. The 4 Soundcore screens (`ui/Soundcore*Activity.kt`) repaint from it
 and write with `soundcoreSet` (bridge command `sc`). Wire format: docs/SOUNDCORE-PROTOCOL.md.
 The desktop app calls the core directly (`desktop-tauri/src/main.rs` re-exports `cmd`, `msg`, `wire` and the OPPO model data in `core/src/oppo/`).

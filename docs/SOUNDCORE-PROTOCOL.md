@@ -1,8 +1,16 @@
 # SOUNDCORE-PROTOCOL.md — the Soundcore wire format
 
-This is the RFCOMM protocol of Anker Soundcore earbuds, as QuickBuds speaks it. The code is in `core/src/soundcore/`:
-`packet.rs` (framing), `msg.rs` (the packets every model shares) and `driver.rs` (the model layouts, the state and
-every write). The Android app runs it through `core-jni/` (`sc_command`, `sc_state_json`).
+This is the RFCOMM protocol of Anker Soundcore earbuds and headphones, as QuickBuds speaks it. The code is in
+`core/src/soundcore/`:
+
+- `packet.rs`: the framing.
+- `msg.rs`: the pushes every model shares.
+- `models.rs`: one table per model: the state packet field by field, and the model's features.
+- `presets.rs`, `demo.rs`: the equalizer presets and a recorded state packet per model. Scripts in `local/tools/`
+  make both from OpenSCQ30; do not edit them by hand.
+- `driver.rs`: the state, every write and the JSON for the apps.
+
+The Android app runs it through `core-jni/` (`sc_command`, `sc_state_json`).
 
 The source is [OpenSCQ30](https://github.com/Oppzippy/OpenSCQ30) (`lib/src/devices/soundcore/`, commit `c941bc4`),
 GPL-3.0-or-later. Its owner agreed to the port. The ported code carries the note "Copyright 2026 Kyle Scheuing,
@@ -14,17 +22,23 @@ GPL-3.0-or-later".
 - `[TESTED]`: a tester's log. The developer owns no Soundcore buds.
 - `[GUESS]`: unverified.
 
-**Models:** Space A40 (A3936) and Liberty 5 (A3957). Not tested on buds.
+**Models:** every OpenSCQ30 model except the A3116 (Motion+, a speaker): A3004, A3005, A3027, A3028, A3029,
+A3030, A3031, A3033, A3035, A3040, A3062, A3330, A3388, A3876, A3909, A3926, A3930, A3931, A3933, A3935, A3936,
+A3939, A3944, A3945, A3947, A3948, A3949, A3951, A3952, A3953, A3954, A3955, A3957, A3959, A3968, D1101, D1202,
+D1202C, D1301, D1402. The names are in `app/src/main/assets/models.json` (`soundcore`). A Space A40 (A3936) is
+`[TESTED]`; the others are `[OPENSCQ30]` `[RECORDED]`.
 
 ## 1. Connect
 
 - Brand pick (`ConnectPolicy.brand`): the buds list a service UUID that starts with
   `0cf12d31-fac3-4553-bd80-d6832e7`, or their name starts with "soundcore". Else the OPPO driver runs `[OPENSCQ30]`.
+  The last 5 hex digits of the vendor UUID name the model, for example `b3936` or `d1101`.
 - Service: the vendor UUIDs the buds list. Only buds without one get plain SPP `00001101-0000-1000-8000-00805f9b34fb`
   `[OPENSCQ30]`. A Space A40 with the vendor service gives no state on SPP `[TESTED]`. The OPPO channel 15 fallback is off.
 - The driver sends `01 01` (request state). No answer in 1.5 s: it sends it once more.
-- The answer's serial number (bytes 16 to 31) starts with the model number, for example `3936`. That picks the layout.
-  A serial of an unknown model, or a short packet, gives a `NOTE` log line and no state.
+- The model: each table's serial number field is tried; the serial starts with the model number, for example
+  `3936`. The tables of the models without a serial in their state (A3031, A3909, A3926, A3930, A3931, A3951)
+  match the Bluetooth name instead. No match, or a packet shorter than the table: a `NOTE` log line and no state.
 - Dual connection on: the driver asks for the device list (`0b 01`).
 - Android saves the brand only when the driver knows the model (its `Ready`); an OPPO link clears it.
   A Soundcore device counts as the buds for the auto-connect only with the name of a known model.
@@ -43,8 +57,9 @@ The reader joins reads into frames and skips bytes up to the next header. A bad 
 (`DISCARDED RX` in the log) `[OPENSCQ30]`. The log has whole frames, `TX: 08 EE …` and `RX: 09 FF …`, with the
 command in brackets. The report Worker accepts a log that holds an `RX: 09 FF` line.
 
-The buds answer each write with a packet of the same command: empty, or with the written bytes (`0b 83`, `0b 84`). The driver changes its copy of the state when it
-sends the write, as OpenSCQ30 does after the answer. A write that the buds refuse is not seen `[GUESS]`.
+The buds answer each write with a packet of the same command: empty, or with the written bytes (`0b 83`, `0b 84`).
+The driver changes its copy of the state when it sends the write, as OpenSCQ30 does after the answer. A write that
+the buds refuse is not seen `[GUESS]`.
 
 ## 3. Pushes
 
@@ -52,93 +67,91 @@ sends the write, as OpenSCQ30 does after the answer. A write that the buds refus
 |---|---|---|
 | `01 01` | the state packet (section 4) | answer to the request; replaces the whole state |
 | `01 02` | host, both | TWS status: both buds connected to each other |
-| `01 03` | left, right (1 or 2 more bytes on newer firmware; a Space A40 sends 3) | battery level |
-| `01 04` | left, right | charging, 1 = yes |
-| `01 05` | 2 firmware versions ("04.19"), 16-byte serial | firmware |
+| `01 03` | 1 level (headphones), or left, right (1 or 2 more bytes on newer firmware; a Space A40 sends 3) | battery level |
+| `01 04` | 1 or 2 bytes, 1 = charging | charging |
+| `01 05` | 1 or 2 firmware versions ("04.19"), 16-byte serial | firmware |
+| `01 10` | 1 byte | voice prompt changed |
 | `01 11` | 1 byte | gaming mode changed on the buds |
 | `01 7F` | 1 byte | LDAC |
-| `06 01` | 4 bytes, or the model's full sound mode group | sound modes |
+| `06 01` | the model's full sound mode group | sound modes; another length is refused, as OpenSCQ30 does |
 | `0b 01` | total, index, devices | dual connection devices (section 6) |
 
 ## 4. The state packet
 
-Offsets count from the first body byte `[OPENSCQ30]` `[RECORDED]`.
+Each model's table in `models.rs` lists the fields in order with their lengths. The driver adds the lengths up for
+the offsets, so no offset is written by hand. Field keys:
 
-| Field | A3936 Space A40 | A3957 Liberty 5 |
+| Key | Bytes | Content |
 |---|---|---|
-| TWS status | 0 | 0 |
-| Battery left, right; charging left, right | 2 | 2 |
-| Firmware left, right | 6 | 6 |
-| Serial | 16 | 16 |
-| Case battery | 124 | 37 |
-| Equalizer: preset u16 LE, 2 x 10 bands | 32 | 38 |
-| Age range | 54 | 60 |
-| HearID block (48 bytes) | 55 | 61 |
-| Buttons | 104 (6 x 2 bytes) | 110 (8 x 1 byte) |
-| Noise control cycle | 116 | 118 |
-| Sound modes | 117 (6 bytes) | 119 (7 bytes) |
-| Touch tone | 123 | 145 |
-| LDAC | 126 | 129 |
-| Dual connection | 127 | 130 |
-| Auto power off: on, index | 128 | 131 |
-| Gaming mode | 130 | 146 |
-| Wearing tone | - | 127 |
-| Low battery prompt | - | 128 |
-| Limit high volume: on, dB, refresh rate | - | 133 |
-| Sound leak compensation | - | 143 |
-| Wear detection | - | 144 |
-| Shortest packet | 131 | 148 |
+| `tws` | 2 | host, both buds connected |
+| `battery` | 1 to 4 | single: level, charging; dual: left, right, left charging, right charging; or the levels only |
+| `fw`, `serial` | 5 or 10, 16 | firmware of one or both buds ("04.19"), serial number |
+| `case` | 1 | case battery |
+| `eq` | 2 + channels x bands | preset id (u16 LE), then the bands (section 7) |
+| `gender`, `age` | 1 each | HearID profile; age 0xFF = no HearID |
+| `hearId` | 21 to 58 | the HearID block; its layout per model is a `Hid` in `models.rs` |
+| `buttons` | 1 or 2 per button | the button group (section 6); a model can split it (A3953) or have more groups |
+| `cycle` | 1 | noise control cycle: bit 0 noise cancelling, bit 1 transparency, bit 2 normal (A3968: per nibble) |
+| `modes` | 4 to 8 | the sound mode group (section 5) |
+| `autoOff` | 2 | on, index of the time |
+| `volumeLimit` | 3 | on, dB, refresh rate |
+| `dual` | 1 | dual connection on |
+| other keys | 1 | one setting each (section 5, settings) |
 
-Battery: the Space A40 reports 0 to 5. The Liberty 5 reports 0 to 9 for the buds and the case: the level is
-`raw + 1` out of 10. The case of the Space A40 is 0 to 10.
-
-The Liberty 5 also has an immersive byte (136) and a pressure sensitivity byte (147). OpenSCQ30 has no write for
-them, so the driver does not show them.
+Battery levels: most models report 0 to 5. Some report 0 to 9 with 1 added (out of 10), the A3954 0 to 100.
+`models.rs` gives each model's scale. Optional fields at the end are absent when the packet ends before them.
+The A3953 has a gap whose length is the byte before its buttons minus 18 `[OPENSCQ30]`.
 
 ## 5. Writes
 
+### Sound modes
+
+The group (`06 01`, `06 81`) differs per model. `models.rs` lists its fields: the byte, the part of the byte (whole,
+high or low nibble, bit 0 or 1), the values and the parent mode. A write changes one field and sends the whole
+group with `06 81`. Common fields:
+
+| Key | Meaning |
+|---|---|
+| `noise` | 0 noise cancelling, 1 transparency, 2 normal (A3954: 3 airplane) |
+| `ancMode` | the noise cancelling mode; its values have names per model (manual, adaptive, transport, outdoor, indoor, custom, scene) |
+| `ancLevel`, `customAnc` | the strength (1 to 3 named, 1 to 5, or 0 to 10) |
+| `adaptiveLevel` | read only |
+| `transparencyMode`, `transparencyLevel` | full or vocal (A3040: talk or manual), and a level 1 to 5 |
+| `transport`, `multiScene` | plane, train, bus, car; transport, outdoor, indoor |
+| `windNoise`, `windDetected` | wind suppression; wind detected now (read only) |
+
+Some models take a field only while its parent mode is on (OpenSCQ30 `MigrationSteps`). For them the driver
+refuses such a write (a `NOTE` line). The apps show each field only while its parent mode is on (`shown`), for
+every model. Special cases: the A3035 and A3959 repeat the noise control mode in byte 2; the A3968 writes 0xFF
+in byte 5, the D1202 0; the A3954 holds noise cancelling 1 to 5 (6 minus the level) and transparency 7 to 11
+(6 plus the level) in one slider byte.
+
+### Settings
+
 | Setting (`state_json` key) | Command | Body |
 |---|---|---|
-| Sound modes (all fields below) | `06 81` | the full sound mode group with one field changed |
-| Touch tone `touchTone` | `01 83` | 0 or 1 |
-| LDAC `ldac` | `01 FF` | 0 or 1 |
-| Gaming mode `gaming` | A3936 `01 87`, A3957 `10 85` | 0 or 1 |
-| Wearing tone `wearingTone` | `01 8C` | 0 or 1 |
-| Low battery prompt `lowBattery` | `10 82` | 0 or 1 |
-| Wear detection `wearDetection` | `01 81` | 0 or 1 |
-| Sound leak compensation `leak` | `10 86` | 0 or 1 |
+| A one-byte setting | its own (`models.rs` `Set`) | the value. `touchTone` `01 83`, `gaming` `01 87` (A3947, A3957 `10 85`), `wearDetection` and `autoPlay` `01 81`, `wearingTone` `01 8C`, `lowBattery` `10 82` (A3035, A3040 `01 AF`), `voicePrompt` `01 90` (A3035, A3040, A3062, D1402 `01 AE`), `leak` `10 86`, `surround` `02 86`, `touchLock` `04 86`, `ldac` `01 FF`, `buttonsOff` `10 94` (1 = the touch controls are off) |
 | Auto power off `autoOff` | `01 86` | on, index |
-| Limit high volume `volumeLimit` | `20 82` / `20 81` | on, dB (75 to 100) / refresh rate |
-| Noise control cycle `cycle` | `06 82` | bit 0 noise cancelling, bit 1 transparency, bit 2 normal |
-| Button action `button` | `04 81` | side (0 left, 1 right), button id, action byte |
-| Button on or off (A3936) | `04 83` | side, button id, on byte |
+| Limit high volume `volumeLimit` | `20 82` / `20 81` | on, dB (75 to 100, steps of 5) / refresh rate |
+| Noise control cycle `cycle` | `06 82` | the bits; the buds need two modes |
+| Button action `button` | `04 81` (A3330 call buttons `04 87`, D1402 function button `04 61`) | side (0 left, 1 right), button id, action byte |
+| Button on or off | `04 83` | side, button id, on byte |
+| All buttons (COMMON_SETTINGS models) | `04 84` | the whole button group, when two buttons change |
 | Reset the buttons | `04 82` | empty; the buds answer with an empty `04 82`, then the driver sends `01 01` |
-| Equalizer `eq` | `03 87` | see section 7 |
+| Equalizer `eq` | section 7 | |
 | Dual connection `dual` | `0b 84` | 0 or 1 |
 | Connect, disconnect, forget a device | `0b 82`, `0b 81`, `0b 83` | the 6-byte address |
 
-### Sound modes
-
-| Byte | Field | Values |
-|---|---|---|
-| 0 | noise control | 0 noise cancelling, 1 transparency, 2 normal |
-| 1 | strengths | high nibble: manual level (A3936 1 to 3, A3957 1 to 5); low nibble: adaptive level, read only |
-| 2 | transparency mode | 0 full, 1 vocal |
-| 3 | noise cancelling mode | 0 manual, 1 adaptive (A3936), 2 transport (A3957) |
-| 4 | wind | bit 0 suppression on, bit 1 wind detected now (read only) |
-| 5 | adaptive sensitivity | kept as it is |
-| 6 | transport (A3957) | 0 plane, 3 car |
-
-The A3957 takes a field only while its parent mode is on: transparency mode in transparency, the noise cancelling
-mode in noise cancelling, the strength in manual noise cancelling, the transport type in transport mode, wind in
-noise cancelling or transparency. OpenSCQ30 plans such changes in steps (`MigrationSteps`) `[OPENSCQ30]`.
-The driver refuses a field whose parent mode is off (a `NOTE` line), and the apps show each sub-setting only while
-its parent mode is on, for every model. So no write needs a mode change first.
-A `06 01` push of another length than the model's group is refused, as OpenSCQ30's parser does.
+Model-only settings in the tables: Dolby audio `02 86` and side tone `01 84` (A3062), ambient sound prompt `10 83`
+and press sensitivity `04 85` (A3953), personalized noise cancelling `03 90` (A3955), volume balance `10 8C`
+(A3876), case language `07 8A` (A3954), the Hey Anka wake word `18 83` (D1402), and the sleep settings of the
+D1301 (listening mode `01 A9`, default listening mode `10 95`, prompts `10 9E` and `10 9F`, noise cancelling
+`06 87`, incoming calls `10 75`, tap controls `10 94`, switch once asleep `15 8F`).
 
 ### Auto power off
 
-The index picks the time. A3936: 30, 60, 90, 120 min. A3957: 10, 20, 30, 60 min.
+The index picks the time; each model lists its times: 30, 60, 90, 120 min; 10, 20, 30, 60 min; all 8 from 10 to
+300 min (A3931); or 30, 60, 180, 300 min (D1402).
 
 ### Volume limit refresh rate
 
@@ -146,11 +159,16 @@ The index picks the time. A3936: 30, 60, 90, 120 min. A3957: 10, 20, 30, 60 min.
 
 ## 6. Buttons and devices
 
-Press kinds and button ids: single 2, double 0, triple 5, long 1. A3936: single, double, long. A3957: single,
-double, triple, long. In the state, the order is left single, right single, left double, right double, and so on.
+A button group lists its buttons in state order (press kind, side). Press kinds and button ids: single 2, double 0,
+triple 5, long 1, slide up 6, slide down 7. Each press kind has a list of action ids with names.
 
-The action byte has 2 nibbles: low = the action while both buds are connected to each other, high = the action
-while one bud is alone. The driver writes the nibble that applies now (TWS status) and keeps the other.
+A button has an action byte and, on some models, an "on" byte before it. Each byte is either one value or two
+nibbles: low = the value while both buds are connected to each other, high = the value while one bud is alone.
+The driver writes the nibble that applies now (TWS status) and keeps the other. Without an "on" byte, or on models
+whose "on" byte is ignored, action 0xF is off.
+
+A button turns off in one of three ways per model: not at all; one side off turns the other off too, and one side
+on turns the other on with its last action; or each side alone `[OPENSCQ30]`.
 
 | Action id | Action |
 |---|---|
@@ -161,34 +179,62 @@ while one bud is alone. The driver writes the nibble that applies now (TWS statu
 | 4 | noise control mode (the cycle) |
 | 5 | voice assistant |
 | 6 | play / pause |
+| 7 | bass up (A3035, A3040, A3062, D1402) |
 | 9 | gaming mode |
-| 15 | none (A3957) |
 
-A3936 single press: 0, 1, 2, 3, 6. A3936 double and long: all 8. A3957: 0 to 6.
-
-A3936 buttons have an "on" byte before the action byte, with the same 2 nibbles. Turning one side off turns the
-other side off too. Turning one side on turns the other side on with its last action `[OPENSCQ30]`.
-A3957 buttons have no "on" byte: action 15 is off.
+Model-only actions: lights 14 (A3876), noise cancelling 8 and change mode 13 (D1301), decline 0 and answer 1 on a
+call (A3330), Anka assistant 11, translation 10 and nap 13 on the function button (D1402).
 
 Device list (`0b 01`): total packets, this packet's index, then per device: a length byte (8 + the name length),
 connected (0 or 1), the 6-byte address, the name (UTF-8, up to a 0 byte). The list can come in several packets.
 
 ## 7. Equalizer
 
-- Preset ids 0 to 21 (Soundcore Signature to Treble Reducer), custom `FE FE`. The driver has the 22 presets'
-  bands (OpenSCQ30 `common_settings_type_2`).
-- A band byte = tenths of a dB + 120. Range -12.0 to +13.4 dB. 10 bands per channel: 8 shown
-  (100 Hz to 12.8 kHz), then 2 hidden bands: 0 and -12.0 dB for a preset, 0 and 0 for the custom curve.
-- The driver writes both channels with the same bands and turns HearID off, so the bands apply.
-- A3936 body: preset (2), music genre (2, from the HearID block), bands (2 x 10), gender (0), age range, 0,
-  HearID bands (20), HearID time (4, big-endian), HearID type, HearID custom bands (20), the DRC bands (2 x 10).
-- A3957 body: preset (2), music genre (2), bands (2 x 10), 0, 0, HearID on (0), HearID bands (20), time (4),
-  type, custom bands (20), each active band byte followed by 0 (40), 0, 0.
-- DRC (A3936): OpenSCQ30's `apply_drc`. It mixes the 8 bands with fixed coefficients and divides the result by 10.
+- Each model has its preset list (`presets.rs`): the 22 Soundcore presets in two variants, or a model's own list.
+  Custom is preset `FE FE`; the A3944 and A3949 take presets only.
+- A band byte = tenths of a dB + 120. Range -12.0 to +13.4 dB. The A3909 counts whole dB: byte = dB + 12, and its
+  state holds the preset id only. The shown bands are 8 (100 Hz to 12.8 kHz). A model with 10 bands has 2 hidden
+  ones: 0 and -12.0 dB for a preset, 0 and 0 for the custom curve.
+- The driver writes every channel with the same bands and turns HearID off, so the bands apply.
+- DRC: OpenSCQ30's `apply_drc`, from the Soundcore app ("DRC equalizer"). It mixes the 8 bands with fixed
+  coefficients and divides the result by 10. Some writes carry these effective bands after the set ones.
+
+| Write (`models.rs` `EqW`) | Command | Body |
+|---|---|---|
+| `Plain` | `02 81` | preset, bands |
+| `Drc` | `02 83` | preset, bands, DRC bands |
+| `Raw83` (A3388) | `02 83` | preset, bands (the one stored channel twice) |
+| `A3876` | `02 83` | preset, channel 1, channel 1 with DRC |
+| `HearId` | `03 87`; `03 86` when the age is 0xFF | preset, genre, bands, gender, age, 0, HearID bands, time, type, custom bands, DRC bands. Without HearID: 0xFF for gender, age and the band groups, and no genre. The A3936 always takes `03 87`. |
+| `A3035` | `03 87` | preset, genre, bands, FF FF, 0, HearID bands, time, type, custom bands, DRC bands, 0 |
+| `A3040` | `03 87` | preset, genre, channel 1 twice, 0 1, 0, HearID bands, time, type, left custom bands twice, DRC twice, 0 |
+| `A3062` | `03 87` | preset, genre, bands, 0 0, 0, HearID bands, time, type, custom bands, bands, 0 |
+| `A3947` | `03 87` | as A3062, with the DRC bands (band 10 = 0) in place of the second bands |
+| `A3953` (A3953, A3955) | `03 87` | as A3035; FF FF is 0 0 when the HearID status byte is not 0xFF or 0xFE |
+| `A3954` (A3954, A3957, D1202) | `03 87` | preset, genre, bands, 0 0, 0, HearID bands, time, type, custom bands, each band byte followed by 0, 0 0 |
+| `D1402` | `03 87` | preset, genre, bands, the unknown EQ byte, age, 0, HearID bands, time, type, custom bands, DRC bands, 0 |
+
+An absent HearID channel (first byte 0xFF) goes out as 0xFF bytes; the A3035, A3953 and D1402 writes end each
+absent channel with a 0 `[OPENSCQ30]`.
 
 ## 8. What the apps show
 
 `core/src/soundcore/driver.rs` `state_json` gives every setting. A key is absent when the model lacks the setting.
+
+| Key | Content |
+|---|---|
+| `modes` | the sound mode fields: `key`, `value`, `values` (empty = read only), `labels` (value names), `shown` |
+| `switches`, `choices` | the one-byte settings: `key` and `on`, or `key`, `value` and `values` |
+| `gaming`, `ldac`, `dual`, `devices` | the home rows |
+| `eqPreset`, `eqBands`, `eqPresets`, `eqHz`, `eqRange`, `eqStep`, `eqCustom` | the equalizer |
+| `buttons` | per button: `group`, `press`, `side`, `action`, `actions` (id and name), `canOff`; also `buttonsPaired`, `buttonsReset` |
+| `cycle`, `autoOff`, `volumeLimit`, `firmware`, `serial` | as their names say |
+
 Android: the home rows (noise control, low latency = gaming mode, high-quality audio = LDAC, equalizer, dual
-connection, earbud settings) and four screens: `SoundcoreSettingsActivity`, `SoundcoreButtonsActivity`,
-`SoundcoreEqActivity`, `SoundcoreDualActivity`. The desktop app does not connect to Soundcore buds yet.
+connection, earbud settings) show when the model has the key, and four screens: `SoundcoreSettingsActivity`,
+`SoundcoreButtonsActivity`, `SoundcoreEqActivity`, `SoundcoreDualActivity`. The screens build their rows from the
+lists, so they hold no model table. Dev tools › Soundcore demo shows each model's recorded state without buds.
+The desktop app does not connect to Soundcore buds yet.
+
+Not ported yet: the A3876 lights, the A3954 case features, easy chat and air pressure, spatial audio (A3953,
+A3954, D1202), the D1301 alarms, timer and post-sleep audio, and the A3116.

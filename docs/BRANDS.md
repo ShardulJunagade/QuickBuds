@@ -46,9 +46,10 @@ app. It is a second source to check each fact against.
 
 ## State
 
-- Soundcore: `core/src/soundcore/` (framing, common packets, a sans-IO driver). Models: Space A40 (A3936) and
-  Liberty 5 (A3957), from OpenSCQ30's recorded packets; not tested on buds yet. Android finds Soundcore buds by
-  the vendor service `0cf12d31-fac3-4553-bd80-d6832e7xxxxx` or a name that starts with "soundcore", and the
-  Rust engine drives them. Every setting that OpenSCQ30 can write for the two models reads and writes:
-  [SOUNDCORE-PROTOCOL.md](./SOUNDCORE-PROTOCOL.md). The desktop app does not connect to Soundcore buds yet.
+- Soundcore: `core/src/soundcore/` (framing, common packets, a table per model, a sans-IO driver). Models: every
+  OpenSCQ30 model except the A3116 speaker, 40 in all. A tester's Space A40 (A3936) works; the others come from
+  OpenSCQ30's recorded packets. Android finds Soundcore buds by the vendor service
+  `0cf12d31-fac3-4553-bd80-d6832e7xxxxx` or a name that starts with "soundcore", and the Rust engine drives them.
+  The settings each model has: [SOUNDCORE-PROTOCOL.md](./SOUNDCORE-PROTOCOL.md). The desktop app does not connect
+  to Soundcore buds yet.
 
