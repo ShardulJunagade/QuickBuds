@@ -158,6 +158,13 @@ The user can turn the count off in Settings.
 5. Desktop picks the file for its system (`-windows-x64.zip` or `-linux-x64.AppImage`),
    checks `SHA256SUMS` and replaces its own program. On Linux only an AppImage replaces itself. A Linux build that is
    not an AppImage, or a program in a folder it cannot write to, opens the release page instead.
+6. Beta channel (switch "Beta versions", default off). A beta is a GitHub pre-release with a tag like
+   `v6.4.0-beta.1`. With the switch on, the app asks the GitHub release list and takes the highest version,
+   pre-releases included. The Worker `/latest` answers only stable releases, so the beta path skips it.
+   The order is `6.3.0` < `6.4.0-beta.1` < `6.4.0-beta.2` < `6.4.0`.
+7. Back to stable. Android blocks a lower `versionCode`, so a beta install stays until the next stable release.
+   `versionCode` comes from `versionName` (`app/build.gradle.kts`): a beta gets a code below its own stable.
+   Desktop has no such block: with the switch off, a beta build offers the latest stable release at once.
 
 ## Rules that keep the parts in step
 

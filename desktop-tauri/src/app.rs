@@ -13,7 +13,7 @@ pub const LANGUAGES: &[&str] = &[
 ];
 
 /// The settings the page may write, with the type each one holds.
-const KEYS: &[&str] = &["anc_pick_first", "usage_ping", "clear_battery", "dev_tools_button", "update_auto"];
+const KEYS: &[&str] = &["anc_pick_first", "usage_ping", "clear_battery", "dev_tools_button", "update_auto", "update_beta"];
 
 /// A reply of the developer to a report of this install, from the daily count.
 static REPLY: Mutex<Option<String>> = Mutex::new(None);
@@ -51,6 +51,7 @@ pub fn get_settings() -> Value {
         "anc_pick_first": flag("anc_pick_first", false),
         "dev_tools_button": flag("dev_tools_button", false),
         "update_auto": flag("update_auto", true),
+        "update_beta": flag("update_beta", false),
         "panel_corner": st["panel_corner"].as_u64().filter(|&c| c <= 4).unwrap_or(0),
         "autostart": autostart_on(),
         "reply": REPLY.lock().unwrap().clone(),
@@ -134,7 +135,8 @@ pub fn set_autostart(on: bool) {
 
 // ---- App update ----
 
-/// Looks for a newer release. Answer: { latest, newer, error }.
+/// Looks for a newer release. Answer: { latest, newer, error }. With the beta channel off, a beta build also gets
+/// the latest stable release, so the user goes back to stable at once.
 #[tauri::command]
 pub async fn update_check() -> Value {
     // A test of the update page: `QB_FAKE_UPDATE=1` offers a newer version and "downloads" it. Nothing is installed.
@@ -143,9 +145,11 @@ pub async fn update_check() -> Value {
         return json!({ "latest": "99.0.0", "newer": true, "notes": "## Fake update\n- A test of the update page.\n- Nothing is installed." });
     }
     update::clean_up();
-    match update::latest() {
+    let beta = crate::load_settings()["update_beta"].as_bool().unwrap_or(false);
+    match update::latest(beta) {
         Ok(r) => {
-            let newer = update::newer(&r.version, env!("CARGO_PKG_VERSION"));
+            let local = env!("CARGO_PKG_VERSION");
+            let newer = update::newer(&r.version, local) || (!beta && update::is_beta(local) && r.version != local);
             let v = json!({ "latest": r.version, "newer": newer, "notes": r.notes });
             *FOUND.lock().unwrap() = newer.then_some(r);
             v

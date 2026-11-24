@@ -129,6 +129,12 @@ class UpdateActivity : Activity() {
         root.addView(SettingRowFactory.card(this).apply {
             (layoutParams as LinearLayout.LayoutParams).topMargin = dp(14f)
             addView(SettingRowFactory.build(this@UpdateActivity, R.drawable.ic_update, R.string.update_auto_title, R.string.update_auto_sub, autoSwitch) { autoSwitch.performClick() })
+            val betaSwitch = SettingRowFactory.buildSwitch(this@UpdateActivity, UpdateChecker.beta(this@UpdateActivity))
+            betaSwitch.setOnCheckedChangeListener { _, on ->
+                UpdateChecker.setBeta(this@UpdateActivity, on)
+                if (!busy && downloadedApk == null) check()
+            }
+            addView(SettingRowFactory.build(this@UpdateActivity, R.drawable.ic_update, R.string.update_beta_title, R.string.update_beta_sub, betaSwitch) { betaSwitch.performClick() })
         })
 
         notesLabel = SettingRowFactory.sectionLabel(this, R.string.update_notes).apply { visibility = View.GONE }
@@ -176,7 +182,7 @@ class UpdateActivity : Activity() {
         statusText.setText(R.string.update_checking)
         setAction(R.string.update_check, enabled = false)
         Thread {
-            val result = runCatching { UpdateChecker.fetch() }
+            val result = runCatching { UpdateChecker.fetch(UpdateChecker.beta(this)) }
             handler.post {
                 busy = false
                 val r = result.getOrElse {

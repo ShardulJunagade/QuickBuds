@@ -32,6 +32,8 @@ object UpdateChecker {
 
     /** Settings › App › Check for updates (default on). */
     const val KEY_AUTO = "updateAutoCheck"
+    /** Settings › App update › Beta versions (default off). On: pre-releases count as updates. */
+    const val KEY_BETA = "updateBeta"
     private const val KEY_LAST_CHECK = "updateLastCheck"
     private const val KEY_ANNOUNCED = "updateAnnounced"
 
@@ -56,6 +58,16 @@ object UpdateChecker {
         apkUrl != null && isNewer(tag, installed) && announced != tag
 
     /** A successful fetch records [now]; a failed fetch leaves the previous time. */
+    /** Turns the beta channel on or off. The next app open checks again at once. */
+    fun setBeta(c: Context, on: Boolean) {
+        c.getSharedPreferences(ThemeRes.PREFS_NAME, Context.MODE_PRIVATE).edit()
+            .putBoolean(KEY_BETA, on).putLong(KEY_LAST_CHECK, 0L).apply()
+        PacketLogger.log("UPDATE: beta=$on")
+    }
+
+    fun beta(c: Context): Boolean =
+        c.getSharedPreferences(ThemeRes.PREFS_NAME, Context.MODE_PRIVATE).getBoolean(KEY_BETA, false)
+
     fun lastCheckAfterFetch(success: Boolean, now: Long, previous: Long): Long =
         if (success) now else previous
 
@@ -82,23 +94,32 @@ object UpdateChecker {
     }
 
     /**
-     * Blocking; call off the main thread. It asks the Worker first. When the Worker fails or its newest
-     * release is not for Android, it asks GitHub once, the old path.
+     * Blocking; call off the main thread. Stable: it asks the Worker first, and GitHub once when the Worker fails
+     * or its newest release is not for Android. Beta: it asks GitHub for the list and takes the highest version,
+     * pre-releases included. When GitHub fails, the stable path answers.
      */
-    fun fetch(): Release {
-        runCatching { release(JSONObject(get(API, "application/json"))) }.getOrNull()?.let { return it }
-        // Newest first. Desktop releases (`desktop-v*`) and pre-releases share the repo; skip them.
-        val list = JSONArray(get(GITHUB, "application/vnd.github+json"))
-        for (i in 0 until list.length()) {
-            runCatching { release(list.getJSONObject(i)) }.getOrNull()?.let { return it }
+    fun fetch(beta: Boolean): Release {
+        if (beta) {
+            runCatching { pick(JSONArray(get(GITHUB, "application/vnd.github+json")), true) }
+                .onFailure { PacketLogger.error("update beta fetch", it) }
+                .getOrNull()?.let { return it }
         }
-        throw IllegalStateException("No Android release")
+        runCatching { release(JSONObject(get(API, "application/json")), false) }.getOrNull()?.let { return it }
+        return pick(JSONArray(get(GITHUB, "application/vnd.github+json")), false)
+            ?: throw IllegalStateException("No Android release")
     }
 
-    /** The Android release in [json], or null when the tag is not an app build or has no `.apk`. */
-    private fun release(json: JSONObject): Release? {
+    /** The highest Android release in [list]. Pre-releases count only when [beta] is true. */
+    private fun pick(list: JSONArray, beta: Boolean): Release? =
+        (0 until list.length())
+            .mapNotNull { runCatching { release(list.getJSONObject(it), beta) }.getOrNull() }
+            .maxWithOrNull { a, b -> compare(a.tag, b.tag) }
+
+    /** The Android release in [json], or null when the tag is not an app build, has no `.apk`, or is a pre-release off the beta channel. */
+    private fun release(json: JSONObject, beta: Boolean): Release? {
         val tag = json.optString("tag_name")
-        if (!tag.startsWith("v") || json.optBoolean("prerelease")) return null
+        if (!tag.startsWith("v") || json.optBoolean("draft")) return null
+        if (json.optBoolean("prerelease") && !beta) return null
         val assets = json.optJSONArray("assets") ?: return null
         val apk = (0 until assets.length())
             .map { assets.getJSONObject(it).optString("browser_download_url") }
@@ -107,16 +128,27 @@ object UpdateChecker {
         return Release(tag, apk, json.optString("body").takeIf { it != "null" }.orEmpty())
     }
 
-    /** Numeric compare of "v2.1.0" against "2.1.0-debug"; suffixes are ignored. */
-    fun isNewer(remote: String, local: String): Boolean {
-        val a = remote.trim().removePrefix("v").substringBefore('-').split('.')
-        val b = local.trim().removePrefix("v").substringBefore('-').split('.')
+    /** True when [remote] is a higher version than [local]. "6.4.0-beta.2" < "6.4.0"; other suffixes ("-debug") are ignored. */
+    fun isNewer(remote: String, local: String): Boolean = compare(remote, local) > 0
+
+    /** Orders "v6.4.0-beta.1" < "6.4.0-beta.2" < "6.4.0". */
+    fun compare(x: String, y: String): Int {
+        val a = parts(x)
+        val b = parts(y)
         for (i in 0 until maxOf(a.size, b.size)) {
-            val x = a.getOrNull(i)?.toIntOrNull() ?: 0
-            val y = b.getOrNull(i)?.toIntOrNull() ?: 0
-            if (x != y) return x > y
+            val d = (a.getOrNull(i) ?: 0).compareTo(b.getOrNull(i) ?: 0)
+            if (d != 0) return d
         }
-        return false
+        return 0
+    }
+
+    /** "6.4.0-beta.2" → [6, 4, 0, 2]; a stable "6.4.0" → [6, 4, 0, MAX], so it sorts above its betas. */
+    private fun parts(v: String): List<Int> {
+        val t = v.trim().removePrefix("v")
+        val nums = t.substringBefore('-').split('.').map { it.toIntOrNull() ?: 0 }.let { it + List(maxOf(0, 3 - it.size)) { 0 } }
+        val pre = t.substringAfter('-', "").takeIf { it.startsWith("beta") }
+            ?.removePrefix("beta")?.trimStart('.')?.toIntOrNull()
+        return nums + (pre ?: Int.MAX_VALUE)
     }
 
     /** Streams [url] into [dest], reporting 0..100 (or -1 when the size is unknown). Blocking. */
@@ -176,7 +208,7 @@ object UpdateChecker {
         val installed = installed(activity)
         Thread {
             try {
-                val release = runCatching { fetch() }.getOrElse {
+                val release = runCatching { fetch(beta(activity)) }.getOrElse {
                     PacketLogger.error("update fetch", it)
                     PacketLogger.log("UPDATE: fetch failed, last check unchanged")
                     return@Thread
@@ -244,7 +276,7 @@ object UpdateChecker {
     fun runBackground(c: Context) {
         val prefs = c.getSharedPreferences(ThemeRes.PREFS_NAME, Context.MODE_PRIVATE)
         if (!prefs.getBoolean(KEY_AUTO, true)) return
-        val release = runCatching { fetch() }.getOrElse {
+        val release = runCatching { fetch(beta(c)) }.getOrElse {
             PacketLogger.error("update job fetch", it)
             return
         }
