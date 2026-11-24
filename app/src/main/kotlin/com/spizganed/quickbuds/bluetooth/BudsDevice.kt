@@ -9,10 +9,14 @@ import com.spizganed.quickbuds.protocol.OpoProtocol
 import com.spizganed.quickbuds.ui.ThemeRes
 
 /**
- * Which paired device is "the buds": the paired device named like the model picked by hand, else the address saved last (the buds
- * whose audio connected most recently, see [KeepAliveReceiver]), else the first bonded device that
- * offers one of the OPPO SPP UUIDs, carries a model name from `models.json`, or is a Soundcore device
+ * Which paired device is "the buds": the paired device named like the model picked by hand, else earbuds
+ * that are connected now, else the address saved last (the buds whose audio connected most recently, see
+ * [KeepAliveReceiver]), else the first bonded earbuds. Earbuds ([isBuds]): a bonded device that offers one
+ * of the OPPO SPP UUIDs, carries a model name from `models.json`, or is a Soundcore device
  * ([ConnectPolicy.brand]) with the name of a known Soundcore model.
+ *
+ * Connected earbuds come before the saved address: with two pairs paired, the saved address can name the
+ * pair in its case while the other pair plays audio.
  */
 @SuppressLint("MissingPermission")
 object BudsDevice {
@@ -51,9 +55,28 @@ object BudsDevice {
         // A model picked by hand names the buds the person means, whichever buds connected for audio last.
         val picked = ModelCatalog.manual(context)?.let { id -> ModelCatalog.all(context).firstOrNull { it.id == id }?.name }
         picked?.let { name -> bonded.firstOrNull { it.name == name } }?.let { return it.also { d -> remember(context, d) } }
-        return bonded.firstOrNull { it.address == saved }
-            ?: bonded.firstOrNull { isBuds(context, it) }?.also { remember(context, it) }
+        val buds = bonded.filter { isBuds(context, it) }
+        val device = pick(buds.map { Candidate(it.address, connected(it)) }, saved)
+            ?.let { a -> buds.first { it.address == a } }
+            ?: bonded.firstOrNull { it.address == saved }
+        if (device != null && device.address != saved) remember(context, device)
+        return device
     }
+
+    /** A paired earbuds device: its address, and whether it is connected now. */
+    data class Candidate(val address: String, val connected: Boolean)
+
+    /** The address of the buds among [buds]: a connected one (the saved one first), else the saved one, else the first. */
+    fun pick(buds: List<Candidate>, saved: String?): String? {
+        val connected = buds.filter { it.connected }
+        return (connected.firstOrNull { it.address == saved } ?: connected.firstOrNull()
+            ?: buds.firstOrNull { it.address == saved } ?: buds.firstOrNull())?.address
+    }
+
+    /** The ACL link is up. A hidden API: reflection, false when it fails. */
+    private fun connected(d: BluetoothDevice): Boolean = try {
+        d.javaClass.getMethod("isConnected").invoke(d) as Boolean
+    } catch (_: Exception) { false }
 
     /** The paired devices that look like OPPO, OnePlus, realme or Soundcore earbuds, for the setup guide's picker. */
     fun candidates(context: Context): List<BluetoothDevice> = runCatching {

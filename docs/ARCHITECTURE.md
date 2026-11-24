@@ -101,7 +101,8 @@ The buds are the only source of truth. The app is a remote control.
 
 ### Connect (Android)
 
-1. `KeepAliveReceiver` sees an audio profile connect. `BudsDevice` picks the paired device that is the buds.
+1. `KeepAliveReceiver` sees an audio profile connect. `BudsDevice` picks the paired device that is the buds: a model
+   picked by hand, else earbuds connected now, else the address saved last. A smart band or a watch is not earbuds.
 2. `BudsConnectionManager.connect` opens the RFCOMM socket with the OPPO SPP UUID.
 3. `onLinkUp` starts the init sequence on its own thread: handshake, product id, broadcast codes, then the
    notification registration.
