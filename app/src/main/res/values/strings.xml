@@ -248,6 +248,8 @@
     <!-- Dev tools: English only by design. -->
     <string name="dev_rust_engine_title" translatable="false">Rust engine</string>
     <string name="dev_rust_engine_sub" translatable="false">The Rust core drives the buds. Applies on the next connect.</string>
+    <string name="dev_soundcore_demo_title" translatable="false">Soundcore demo</string>
+    <string name="dev_soundcore_demo_sub" translatable="false">Show the Soundcore screens with a recorded state. A connect ends it.</string>
     <string name="update_beta_title">Beta versions</string>
     <string name="update_beta_sub">Test versions before the stable release. Turn off to go back with the next stable release.</string>
     <string name="update_found_title">QuickBuds %1$s is available</string>

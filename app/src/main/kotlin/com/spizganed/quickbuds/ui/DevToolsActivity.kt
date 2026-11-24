@@ -140,6 +140,13 @@ class DevToolsActivity : Activity() {
                 R.string.dev_rust_engine_sub, rustSwitch) { rustSwitch.performClick() })
         }, spaced(dp(12f)))
 
+        // Soundcore demo: a recorded state packet fills the Soundcore screens, so they can be checked without buds.
+        // A real connect replaces it. Writes go nowhere: there is no link.
+        root.addView(SettingRowFactory.card(this).apply {
+            addView(SettingRowFactory.build(this@DevToolsActivity, R.drawable.ic_info, R.string.dev_soundcore_demo_title,
+                R.string.dev_soundcore_demo_sub, SettingRowFactory.buildChevron(this@DevToolsActivity)) { soundcoreDemo() })
+        }, spaced(dp(12f)))
+
         logText = TextView(this).apply {
             setTextIsSelectable(true)
             textSize = 12f
@@ -390,5 +397,21 @@ class DevToolsActivity : Activity() {
         }
         File(dir, name).writeText(content)
         return "${dir.absolutePath}/$name"
+    }
+
+    private fun soundcoreDemo() {
+        val sc = com.spizganed.quickbuds.protocol.Soundcore
+        val options = listOf("Off" to null, "Space A40 (A3936)" to "A3936", "Liberty 5 (A3957)" to "A3957")
+        BottomSheetDialog(this).title(getString(R.string.dev_soundcore_demo_title))
+            .items(options.map { (label, model) ->
+                BottomSheetDialog.Item(label, model == null && !sc.active(this)) {
+                    if (model == null) { sc.setActive(this, false); showInLog("Soundcore demo off"); return@Item }
+                    val st = com.spizganed.quickbuds.protocol.RustDriver.soundcoreDemo(model)
+                        ?: return@Item showInLog("Soundcore demo: the native library is missing")
+                    sc.save(this, st)
+                    sc.setActive(this, true)
+                    showInLog("Soundcore demo: $label. Open the home screen.")
+                }
+            }).show()
     }
 }

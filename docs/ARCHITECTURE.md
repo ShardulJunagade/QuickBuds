@@ -42,6 +42,11 @@ push, and gives find phone as an effect. Shadow mode is off while driver mode ru
 Why a switch: the Kotlin layer stays as the fallback while beta users test the core on their buds.
 The connect picks the brand first (`ConnectPolicy.brand`: the service list, then the name). Soundcore buds always
 run in driver mode, with the Soundcore driver (`core/src/soundcore/driver.rs`), because no Kotlin copy exists.
+The connect saves the brand (`protocol/Soundcore.kt`). On a Soundcore link, `ModelCatalog.current` is null, and
+`Rows`, `AncModes`, reports and the model test read the Soundcore state instead. The Soundcore driver keeps the raw
+state packet and gives every setting as one JSON object (`state_json`, the `sc` key of the bridge state).
+`applyRust` saves it and calls `onSoundcore`. The 4 Soundcore screens (`ui/Soundcore*Activity.kt`) repaint from it
+and write with `soundcoreSet` (bridge command `sc`). Wire format: docs/SOUNDCORE-PROTOCOL.md.
 The desktop app calls the core directly (`desktop-tauri/src/main.rs` re-exports `cmd`, `msg`, `wire` and the OPPO model data in `core/src/oppo/`).
 
 Both apps decode a frame in one place. Android: `Decode.decode`, then `BudsConnectionManager.apply`. Desktop: `buds_core::msg::decode`, mapped to the session's `Event` in `core/src/oppo/protocol.rs`.

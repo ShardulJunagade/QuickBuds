@@ -45,6 +45,7 @@ An APK from another site is genuine only with this signing certificate (SHA-256,
 QuickBuds knows all 140 models of the HeyMelody and realme Link lists. Owners confirmed 49 of them.
 It works on any Android phone, not only on OnePlus, OPPO and realme phones.
 The full list: [MODELS.md](./docs/MODELS.md).
+The beta versions also control Soundcore Space A40 and Liberty 5 on Android ([BRANDS.md](./docs/BRANDS.md)).
 
 ## Features
 
@@ -67,6 +68,7 @@ Details and how to turn it off: [PRIVACY.md](./docs/PRIVACY.md).
 
 - [CONTRIBUTING.md](./docs/CONTRIBUTING.md): build, tests, translations and the rules.
 - [OPPO-PROTOCOL.md](./docs/OPPO-PROTOCOL.md): the OPPO, OnePlus and realme wire format, each claim with its source.
+- [SOUNDCORE-PROTOCOL.md](./docs/SOUNDCORE-PROTOCOL.md): the Soundcore wire format, ported from OpenSCQ30.
 - [ROADMAP.md](./docs/ROADMAP.md): the plan and the features decided against.
 - [PACKET-CAPTURE.md](./docs/PACKET-CAPTURE.md): how to capture the earbuds' traffic.
 
@@ -80,6 +82,7 @@ The first protocol hints came from [OppoPodsManager](https://github.com/Zhaoyi-y
 or the vendor apps, studied for interoperability only. The PC app uses [Tauri](https://tauri.app) and
 [tray-icon](https://github.com/tauri-apps/tray-icon). Fonts: [Doto](https://github.com/oliverlalan/Doto) and
 [Google Sans Flex](https://github.com/googlefonts/googlesans-flex) (SIL Open Font License 1.1).
+The Soundcore support is a port of [OpenSCQ30](https://github.com/Oppzippy/OpenSCQ30) by Kyle Scheuing (GPL-3.0).
 
 ## License
 

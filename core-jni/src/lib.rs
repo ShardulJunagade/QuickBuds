@@ -412,6 +412,16 @@ fn sc_state_json(d: &sc::Driver) -> String {
     }).to_string()
 }
 
+/// Dev tools › Soundcore demo: the state of a recorded packet (`soundcore::driver::DEMO`), as `nativeState` gives it.
+#[no_mangle]
+pub extern "system" fn Java_com_spizganed_quickbuds_protocol_RustDriver_nativeSoundcoreDemo(
+    mut env: JNIEnv, _this: JObject, model: JString,
+) -> jstring {
+    let Some(m) = text(&mut env, &model) else { return std::ptr::null_mut() };
+    let st = catch_unwind(|| sc::demo(&m).map(|d| sc_state_json(&d))).ok().flatten();
+    out(&mut env, st)
+}
+
 #[no_mangle]
 pub extern "system" fn Java_com_spizganed_quickbuds_protocol_RustDriver_nativeNew(_env: JNIEnv, _this: JObject) -> jlong {
     let l = Link { soundcore: false, oppo: Driver::new(Settings::default()), sc: sc::Driver::new() };

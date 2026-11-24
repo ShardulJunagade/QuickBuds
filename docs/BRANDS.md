@@ -49,5 +49,6 @@ app. It is a second source to check each fact against.
 - Soundcore: `core/src/soundcore/` (framing, common packets, a sans-IO driver). Models: Space A40 (A3936) and
   Liberty 5 (A3957), from OpenSCQ30's recorded packets; not tested on buds yet. Android finds Soundcore buds by
   the vendor service `0cf12d31-fac3-4553-bd80-d6832e7xxxxx` or a name that starts with "soundcore", and the
-  Rust engine drives them. Read: battery, case, noise control, LDAC, game mode, firmware. Write: noise control.
+  Rust engine drives them. Every setting that OpenSCQ30 can write for the two models reads and writes:
+  [SOUNDCORE-PROTOCOL.md](./SOUNDCORE-PROTOCOL.md). The desktop app does not connect to Soundcore buds yet.
 

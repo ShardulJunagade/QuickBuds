@@ -162,8 +162,10 @@ pub const CUSTOM_EQ: u16 = 0xFEFE;
 pub const EQ_HZ: [u16; 8] = [100, 200, 400, 800, 1600, 3200, 6400, 12800];
 pub const EQ_MIN: i16 = -120;
 pub const EQ_MAX: i16 = 134;
-/// The 2 bands after the 8 shown ones keep these values.
+/// The 2 bands after the 8 shown ones: a preset has 0 and -12 dB, the custom curve 0 and 0 (OpenSCQ30
+/// `InvisibleBandsMode::Fixed`). DRC fills them with the preset values.
 const EQ_TAIL: [i16; 2] = [0, -120];
+const EQ_TAIL_CUSTOM: [i16; 2] = [0, 0];
 /// Limit high volume: the dB range.
 pub const VOLUME_LIMIT_DB: (u8, u8) = (75, 100);
 
@@ -516,7 +518,6 @@ impl Driver {
         let id = l.presses[press].id;
         let (at, on_at) = Self::button_at(l, press, side);
         if let Some(a) = action {
-            if !l.presses[press].actions.contains(&a) { return self.note(format!("button action {a} not offered")); }
             let byte = self.with_nibble(self.byte(at), a);
             self.state[at] = byte;
             self.send([0x04, 0x81], &[side, id, byte]);
@@ -615,6 +616,9 @@ impl Driver {
                 let side = v["side"].as_u64().filter(|&s| s <= 1).map(|s| s as u8);
                 let (Some(press), Some(side)) = (press, side) else { return self.note(format!("button {v} unknown")) };
                 let action = v["action"].as_u64().map(|a| a as u8);
+                if let Some(a) = action.filter(|a| !l.presses[press].actions.contains(a)) {
+                    return self.note(format!("button action {a} not offered"));
+                }
                 self.set_button(l, press, side, action);
                 // A3936: one side off turns the other off; one side on turns the other on with its last action.
                 if l.button_pair_off {
@@ -643,15 +647,16 @@ impl Driver {
                     Some(p) => match PRESETS.iter().find(|x| x.1 == p) { Some(x) => x.2, None => return self.note(format!("eq preset {p} unknown")) },
                     None => return self.note(format!("eq {v} has no preset")),
                 };
-                self.set_eq(l, id.unwrap_or(0), bands);
+                let tail = if id == Some(CUSTOM_EQ) { EQ_TAIL_CUSTOM } else { EQ_TAIL };
+                self.set_eq(l, id.unwrap_or(0), bands, tail);
             }
             _ => self.note(format!("setting {key} = {v} unknown")),
         }
     }
 
     /// Writes the equalizer: both channels get the same bands. HearID stays off, so the bands apply.
-    fn set_eq(&mut self, l: &Layout, preset: u16, bands: [i16; 8]) {
-        let all: [i16; 10] = std::array::from_fn(|i| if i < 8 { bands[i] } else { EQ_TAIL[i - 8] });
+    fn set_eq(&mut self, l: &Layout, preset: u16, bands: [i16; 8], tail: [i16; 2]) {
+        let all: [i16; 10] = std::array::from_fn(|i| if i < 8 { bands[i] } else { tail[i - 8] });
         let eq: Vec<u8> = all.iter().map(|&x| eq_byte(x)).collect();
         self.state[l.eq..l.eq + 2].copy_from_slice(&preset.to_le_bytes());
         for ch in 0..2 { self.state[l.eq + 2 + ch * 10..l.eq + 12 + ch * 10].copy_from_slice(&eq); }
@@ -717,6 +722,27 @@ impl Driver {
     }
 }
 
+/// Recorded state packets (command 01 01). A3936: OpenSCQ30 `tools/soundcore-device-faker/devices/a3936.toml`.
+/// A3957: a Liberty 5 (OpenSCQ30 issue 226, test `test_with_liberty5_packet_from_issue_226`). The tests read them,
+/// and the apps' demo mode shows every screen with them, without buds.
+pub const DEMO: [(&str, &str); 2] = [
+    ("A3936", "01010503010130342E313930342E31393339333661343737353833646461396500007878787878787878780078787878787878787800FF00FFFFFFFFFFFFFFFFFF00FFFFFFFFFFFFFFFFFF000000000000FFFFFFFFFFFFFFFFFF00FFFFFFFFFFFFFFFFFF0000000E001100001163116611441149070230000100000008310001010000FFFFFFFFFFFFFFFFFFFFFFFF"),
+    ("A3957", "00010808000030332E393030332E39303339353746343944384143323033333430302E303002000078787878787878787878FFFFFFFFFFFFFFFFFFFF0001918273778B938F960000918273778B938F9600000000000000918273778B938F960000918273778B938F96000000000A66663233FFFF4444330050000000000033010100010102005A0000010000FF01000001010001FFFFFF03FFFF"),
+];
+
+fn unhex(t: &str) -> Vec<u8> { (0..t.len() / 2).filter_map(|i| u8::from_str_radix(t.get(i * 2..i * 2 + 2)?, 16).ok()).collect() }
+
+/// A driver that holds a recorded state ([`DEMO`]): its `state_json` is what the buds would give. No link.
+pub fn demo(model: &str) -> Option<Driver> {
+    let (_, hex) = DEMO.iter().find(|d| d.0 == model)?;
+    let mut d = Driver::new();
+    let _ = d.connected(0, String::new());
+    d.state(&unhex(hex));
+    d.retry_at = None;
+    d.out.clear();
+    Some(d)
+}
+
 fn modes_len(kind: Modes) -> usize { match kind { Modes::A3936 => 6, Modes::A3957 => 7 } }
 
 fn noise_key(ambient_byte: u8) -> &'static str {
@@ -732,12 +758,9 @@ mod tests {
     use super::*;
     use super::super::packet::IN;
 
-    fn unhex(t: &str) -> Vec<u8> { (0..t.len()).step_by(2).map(|i| u8::from_str_radix(&t[i..i + 2], 16).unwrap()).collect() }
+    const A3936: &str = DEMO[0].1;
+    const A3957: &str = DEMO[1].1;
 
-    // Command 01 01. A3936: OpenSCQ30 `tools/soundcore-device-faker/devices/a3936.toml`. A3957: a Liberty 5
-    // (OpenSCQ30 issue 226, test `test_with_liberty5_packet_from_issue_226`).
-    const A3936: &str = "01010503010130342E313930342E31393339333661343737353833646461396500007878787878787878780078787878787878787800FF00FFFFFFFFFFFFFFFFFF00FFFFFFFFFFFFFFFFFF000000000000FFFFFFFFFFFFFFFFFF00FFFFFFFFFFFFFFFFFF0000000E001100001163116611441149070230000100000008310001010000FFFFFFFFFFFFFFFFFFFFFFFF";
-    const A3957: &str = "00010808000030332E393030332E39303339353746343944384143323033333430302E303002000078787878787878787878FFFFFFFFFFFFFFFFFFFF0001918273778B938F960000918273778B938F9600000000000000918273778B938F960000918273778B938F96000000000A66663233FFFF4444330050000000000033010100010102005A0000010000FF01000001010001FFFFFF03FFFF";
 
     fn inbound(cmd: [u8; 2], body: &[u8]) -> Vec<u8> {
         let mut f = encode(cmd, body, true);
@@ -954,6 +977,12 @@ mod tests {
         assert_eq!(s["devices"], json!([{"mac": "01:02:03:04:05:06", "name": "Phone", "connected": true},
             {"mac": "09:09:09:09:09:09", "name": "PC", "connected": false}]));
         assert_eq!(sent(&d.command(8, Cmd::Device("connect".into(), "09:09:09:09:09:09".into()))), [encode([0x0B, 0x82], &[9; 6], true)]);
+    }
+
+    #[test]
+    fn demo_gives_the_recorded_state() {
+        assert_eq!(demo("A3957").unwrap().state_json()["ancLevel"], 5);
+        assert!(demo("A9999").is_none());
     }
 
     #[test]

@@ -44,7 +44,18 @@ Rules:
 Source: OpenSCQ30 (`lib/src/devices/soundcore/`, read on 2026-11-22). The count is the number of its 41 models
 with the module. A model-specific module (for example `a3947_sound_modes`) counts for the shared feature.
 
-### Into the screens that exist
+### Where the controls are
+
+Android has 4 Soundcore screens: `SoundcoreSettingsActivity` (noise control details, gestures, the cycle, the
+switches, auto power off, volume limit, firmware), `SoundcoreButtonsActivity`, `SoundcoreEqActivity` and
+`SoundcoreDualActivity`. They use the same row, card and sheet parts as the OPPO screens, so they look the same.
+The home screen keeps its rows: noise control, low latency (gaming mode), high-quality audio (LDAC), the equalizer,
+dual connection and earbud settings open the Soundcore screens.
+Why not the OPPO screens: they read OPPO model data (the `models.json` gesture tables, `EqCodec`, the `0x8100`
+bitmap). The Soundcore driver gives its own data (`state_json`), so a screen per brand is smaller than one screen
+with two data models. A third brand with the same features can take these screens over.
+
+The table names each feature's control:
 
 | Feature | Soundcore module | Models | QuickBuds control | Gap to close |
 |---|---|---|---|---|

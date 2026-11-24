@@ -125,6 +125,11 @@ class RustDriver(private val shell: Shell) {
 
         private fun spaced(hex: String) = hex.chunked(2).joinToString(" ")
 
+        /** Dev tools › Soundcore demo: the Soundcore state of a recorded packet, or null without the library. */
+        fun soundcoreDemo(model: String): JSONObject? = if (!loaded) null else
+            runCatching { nativeSoundcoreDemo(model)?.let { JSONObject(it).optJSONObject("sc") } }.getOrNull()
+
+        @JvmStatic private external fun nativeSoundcoreDemo(model: String): String?
         @JvmStatic private external fun nativeNew(): Long
         @JvmStatic private external fun nativeBrand(h: Long, soundcore: Boolean)
         @JvmStatic private external fun nativeSettings(h: Long, product: String?, manual: String?, clearBattery: Boolean,
