@@ -71,8 +71,14 @@ class SoundcoreEqActivity : SoundcoreScreen() {
                 gravity = Gravity.END
                 minWidth = dp(64f)
             }
+            val accent = android.content.res.ColorStateList.valueOf(ThemeRes.color(this, R.attr.appColorAccent))
+            val track = android.content.res.ColorStateList.valueOf(ThemeRes.color(this, R.attr.appColorTextSecondary))
             val bar = SeekBar(this).apply {
                 max = STEPS
+                // The theme's accent, as the app's other controls; Android's default is red.
+                progressTintList = accent
+                thumbTintList = accent
+                progressBackgroundTintList = track
                 setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
                     override fun onProgressChanged(b: SeekBar, p: Int, fromUser: Boolean) { if (fromUser) value.text = db(fromProgress(p)) }
                     override fun onStartTrackingTouch(b: SeekBar) { dragging = true }

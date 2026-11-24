@@ -85,7 +85,14 @@ class SoundcoreSettingsActivity : SoundcoreScreen() {
         }
     }
 
-    private fun show(row: View, on: Boolean) { row.visibility = if (on) View.VISIBLE else View.GONE }
+    /** Shows or hides a row, and the divider that [SettingRowFactory.addRow] put before it. A card's first row never hides. */
+    private fun show(row: View, on: Boolean) {
+        val v = if (on) View.VISIBLE else View.GONE
+        row.visibility = v
+        val parent = row.parent as? android.view.ViewGroup ?: return
+        val i = parent.indexOfChild(row)
+        if (i > 0) parent.getChildAt(i - 1).takeIf { it !is LinearLayout }?.visibility = v
+    }
 
     override fun render(s: JSONObject) {
         transparency.second.text = getString(transparencyLabel(s.optInt("transparencyMode")))
