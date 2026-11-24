@@ -143,7 +143,7 @@ in byte 5, the D1202 0; the A3954 holds noise cancelling 1 to 5 (6 minus the lev
 | Connect, disconnect, forget a device | `0b 82`, `0b 81`, `0b 83` | the 6-byte address |
 
 Model-only settings in the tables: Dolby audio `02 86` and side tone `01 84` (A3062), ambient sound prompt `10 83`
-and press sensitivity `04 85` (A3953), personalized noise cancelling `03 90` (A3955), volume balance `10 8C`
+and press sensitivity `04 85` (A3953), personalized noise cancelling `03 90` (A3955), volume balance `10 8C` (the balance -6 to +6 plus 100)
 (A3876), case language `07 8A` (A3954), the Hey Anka wake word `18 83` (D1402), and the sleep settings of the
 D1301 (listening mode `01 A9`, default listening mode `10 95`, prompts `10 9E` and `10 9F`, noise cancelling
 `06 87`, incoming calls `10 75`, tap controls `10 94`, switch once asleep `15 8F`).

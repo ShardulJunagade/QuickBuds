@@ -623,6 +623,7 @@ const HALF_HOURS: &[u16] = &[30, 60, 90, 120];
 const TENS: &[u16] = &[10, 20, 30, 60];
 const ALL_DURATIONS: &[u16] = &[10, 20, 30, 60, 90, 120, 180, 300];
 const LONG_DURATIONS: &[u16] = &[30, 60, 180, 300];
+// Volume balance (A3876): the byte is the balance plus 100, from -6 (left) to +6 (right).
 
 pub struct Model {
     /// The model numbers this table serves; a serial number starts with one of them.
@@ -770,7 +771,7 @@ pub const MODELS: &[Model] = &[
         eq: Some(eqs(2, 10, &presets::A3876, EqW::A3876)),
         buttons: &[btns(&[no_tws("single", 2, A_MIN), no_tws("double", 0, A_A3876), no_tws("triple", 5, A_A3876), no_tws("long", 1, A_A3876)], LR4, true)],
         auto_off: TENS,
-        sets: &[VOICE, GAMING, choice("volumeBalance", [0x10, 0x8C], &[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12])],
+        sets: &[VOICE, GAMING, choice("volumeBalance", [0x10, 0x8C], &[94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106])],
         dual: true,
         groups: &[LIGHTS_A3876],
         ..model(&["3876"], &["Soundcore V20i"],

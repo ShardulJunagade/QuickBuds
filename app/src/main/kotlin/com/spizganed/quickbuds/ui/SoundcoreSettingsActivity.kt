@@ -207,10 +207,10 @@ class SoundcoreSettingsActivity : SoundcoreScreen() {
         "pressSensitivity" -> getString(when (v) { 0 -> R.string.sc_press_soft; 2 -> R.string.sc_press_firm; else -> R.string.sc_press_medium })
         "listeningMode", "defaultListeningMode" -> getString(if (v == 1) R.string.sc_listening_local else R.string.sc_listening_bluetooth)
         "caseLanguage" -> getString(when (v) { 0 -> R.string.sc_lang_japanese; 2 -> R.string.sc_lang_chinese; else -> R.string.sc_lang_english })
-        // 0 to 12, 6 is the middle: left below, right above.
+        // The balance plus 100: 94 to 106, 100 is the middle, left below, right above.
         "volumeBalance" -> when {
-            v < 6 -> getString(R.string.sc_balance_left, 6 - v)
-            v > 6 -> getString(R.string.sc_balance_right, v - 6)
+            v < 100 -> getString(R.string.sc_balance_left, 100 - v)
+            v > 100 -> getString(R.string.sc_balance_right, v - 100)
             else -> getString(R.string.sc_balance_center)
         }
         else -> v.toString()
