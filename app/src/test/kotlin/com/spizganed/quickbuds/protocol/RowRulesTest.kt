@@ -216,4 +216,16 @@ class RowRulesTest {
         assertFalse(RowRules.GAME_EQ in RowRules.rows(null, reply, emptySet()))
         assertTrue(RowRules.GAME_EQ in RowRules.rows(null, reply, setOf(OpoProtocol.CMD_GAME_EQ_STATE)))
     }
+
+    @Test
+    fun aFirmwareGateHidesTheWindRowOnOldFirmware() {
+        // Report 225: realme Buds Wireless 3 on 1.1.0.65 answers 1A=0; realme Link shows wind from 1.1.0.100.
+        val m = JSONObject("""{"windMode":1,"windFirmware":"1.1.0.100"}""")
+        val reply = mapOf(Feature.WIND_NOISE to 0)
+        assertFalse(RowRules.WIND in RowRules.rows(m, reply, emptySet(), firmware = "1.1.0.65"))
+        assertFalse(RowRules.WIND in RowRules.rows(m, reply, emptySet()))
+        assertTrue(RowRules.WIND in RowRules.rows(m, reply, emptySet(), firmware = "1.1.0.100"))
+        assertTrue(RowRules.WIND in RowRules.rows(m, reply, emptySet(), firmware = "1.2.0.1"))
+        assertTrue(RowRules.WIND in RowRules.rows(JSONObject("""{"windMode":1}"""), reply, emptySet()))
+    }
 }

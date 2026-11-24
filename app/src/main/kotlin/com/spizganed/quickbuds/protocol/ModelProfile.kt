@@ -35,6 +35,8 @@ class ModelProfile(val json: JSONObject?) {
 
     // --- Switches a flag adds to the ask list (RowRules.askQuery) ---
     val windMode get() = flag("windMode")
+    /** The lowest firmware with the wind switch (realme Link's gate). Older firmware answers `1A=0` for any id. */
+    val windFirmware: String? get() = json?.optString("windFirmware")?.takeIf { it.isNotBlank() }
     val voiceBoost get() = flag("voiceBoost")
     val gameSoundFx get() = flag("gameSoundFx")
     val autoVolume get() = flag("autoVolume")

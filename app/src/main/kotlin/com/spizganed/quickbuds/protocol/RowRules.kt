@@ -83,6 +83,7 @@ object RowRules {
      * [manual]: the person picked the model. Then the model's data passes where the bitmap would decide
      * (Personalized ANC, game sound type, tap level, the priority device).
      * [gestures]: the model has a gesture row this app can write. Null: the model's `gestures` list decides.
+     * [firmware]: the buds' firmware text. A model gate (`windFirmware`) hides its row until the firmware reaches it.
      */
     fun rows(
         model: JSONObject?,
@@ -91,7 +92,8 @@ object RowRules {
         productAnc: Map<String, Int>? = null,
         phoneSpatialOk: Boolean = false,
         manual: Boolean = false,
-        gestures: Boolean? = null
+        gestures: Boolean? = null,
+        firmware: String? = null
     ): Set<String> {
         val out = linkedSetOf(EARBUDS)
         out += commandRows(model, bitmap, manual, gestures)
@@ -101,7 +103,7 @@ object RowRules {
         val accepts = { cmd: Int -> cmd in caps || manual }
         val p = ModelProfile(model)
 
-        if (has(Feature.WIND_NOISE)) out += WIND
+        if (has(Feature.WIND_NOISE) && firmwareAtLeast(firmware, p.windFirmware)) out += WIND
         if (GAME_IDS.any { has(it) }) out += GAME
         if (has(Feature.HIRES_CODEC) || codecPicker(model, bitmap)) out += HIRES
         // Phone-made 3D audio shows only where this phone can make it ([phoneSpatialOk]).
@@ -180,6 +182,21 @@ object RowRules {
         val ids = base.split(' ').mapNotNull { it.toIntOrNull(16) }.toMutableSet()
         askExtras(model).forEach { ids += it }
         return ids.sorted().joinToString(" ") { "%02X".format(it) }
+    }
+
+    /**
+     * True when [have] is [need] or newer, part by part ("1.1.0.100" > "1.1.0.65"). No gate passes.
+     * Unknown firmware does not pass a gate: the row shows when the firmware read arrives.
+     */
+    fun firmwareAtLeast(have: String?, need: String?): Boolean {
+        if (need == null) return true
+        val a = have?.split('.')?.map { it.trim().toIntOrNull() ?: return false } ?: return false
+        val b = need.split('.').map { it.toInt() }
+        for (i in 0 until maxOf(a.size, b.size)) {
+            val d = a.getOrElse(i) { 0 } - b.getOrElse(i) { 0 }
+            if (d != 0) return d > 0
+        }
+        return true
     }
 
     /** True when the default id list must add the wind id: only a model with the `windMode` flag. */

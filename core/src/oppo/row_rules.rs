@@ -76,10 +76,25 @@ pub struct Input<'a> {
     pub phone_spatial_ok: bool,
     pub manual: bool,
     pub gestures: Option<bool>,
+    /// The buds' firmware text. A model gate (`windFirmware`) hides its row until the firmware reaches it.
+    pub firmware: Option<&'a str>,
 }
 
 fn has_array(list: Option<&Vec<Value>>) -> bool { list.is_some_and(|a| !a.is_empty()) }
 fn in_bitmap(bitmap: Option<&[u16]>, cmd: u16) -> bool { bitmap.is_some_and(|b| b.contains(&cmd)) }
+
+/// True when `have` is `need` or newer, part by part ("1.1.0.100" > "1.1.0.65"). No gate passes. Unknown firmware
+/// does not pass a gate: the row shows when the firmware read arrives.
+pub fn firmware_at_least(have: Option<&str>, need: Option<&str>) -> bool {
+    let Some(need) = need else { return true };
+    let parse = |s: &str| s.split('.').map(|x| x.trim().parse::<u32>().ok()).collect::<Option<Vec<_>>>();
+    let (Some(a), Some(b)) = (have.and_then(parse), parse(need)) else { return false };
+    for i in 0..a.len().max(b.len()) {
+        let (x, y) = (a.get(i).copied().unwrap_or(0), b.get(i).copied().unwrap_or(0));
+        if x != y { return x > y; }
+    }
+    true
+}
 
 pub fn rows(i: &Input) -> BTreeSet<&'static str> {
     let mut out = BTreeSet::from([EARBUDS]);
@@ -92,7 +107,7 @@ pub fn rows(i: &Input) -> BTreeSet<&'static str> {
     let accepts = |cmd: u16| caps(cmd) || i.manual;
     let mut add = |on: bool, key: &'static str| if on { out.insert(key); };
 
-    add(has(FEATURE_WIND_NOISE), WIND);
+    add(has(FEATURE_WIND_NOISE) && firmware_at_least(i.firmware, p.wind_firmware()), WIND);
     add(GAME_IDS.iter().any(|&g| has(g)), GAME);
     add(has(FEATURE_HIRES) || codec_picker(m, b), HIRES);
     add((has(FEATURE_SPATIAL) && (!phone_spatial(m, b) || i.phone_spatial_ok)) || spatial_by_type(m, b), SPATIAL);
@@ -287,5 +302,19 @@ mod tests {
         assert!(ask_ids(Some(&find)).contains(&0x26));
         let dynamic = serde_json::json!({ "statusQuery": "05", "bassBands": 3 });
         assert!(ask_ids(Some(&dynamic)).contains(&FEATURE_BASSWAVE));
+    }
+
+    #[test]
+    fn a_firmware_gate_hides_the_wind_row_on_old_firmware() {
+        // Report 225: realme Buds Wireless 3 on 1.1.0.65 answers 1A=0; realme Link shows wind from 1.1.0.100.
+        let m = serde_json::json!({"windMode": 1, "windFirmware": "1.1.0.100"});
+        let reply = HashMap::from([(FEATURE_WIND_NOISE, 0)]);
+        let at = |fw| rows(&Input { model: Some(&m), reply: Some(&reply), bitmap: Some(&[]), firmware: fw, ..Default::default() });
+        assert!(!at(Some("1.1.0.65")).contains(WIND));
+        assert!(!at(None).contains(WIND));
+        assert!(at(Some("1.1.0.100")).contains(WIND));
+        assert!(at(Some("1.2.0.1")).contains(WIND));
+        let open = serde_json::json!({"windMode": 1});
+        assert!(rows(&Input { model: Some(&open), reply: Some(&reply), bitmap: Some(&[]), ..Default::default() }).contains(WIND));
     }
 }
