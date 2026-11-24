@@ -89,6 +89,8 @@
         <item name="android:backgroundDimEnabled">false</item>
         <item name="android:windowAnimationStyle">@null</item>
         <item name="android:windowNoTitle">true</item>
+        <!-- No starting window: a long press on a Quick Settings tile showed a dark card for a moment. -->
+        <item name="android:windowDisablePreview">true</item>
     </style>
     <!-- Window animation for the bottom sheets (BottomSheetDialog, the EQ editor). -->
     <style name="SheetAnimation">
