@@ -49,6 +49,7 @@ const I={
   chat:'<path d="M5,5h14a2,2 0,0 1,2,2v8a2,2 0,0 1,-2,2H11l-5,4v-4H5a2,2 0,0 1,-2,-2V7a2,2 0,0 1,2,-2z" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>',
   min:'<path d="M6 12h12" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/>',
   max:'<rect x="6.5" y="6.5" width="11" height="11" rx="2.5" fill="none" stroke="#fff" stroke-width="1.6"/>',
+  tray:'<path d="M3,5h18v14H3z" fill="none" stroke="#fff" stroke-width="2" stroke-linejoin="round"/><path d="M13,12h5v4h-5z" fill="#fff"/>',
   x:'<path d="M7 7l10 10M17 7 7 17" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/>'
 };
 const BIG={
@@ -1248,8 +1249,6 @@ if(window.__TAURI__){
     lastRead=Date.now();QBLIVE.send({t:'status_read'});});
 }
 });
-})();
-
 /* ===== native window (Tauri): own title bar buttons, drag area, rounded corners ===== */
 (window.__READY||Promise.resolve()).then(()=>{
 if(document.documentElement.classList.contains('native')&&window.__TAURI__){
@@ -1275,6 +1274,7 @@ if(document.documentElement.classList.contains('native')&&window.__TAURI__){
 }
 
 });
+})();
 /* F2 shows the real frame rate of this window. */
 document.addEventListener('keydown',e=>{if(e.key!=='F2')return;
   let el=document.getElementById('fps');if(el){el.remove();return;}

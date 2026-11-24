@@ -45,6 +45,8 @@ jobs:
           printf '%s\n' "$PROPS" > local/keys/keystore.properties
       - name: Every string in all locales
         run: python3 scripts/check-locales.py
+      - name: Every desktop icon defined
+        run: python3 scripts/check-ui-icons.py
       # The Rust core as a native library for the app (core-jni/, shadow mode). The runner has the NDK.
       - name: Core library for Android
         run: |
