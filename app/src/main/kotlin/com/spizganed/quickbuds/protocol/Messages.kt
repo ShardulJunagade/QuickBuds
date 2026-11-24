@@ -1,7 +1,7 @@
 package com.spizganed.quickbuds.protocol
 
 /**
- * Typed messages of docs/PROTOCOL.md: the value types, the command bitmap and the message
+ * Typed messages of docs/OPPO-PROTOCOL.md: the value types, the command bitmap and the message
  * catalogue. The decoder is in Decode.kt. The Rust port is `core/src/msg.rs`.
  */
 
@@ -52,7 +52,7 @@ data class Triangle(
 /** Both ears' biquad filters of a Golden Sound result: sample rate, left, right. */
 data class Curves(val rate: Int, val left: List<Float>, val right: List<Float>)
 
-/** A request from the buds, which they expect to be answered (PROTOCOL.md section 11). */
+/** A request from the buds, which they expect to be answered (OPPO-PROTOCOL.md section 11). */
 sealed class Request {
     /** `0x0500`: the phone's clock. */
     object Time : Request()
@@ -78,7 +78,7 @@ class Bitmap private constructor(private val cmds: Set<Int>?) {
     companion object {
         val UNKNOWN = Bitmap(null)
 
-        /** Commands behind each bit of the `0x8100` reply (PROTOCOL.md section 5). `core/tests/bitmap_table.json` checks it against core. */
+        /** Commands behind each bit of the `0x8100` reply (OPPO-PROTOCOL.md section 5). `core/tests/bitmap_table.json` checks it against core. */
         private val BITS: List<List<Int>> = listOf(
             listOf(0x0105), listOf(0x0106), listOf(0x0107), listOf(0x0108, 0x0401, 0x0416), listOf(0x0109), listOf(0x0400),
             listOf(0x0402), listOf(0x0403), listOf(0x010C, 0x0404), listOf(0x0405), listOf(0x0406, 0x010F), listOf(0x0407),
@@ -110,7 +110,7 @@ class Bitmap private constructor(private val cmds: Set<Int>?) {
 
 /** A decoded message from the buds. */
 sealed class Msg {
-    // Replies (PROTOCOL.md section 3)
+    // Replies (OPPO-PROTOCOL.md section 3)
     data class BitmapReply(val bitmap: Bitmap) : Msg()
     /** 24-bit product id, as the buds send it. */
     data class ProductId(val id: Int) : Msg()
@@ -164,7 +164,7 @@ sealed class Msg {
     data class GoldenScanFilter(val id: Int, val curves: Curves) : Msg()
     data class Ask(val request: Request) : Msg()
 
-    // Pushes (PROTOCOL.md section 10); the same facts also arrive as replies to a query
+    // Pushes (OPPO-PROTOCOL.md section 10); the same facts also arrive as replies to a query
     data class Battery(val cells: List<Cell>) : Msg()
     data class Wear(val parts: List<Pair<Int, Int>>) : Msg()
     data class AncMsg(val anc: Anc) : Msg()

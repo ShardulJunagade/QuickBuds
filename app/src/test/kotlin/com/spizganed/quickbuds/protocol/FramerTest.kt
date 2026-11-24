@@ -5,7 +5,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
-/** The framer joins slices as PROTOCOL.md section 2 says. */
+/** The framer joins slices as OPPO-PROTOCOL.md section 2 says. */
 class FramerTest {
     private fun bytes(vararg v: Int) = ByteArray(v.size) { v[it].toByte() }
     private fun feed(f: OppoPacketFramer, b: ByteArray) = f.append(b, b.size)

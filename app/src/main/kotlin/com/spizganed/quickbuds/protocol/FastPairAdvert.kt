@@ -1,7 +1,7 @@
 package com.spizganed.quickbuds.protocol
 
 /**
- * Battery in a BLE advertisement (PROTOCOL.md section 13, "Other battery sources"). No connection is needed.
+ * Battery in a BLE advertisement (OPPO-PROTOCOL.md section 13, "Other battery sources"). No connection is needed.
  * Two packets carry it: the OPPO manufacturer data and the Google Fast Pair service data `FE2C`.
  */
 object FastPairAdvert {

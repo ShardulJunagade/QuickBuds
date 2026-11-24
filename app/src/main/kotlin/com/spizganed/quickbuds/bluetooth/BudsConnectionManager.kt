@@ -254,10 +254,10 @@ class BudsConnectionManager(private val context: Context) {
 
     /** Bumped on every connect and on every disconnect: a late connect thread must not install a socket. */
     private var connectGeneration = 0
-    /** Set by the all-zero wear push the buds send just before a lid close drops the link (PROTOCOL.md §13). */
+    /** Set by the all-zero wear push the buds send just before a lid close drops the link (OPPO-PROTOCOL.md §13). */
     @Volatile private var caseClosing = false
     /**
-     * Set by a write that restarts the buds (power saving, PROTOCOL.md §16). They come back with
+     * Set by a write that restarts the buds (power saving, OPPO-PROTOCOL.md §16). They come back with
      * our link only, not the phone's audio, so the next successful connect asks for it: the
      * restart was the user's own action, unlike a system auto-connect (see [connect]).
      */
@@ -817,7 +817,7 @@ class BudsConnectionManager(private val context: Context) {
 
     fun refreshPreferred() = sendRaw(Commands.queryPreferred(), "query preferred")
 
-    // --- Equalizer (PROTOCOL.md §17). Read on demand by the EQ screen, re-read after every write. ---
+    // --- Equalizer (OPPO-PROTOCOL.md §17). Read on demand by the EQ screen, re-read after every write. ---
     /** The events these buds offer (`0x8200`), once read; reset on each connect. */
     @Volatile private var offeredEvents: Set<Int>? = null
 
@@ -847,11 +847,11 @@ class BudsConnectionManager(private val context: Context) {
     fun setBassWaveLevel(level: Int) = equalizer.setBassWave(level)
     fun setBassBand(band: Int, level: Int) = equalizer.setBassBand(band, level)
 
-    /** Find my earbuds: both buds' own locator tone. `[CAPTURE]` 2026-09-23, PROTOCOL.md §18. */
+    /** Find my earbuds: both buds' own locator tone. `[CAPTURE]` 2026-09-23, OPPO-PROTOCOL.md §18. */
     fun setFindTone(on: Boolean) = sendRaw(Commands.findTone(on),"Find tone -> $on")
 
     /**
-     * Latest `0x810D` reply as feature id -> value (PROTOCOL.md §16). Persisted, so the switches
+     * Latest `0x810D` reply as feature id -> value (OPPO-PROTOCOL.md §16). Persisted, so the switches
      * open at the last known state instead of jumping when the connect-time read lands.
      */
     @Volatile var featureStates: Map<Int, Int> = Capabilities.reply(context).orEmpty()
@@ -1062,7 +1062,7 @@ class BudsConnectionManager(private val context: Context) {
             .getOrNull(codec - 1) ?: "#$codec"
 
     /**
-     * Golden Sound test frames, sent in order on one thread (PROTOCOL.md §20): a tone is a stop then
+     * Golden Sound test frames, sent in order on one thread (OPPO-PROTOCOL.md §20): a tone is a stop then
      * the tone, a record is applied in four writes. A `0x0403` among them is followed by a status read.
      */
     fun golden(vararg packets: ByteArray) {
@@ -1081,7 +1081,7 @@ class BudsConnectionManager(private val context: Context) {
 
     /**
      * Spatial type on buds with `0x0422` (0 off, 1 fixed, 2 head tracking), null until read. Changes
-     * repaint through [Listener.onFeatureStates]. `[VENDOR]`, unverified on buds (PROTOCOL.md §18).
+     * repaint through [Listener.onFeatureStates]. `[VENDOR]`, unverified on buds (OPPO-PROTOCOL.md §18).
      */
     @Volatile var spatialType: Int? = null
         private set
@@ -1153,7 +1153,7 @@ class BudsConnectionManager(private val context: Context) {
     /** The default from the last `0x8133` reply; the push carries the level only. */
     private var tapLevelDefault = 0
 
-    /** `0x0420 01 <1|0>`: a game app is in the foreground (PROTOCOL.md §18). */
+    /** `0x0420 01 <1|0>`: a game app is in the foreground (OPPO-PROTOCOL.md §18). */
     fun setGameEqState(inGame: Boolean) = sendRaw(Commands.gameEqState(inGame),"Game equalizer in game=$inGame")
 
     fun refreshTapLevel() = sendRaw(Commands.queryTapLevel(), "query tap level")
@@ -1196,7 +1196,7 @@ class BudsConnectionManager(private val context: Context) {
 
     /**
      * The hold's ANC-cycle membership — `setSupportNoiseReduction`, `[CAPTURE]` 2026-09-22
-     * (PROTOCOL.md §14). `mask` bits use [OpoProtocol.anc]'s numbering (Off 0, On 1,
+     * (OPPO-PROTOCOL.md §14). `mask` bits use [OpoProtocol.anc]'s numbering (Off 0, On 1,
      * Transparency 2, Adaptive 11). Verified the same way every gesture write is: re-read after a delay and log
      * the diff, because a wrong command number here would be ignored exactly as silently as
      * everywhere else in this protocol.
@@ -1250,7 +1250,7 @@ class BudsConnectionManager(private val context: Context) {
     }
 
     /**
-     * `0x010D` for the model in use (PROTOCOL.md §16): its own id list plus the ids a model
+     * `0x010D` for the model in use (OPPO-PROTOCOL.md §16): its own id list plus the ids a model
      * flag names and both game-mode ids ([RowRules.askQuery]). A model without a list uses the
      * default list, which already holds those ids except wind noise.
      */
@@ -1306,7 +1306,7 @@ class BudsConnectionManager(private val context: Context) {
 
     /**
      * The hold's ANC-cycle masks, as last read from `0x010C` `02 <type>` (`[CAPTURE]`,
-     * PROTOCOL.md §14), by noise type ([OpoProtocol.HOLD_TYPE_SHARED], or `_LEFT` / `_RIGHT`).
+     * OPPO-PROTOCOL.md §14), by noise type ([OpoProtocol.HOLD_TYPE_SHARED], or `_LEFT` / `_RIGHT`).
      * Empty until the first reply arrives — same "do not invent it" rule as [lastKeyFnTable], though there is
      * nothing here that writes FROM this field; it exists purely so a UI can show the
      * current cycle without threading its own query/response plumbing.
@@ -1604,7 +1604,7 @@ class BudsConnectionManager(private val context: Context) {
             cmd == 0x812A || cmd == 0x812B || cmd == OpoProtocol.CMD_SPATIAL_TYPE_PUSH || // spatial / game sound type
             cmd == 0x811A || cmd == 0x8133 || cmd == 0x8132 || // personalized ANC, tap sensitivity, preferred device
             cmd == 0x0500 ||                             // time request from the buds, answered (answer 0500)
-            cmd == 0x0501 || cmd == 0x0502 ||            // camera state / shutter (realme: find phone), not answered (PROTOCOL.md §11)
+            cmd == 0x0501 || cmd == 0x0502 ||            // camera state / shutter (realme: find phone), not answered (OPPO-PROTOCOL.md §11)
             cmd == OpoProtocol.CMD_FEATURE_PUSH ||        // feature push
             cmd in 0x8400..0x84FF ||                     // acks for 0x04xx set commands
             cmd in LogDecoder.REPLY_NAMES                // decoded elsewhere, see there
@@ -1635,7 +1635,7 @@ class BudsConnectionManager(private val context: Context) {
         answer?.let { sendRaw(it, "answer %04X".format(cmd)) }
         if (cmd == OpoProtocol.REQ_TIME) return
         // Find phone (realme): `0x0502 05` rings the phone, `06` stops it. HeyMelody models use 0x0502 for the
-        // camera, so only a model with the `findPhone` flag acts on it (PROTOCOL.md section 11).
+        // camera, so only a model with the `findPhone` flag acts on it (OPPO-PROTOCOL.md section 11).
         if (cmd == OpoProtocol.REQ_FIND_PHONE) {
             val action = payload.firstOrNull()?.toInt()
             log("FIND PHONE: action=$action")
@@ -1673,7 +1673,7 @@ class BudsConnectionManager(private val context: Context) {
             }
             is Msg.ProductId -> onProductId(Capabilities.productId(msg.id))
 
-            // Firmware triples (PROTOCOL.md §7), shown in the Earbud settings hub the way HeyMelody shows it.
+            // Firmware triples (OPPO-PROTOCOL.md §7), shown in the Earbud settings hub the way HeyMelody shows it.
             is Msg.Firmware -> {
                 val version = msg.version()
                 val text = if (payload.size > 2) String(payload, 2, payload.size - 2, Charsets.UTF_8) else ""
@@ -1709,7 +1709,7 @@ class BudsConnectionManager(private val context: Context) {
                 onKeyFunctions(KeyFunctionParser.Table(msg.status, entries.size, entries, trailing, trailing.isNotEmpty()))
             }
 
-            // --- ANC: the 0x810C reply and the 0x0204 push 03 share one shape (PROTOCOL.md §14) ---
+            // --- ANC: the 0x810C reply and the 0x0204 push 03 share one shape (OPPO-PROTOCOL.md §14) ---
             is Msg.AncMsg -> when (val anc = msg.anc) {
                 // A push arrives only on a CHANGE, so the reply to the connect-time read corrects a stale value.
                 // An echo of our own write is a no-op: BudsService drops a mode equal to the stored one.
@@ -1809,7 +1809,7 @@ class BudsConnectionManager(private val context: Context) {
             }
             is Msg.HeadGesture -> { headMotionType = msg.type; log("HEAD MOTION TYPE: ${msg.type} RAW=[${raw()}]"); featuresChanged() }
 
-            // --- Golden Sound (PROTOCOL.md §20) ---
+            // --- Golden Sound (OPPO-PROTOCOL.md §20) ---
             is Msg.Hearing -> {
                 log("GOLDEN STATUS: kind=${msg.kind} status=${msg.status}")
                 handler.post { listeners.forEach { it.onGoldenStatus(msg.kind, msg.status) } }
@@ -1844,7 +1844,7 @@ class BudsConnectionManager(private val context: Context) {
                 handler.post { listeners.forEach { it.onGoldenActiveScan(msg.id, data) } }
             }
 
-            // --- Personalized ANC and tap level, [VENDOR] (PROTOCOL.md §20) ---
+            // --- Personalized ANC and tap level, [VENDOR] (OPPO-PROTOCOL.md §20) ---
             is Msg.PersonalAncStored -> {
                 log("PERSONAL ANC stored=${if (msg.stored) 1 else 0}")
                 handler.post { listeners.forEach { it.onPersonalNoiseStored(msg.stored) } }
@@ -1859,7 +1859,7 @@ class BudsConnectionManager(private val context: Context) {
                 log("TAP LEVEL: ${msg.level} default $default")
                 handler.post { listeners.forEach { it.onTapLevel(msg.level, default) } }
             }
-            // Public event (PROTOCOL.md section 10): the first flag that matches wins.
+            // Public event (OPPO-PROTOCOL.md section 10): the first flag that matches wins.
             is Msg.PublicMsg -> when (val e = msg.event) {
                 is Public.AlertVolume -> onAlertVolume(e.level, "ALERT VOLUME push: ${e.level} RAW=[${raw()}]")
                 is Public.TapLevel -> {
@@ -1948,7 +1948,7 @@ class BudsConnectionManager(private val context: Context) {
                         log("FEATURE REFUSED: id=0x%02X status=%d codec=%s offered=%s".format(id, status, codec, codecs))
                 }
             }
-            // A refused ANC write (status 14 with no bud in an ear): read the real mode back (PROTOCOL.md section 14).
+            // A refused ANC write (status 14 with no bud in an ear): read the real mode back (OPPO-PROTOCOL.md section 14).
             OpoProtocol.CMD_SET_ANC -> if (status != 0) {
                 log("ANC write refused (status $status), re-reading")
                 sendRaw(Commands.queryAncMode(), "query anc")
@@ -1998,7 +1998,7 @@ class BudsConnectionManager(private val context: Context) {
     }
 
     /**
-     * The Fast Pair stream (PROTOCOL.md section 1), only while another app holds `079A`: then the stream is the only
+     * The Fast Pair stream (OPPO-PROTOCOL.md section 1), only while another app holds `079A`: then the stream is the only
      * link and gives the whole battery (issue #18). When the link gives no case level or `0` (report #184), a 10 s
      * BLE scan reads it from the advertisement ([AdvertCaseScan]), at most once in 5 min.
      * Was: a short stream read beside the link. Is: no stream beside the link; Google Play Services holds it.

@@ -1,5 +1,5 @@
 {
-  "comment": "Commands behind each bit of the 0x8100 reply (PROTOCOL.md section 5). core/src/msg.rs and Messages.kt must match.",
+  "comment": "Commands behind each bit of the 0x8100 reply (OPPO-PROTOCOL.md section 5). core/src/msg.rs and Messages.kt must match.",
   "always": ["0x0100", "0x0101", "0x0102", "0x0103", "0x0104", "0x0106", "0x010B", "0x010D", "0x0F00", "0x0F03", "0x0F04"],
   "bits": [
     ["0x0105"],

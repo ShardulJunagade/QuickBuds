@@ -20,7 +20,7 @@ import android.os.VibratorManager
 import com.spizganed.quickbuds.R
 
 /**
- * Find phone: the buds ask the phone to ring (`0x0502 05`) or to stop (`0x0502 06`), PROTOCOL.md section 11.
+ * Find phone: the buds ask the phone to ring (`0x0502 05`) or to stop (`0x0502 06`), OPPO-PROTOCOL.md section 11.
  * The ring is the default ringtone on the alarm stream at one step below full volume, with vibration. When the
  * ringtone does not play, the default alarm sound plays, then the notification sound.
  * A notification carries a Stop action. The ring stops by itself after [LIMIT_MS].

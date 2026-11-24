@@ -1,4 +1,4 @@
-//! Typed messages of docs/PROTOCOL.md: builds what the app sends. Each function returns a [`Frame`]
+//! Typed messages of docs/OPPO-PROTOCOL.md: builds what the app sends. Each function returns a [`Frame`]
 //! (command, payload); the link layer adds the sequence number and the frame. [`battery`] and
 //! [`wearing`] return a [`Message`] with the fixed sequence. Written from the spec.
 
@@ -8,7 +8,7 @@ use crate::wire::Message;
 /// A message to send: (command, payload).
 pub type Frame = (u16, Vec<u8>);
 
-// --- Connection (PROTOCOL.md section 6) ---
+// --- Connection (OPPO-PROTOCOL.md section 6) ---
 
 pub fn handshake() -> Frame { (0x0100, vec![]) }
 pub fn product_id() -> Frame { (0x0103, vec![]) }
@@ -138,7 +138,7 @@ pub fn bass_set(level: i8, band: u8) -> Frame {
     (0x041B, p)
 }
 
-// --- Sound and device settings (PROTOCOL.md section 18) ---
+// --- Sound and device settings (OPPO-PROTOCOL.md section 18) ---
 
 pub fn alert_volume_read() -> Frame { (0x0130, vec![]) }
 /// `0x0427 <level>`, 1..10. Each write plays a prompt: send on slider release only.
@@ -177,7 +177,7 @@ pub fn fit_test(on: bool) -> Frame { (0x0405, vec![on as u8]) }
 pub fn personal_anc(action: u8) -> Frame { (0x0412, vec![action]) }
 pub fn personal_anc_stored() -> Frame { (0x011A, vec![]) }
 
-// --- Dual connection (PROTOCOL.md section 19) ---
+// --- Dual connection (OPPO-PROTOCOL.md section 19) ---
 
 pub fn devices_read() -> Frame { (0x0112, vec![]) }
 /// `0x0429 01|02 <MAC>`: connect or disconnect a device. The MAC is in written order.
@@ -205,7 +205,7 @@ pub fn phone_state(s: PhoneState) -> Frame {
     (0x0413, [&[flags, 0][..], &fields.iter().flatten().copied().collect::<Vec<_>>()].concat())
 }
 
-// --- Golden Sound (PROTOCOL.md section 20) ---
+// --- Golden Sound (OPPO-PROTOCOL.md section 20) ---
 
 /// 12 hearing values, left ears 1-6 then right ears 1-6, as `<side> <freq> <value>`.
 fn hearing_info(values: &[i8; 12]) -> Vec<u8> { (0..12).flat_map(|i| [i as u8 / 6 + 1, i as u8 % 6 + 1, values[i] as u8]).collect() }

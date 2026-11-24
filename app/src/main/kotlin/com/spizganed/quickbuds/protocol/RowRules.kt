@@ -205,7 +205,7 @@ object RowRules {
 
     /**
      * The game-mode id the buds write and read. One place, for the ask list and the row.
-     * A model's `gameId` wins, for a model whose capture proves another id (PROTOCOL.md section 16).
+     * A model's `gameId` wins, for a model whose capture proves another id (OPPO-PROTOCOL.md section 16).
      */
     fun gameModeId(bitmap: Set<Int>?, model: JSONObject? = null): Int =
         ModelProfile(model).gameId
@@ -213,7 +213,7 @@ object RowRules {
 
     /**
      * A OnePlus or OPPO model whose bitmap lacks `0xEF03`: the phone makes the 3D effect, and only OPPO, OnePlus and
-     * realme phones can (PROTOCOL.md section 18). The `1B` switch does nothing audible: the row drives the phone's
+     * realme phones can (OPPO-PROTOCOL.md section 18). The `1B` switch does nothing audible: the row drives the phone's
      * spatializer ([com.spizganed.quickbuds.bluetooth.PhoneSpatial]) where it exists, else it is hidden.
      */
     fun phoneSpatial(model: JSONObject?, bitmap: Set<Int>?): Boolean {

@@ -38,7 +38,7 @@ import org.json.JSONObject
 
 /**
  * Equalizer — HeyMelody's layout: built-in presets, BassWave, custom presets with a band editor (6 bands, 10 on some models).
- * Every command is `[CAPTURE]` 2026-09-23 (PROTOCOL.md §17).
+ * Every command is `[CAPTURE]` 2026-09-23 (OPPO-PROTOCOL.md §17).
  *
  * The screen shows the BUDS' state, never its own guess: it binds the service, reads the EQ on
  * open, and every write is followed by a re-read ([Equalizer]) that
@@ -140,7 +140,7 @@ class EqActivity : Activity(), BudsConnectionManager.Listener {
                 34 -> R.string.eq_vibrant
                 40 -> R.string.eq_dyn_vocal
                 41 -> R.string.eq_clear_crisp
-                // realme Link's four presets; HeyMelody has none, so the types are ours (PROTOCOL.md §17).
+                // realme Link's four presets; HeyMelody has none, so the types are ours (OPPO-PROTOCOL.md §17).
                 101 -> R.string.eq_nature_balance
                 102 -> R.string.eq_bass_boost
                 103 -> R.string.eq_clear_vocals

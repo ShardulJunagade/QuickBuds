@@ -7,7 +7,7 @@ import android.os.Build
 import android.provider.Settings
 
 /**
- * 3D audio that the phone makes, for buds whose bitmap lacks `0xEF03` (PROTOCOL.md section 18).
+ * 3D audio that the phone makes, for buds whose bitmap lacks `0xEF03` (OPPO-PROTOCOL.md section 18).
  * The state is the standard Android `Spatializer`. On OPPO, OnePlus and realme phones the switch is an
  * OPLUS audio parameter; a write that the phone ignores falls back to the phone's Holo Audio page.
  * Other phones let only their settings turn it on, so the switch opens the Bluetooth settings.

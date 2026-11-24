@@ -4,7 +4,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Test
 
-/** Packets built from the layouts in PROTOCOL.md section 13. No capture yet. */
+/** Packets built from the layouts in OPPO-PROTOCOL.md section 13. No capture yet. */
 class FastPairAdvertTest {
     private fun bytes(vararg v: Int) = ByteArray(v.size) { v[it].toByte() }
 

@@ -1,4 +1,4 @@
-//! The equalizer's pick rules, apart from the link (the phone's `Equalizer.kt`, PROTOCOL.md section 17). No I/O here.
+//! The equalizer's pick rules, apart from the link (the phone's `Equalizer.kt`, OPPO-PROTOCOL.md section 17). No I/O here.
 //!  - A reply that names another preset than the last pick is ignored while the pick is under [`PICK_HOLD_MS`] old.
 //!  - Quick picks queued behind a write: only the last one is sent. A save with changes is kept.
 

@@ -173,7 +173,7 @@ object RustShadow {
         }))
     }.toString()
 
-    /** A raw wear status as the core names it (PROTOCOL.md section 13). */
+    /** A raw wear status as the core names it (OPPO-PROTOCOL.md section 13). */
     private fun wear(raw: Int) = when (raw) {
         3, 7 -> "ear"
         0, 4 -> "case"

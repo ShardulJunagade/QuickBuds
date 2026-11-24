@@ -173,7 +173,7 @@ fn default_ids(model: Option<&Value>) -> Vec<u8> {
     ids
 }
 
-/// A OnePlus or OPPO model whose bitmap lacks `0xEF03`: the phone makes the 3D effect (PROTOCOL.md section 18).
+/// A OnePlus or OPPO model whose bitmap lacks `0xEF03`: the phone makes the 3D effect (OPPO-PROTOCOL.md section 18).
 pub fn phone_spatial(model: Option<&Value>, bitmap: Option<&[u16]>) -> bool {
     Profile(model).hey_melody() && !Profile(model).spatial_toggle()
         && bitmap.is_some_and(|b| !b.is_empty() && !b.contains(&BUDS_SPATIAL))

@@ -31,7 +31,7 @@ QuickBuds is under the GPL-3.0-or-later. Before the owner merges your pull reque
 Tick the box in the pull request template. You keep your copyright.
 
 Do not copy code or text from HeyMelody, realme Link or other vendor apps. Write your own code from the
-protocol facts in [PROTOCOL.md](./PROTOCOL.md).
+protocol facts in [OPPO-PROTOCOL.md](./OPPO-PROTOCOL.md).
 
 See [ADD-A-MODEL.md](./ADD-A-MODEL.md) for a new or wrong model entry.
 
@@ -89,7 +89,7 @@ Per-model data (features, noise control modes, EQ presets, gestures) is in
 
 Read before changing anything:
 
-- [PROTOCOL.md](./PROTOCOL.md): the wire format. Every claim is tagged with its source.
+- [OPPO-PROTOCOL.md](./OPPO-PROTOCOL.md): the wire format. Every claim is tagged with its source.
 - [FEATURE-SYNC.md](./FEATURE-SYNC.md): one rule for every setting that writes to the buds and reads from them.
 - [ROADMAP.md](./ROADMAP.md): the plan, and the list of features decided against. Please check that
   list before proposing a feature.
@@ -98,7 +98,7 @@ Read before changing anything:
 
 - **Never guess a payload or a command number.** A wrong write to the buds fails silently. Capture
   what HeyMelody sends first ([PACKET-CAPTURE.md](./PACKET-CAPTURE.md)), then read the result back.
-- **Docs change with the code.** A protocol change comes with its PROTOCOL.md entry in the same commit.
+- **Docs change with the code.** A protocol change comes with its OPPO-PROTOCOL.md entry in the same commit.
 - **A new user-visible string needs all 26 translations** (`app/src/main/res/values-*`). Machine
   drafts are fine. Lint does not catch a missing one. `scripts/check-locales.py` does, and the Build workflow runs it.
 - No new dependencies in the Android app, no Material Components. Every activity is portrait-locked by hand.

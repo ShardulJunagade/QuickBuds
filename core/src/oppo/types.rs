@@ -34,15 +34,15 @@ pub const CMD_SET_FEATURE: u16 = 0x0403;
 
 pub const CMD_SET_ANC: u16 = 0x0404;
 
-/// `01` start / `00` stop, both buds (PROTOCOL.md section 18 Find my earbuds).
+/// `01` start / `00` stop, both buds (OPPO-PROTOCOL.md section 18 Find my earbuds).
 pub const CMD_FIND_BUDS: u16 = 0x0400;
 
-/// `<level>` 1..10, ack `8427 00 <level>`; read `0x0130` -> `00 <level>` (PROTOCOL.md section 18).
+/// `<level>` 1..10, ack `8427 00 <level>`; read `0x0130` -> `00 <level>` (OPPO-PROTOCOL.md section 18).
 pub const CMD_SET_ALERT_VOLUME: u16 = 0x0427;
 
 pub const CMD_QUERY_ALERT_VOLUME: u16 = 0x0130;
 
-/// `<level>` 1..5; read `0x0133` -> `00 <level> <default>` (PROTOCOL.md section 18, unverified).
+/// `<level>` 1..5; read `0x0133` -> `00 <level> <default>` (OPPO-PROTOCOL.md section 18, unverified).
 pub const CMD_SET_TAP_LEVEL: u16 = 0x042D;
 
 pub const CMD_QUERY_TAP_LEVEL: u16 = 0x0133;
@@ -51,7 +51,7 @@ pub const CMD_FIT_TEST: u16 = 0x0405;
 
 pub const CMD_GOLDEN_DETECT: u16 = 0x040D;
 
-/// Personalized ANC (PROTOCOL.md section 20, unverified): `<action>` 1 test / 2 use the stored result / 3 cancel, ack `8412 <status>`;
+/// Personalized ANC (OPPO-PROTOCOL.md section 20, unverified): `<action>` 1 test / 2 use the stored result / 3 cancel, ack `8412 <status>`;
 /// `0x011A` -> `00 <exist>`; the test's result is push `0B <r>` (0 applied, 1-5 a reason it failed).
 pub const CMD_PERSONAL_NOISE: u16 = 0x0412;
 
@@ -59,12 +59,12 @@ pub const CMD_QUERY_PERSONAL_NOISE: u16 = 0x011A;
 
 pub const FEATURE_PERSONAL_NOISE: u8 = 0x0C;
 
-/// Game sound type `<type> 01`; read `0x012B` -> `00 <selected> <count> <types>` (PROTOCOL.md section 18).
+/// Game sound type `<type> 01`; read `0x012B` -> `00 <selected> <count> <types>` (OPPO-PROTOCOL.md section 18).
 pub const CMD_GAME_SOUND: u16 = 0x0423;
 
 pub const CMD_QUERY_GAME_SOUND: u16 = 0x012B;
 
-/// Game equalizer (PROTOCOL.md section 18): switch feature `21`, and `0x0420 01 <state>` tells the buds that a
+/// Game equalizer (OPPO-PROTOCOL.md section 18): switch feature `21`, and `0x0420 01 <state>` tells the buds that a
 /// game app is open. The state applies only while the switch is on.
 pub const CMD_GAME_EQ_STATE: u16 = 0x0420;
 
@@ -93,7 +93,7 @@ pub const CMD_SET_BASSWAVE: u16 = 0x041B;
 
 pub const EVT_EQ_CHANGED: u16 = 0x0504;
 
-/// Time request (PROTOCOL.md section 11): answered `8500 <its seq> 00 <unix seconds u32 LE>`, as HeyMelody does.
+/// Time request (OPPO-PROTOCOL.md section 11): answered `8500 <its seq> 00 <unix seconds u32 LE>`, as HeyMelody does.
 pub const REQ_TIME: u16 = 0x0500;
 
 pub const FEATURE_BASSWAVE: u8 = 0x1D;
@@ -104,7 +104,7 @@ pub const FEATURE_HEARING_OPTIMIZE: u8 = 0x38;
 
 pub const EVT_PUSH: u16 = 0x0204;
 
-/// Dual connection (PROTOCOL.md section 19): switch `0x11`; the device list `0x0112` -> `8112 00 <list>`, push `0204 06 <list>`.
+/// Dual connection (OPPO-PROTOCOL.md section 19): switch `0x11`; the device list `0x0112` -> `8112 00 <list>`, push `0204 06 <list>`.
 /// Each toggle is followed by `0x0413 08 00 <00 after on | 01 after off>` (HeyMelody's, meaning unknown).
 pub const FEATURE_DUAL: u8 = 0x11;
 
@@ -112,20 +112,20 @@ pub const CMD_QUERY_DEVICES: u16 = 0x0112;
 
 pub const CMD_DUAL_FOLLOWUP: u16 = 0x0413;
 
-/// Device manager (PROTOCOL.md section 19, unverified): `01|02 <MAC>` connect / disconnect, `04 00` preferred device automatic,
+/// Device manager (OPPO-PROTOCOL.md section 19, unverified): `01|02 <MAC>` connect / disconnect, `04 00` preferred device automatic,
 /// `04 01 <MAC>`; read `0x0132 02` -> `00 02 <00 | 01 <MAC>>`. MACs in written order (the list's reversed).
 pub const CMD_MULTI_CONNECT: u16 = 0x0429;
 
 pub const CMD_QUERY_PREFERRED: u16 = 0x0132;
 
-/// Game mode's `0x0403` switch: `0x28` on buds with game sound (`0x0423`), `0x06` elsewhere (PROTOCOL.md section 16).
+/// Game mode's `0x0403` switch: `0x28` on buds with game sound (`0x0423`), `0x06` elsewhere (OPPO-PROTOCOL.md section 16).
 pub const FEATURE_GAME_MODE: u8 = 0x06;
 
 pub const FEATURE_GAME_MODE_MAIN: u8 = 0x28;
 
-/// `0x0205`, count first; never shorter than `03 01 02 03` (PROTOCOL.md section 8).
+/// `0x0205`, count first; never shorter than `03 01 02 03` (OPPO-PROTOCOL.md section 8).
 /// The events to subscribe to: ours, kept to those the buds offer in `0x8200` when they sent one, as
-/// HeyMelody subscribes to the offered list only (PROTOCOL.md section 8). Some firmwares never ack a list with others.
+/// HeyMelody subscribes to the offered list only (OPPO-PROTOCOL.md section 8). Some firmwares never ack a list with others.
 pub fn notify_ids(caps: &Caps, offered: Option<&[u8]>) -> Vec<u8> {
     let mut ids = vec![1, 2, 3];
     if caps.supports(CMD_FIT_TEST) { ids.push(0x04); }
@@ -138,7 +138,7 @@ pub fn notify_ids(caps: &Caps, offered: Option<&[u8]>) -> Vec<u8> {
 /// realme Link's wind noise switch; asked only for models with the `windMode` flag.
 pub const FEATURE_WIND_NOISE: u8 = 0x1A;
 
-/// High-quality audio (Hi-Res) and 3D audio: exclusive `0x0403` switches, PROTOCOL.md section 18 Spatial sound and Hi-Res.
+/// High-quality audio (Hi-Res) and 3D audio: exclusive `0x0403` switches, OPPO-PROTOCOL.md section 18 Spatial sound and Hi-Res.
 pub const FEATURE_HIRES: u8 = 0x18;
 
 pub const FEATURE_SPATIAL: u8 = 0x1B;
@@ -212,7 +212,7 @@ impl Caps {
     }
 }
 
-// --- Models and ANC modes (`ModelCatalog.kt`, `AncModes.kt`, PROTOCOL.md sections 6 and 14) ---
+// --- Models and ANC modes (`ModelCatalog.kt`, `AncModes.kt`, OPPO-PROTOCOL.md sections 6 and 14) ---
 
 pub const OFF: &str = "Off";
 
@@ -242,7 +242,7 @@ pub fn find_model(id: Option<&str>, name: Option<&str>) -> Option<&'static Value
     let m = models();
     let by_name = |x: &&Value| name.is_some() && x["name"].as_str() == name;
     let by_id = |x: &&Value| id.is_some_and(|id| x["id"].as_str().is_some_and(|i| i.eq_ignore_ascii_case(id)));
-    // HeyMelody's order (PROTOCOL.md section 6): name and id, then name, then id.
+    // HeyMelody's order (OPPO-PROTOCOL.md section 6): name and id, then name, then id.
     m.iter().find(|x| by_name(x) && by_id(x)).or_else(|| m.iter().find(by_name)).or_else(|| m.iter().find(by_id))
 }
 
@@ -328,7 +328,7 @@ impl AncModes {
     }
 }
 
-// --- Equalizer (PROTOCOL.md section 17 Equalizer, `EqCodec`) ---
+// --- Equalizer (OPPO-PROTOCOL.md section 17 Equalizer, `EqCodec`) ---
 
 #[derive(Clone, PartialEq, Debug)]
 pub struct Preset {
@@ -437,7 +437,7 @@ pub fn eq_builtins(model: Option<&Value>, firmware: Option<&str>) -> Vec<(u8, &'
             34 => "eq_vibrant",
             40 => "eq_dyn_vocal",
             41 => "eq_clear_crisp",
-            // realme Link's four presets; HeyMelody has none, so the types are ours (PROTOCOL.md section 17).
+            // realme Link's four presets; HeyMelody has none, so the types are ours (OPPO-PROTOCOL.md section 17).
             101 => "eq_nature_balance",
             102 => "eq_bass_boost",
             103 => "eq_clear_vocals",
@@ -448,7 +448,7 @@ pub fn eq_builtins(model: Option<&Value>, firmware: Option<&str>) -> Vec<(u8, &'
     }).collect()
 }
 
-// --- Hearing profile (PROTOCOL.md section 20 Golden Sound) ---
+// --- Hearing profile (OPPO-PROTOCOL.md section 20 Golden Sound) ---
 
 /// On / off; it applies the record stored on the buds.
 pub const FEATURE_HEARING: u8 = 0x0B;
@@ -527,7 +527,7 @@ pub fn hearing_radar(hearing: &[f32], scan: Option<(&[f32], u32)>) -> [f32; 6] {
     })
 }
 
-// --- Gestures (PROTOCOL.md sections 14 and 15) ---
+// --- Gestures (OPPO-PROTOCOL.md sections 14 and 15) ---
 
 /// The gesture table: read `0x0108` -> `<status> <count>` then `<dev> <btn> <act> <fn>` entries; write `0x0401`
 /// `<count> <entries>`, always the whole table (the entries we do not change come from the last read).
@@ -574,7 +574,7 @@ pub enum Event {
     ProductId(String),
     /// (index 1 left / 2 right / 3 case, level, charging)
     Battery(Vec<(u8, u8, bool)>),
-    /// (component 1 left / 2 right / 3 case, status), PROTOCOL.md section 13
+    /// (component 1 left / 2 right / 3 case, status), OPPO-PROTOCOL.md section 13
     Wear(Vec<(u8, u8)>),
     AncRaw(u32),
     /// The level Smart chose, as a SET bit mask: `0x810C` `00 04 01 <mask>`, push `03 04 01 <mask>`.
@@ -592,7 +592,7 @@ pub enum Event {
     SpatialType(u8),
     Codec(u8),
     Codecs(Vec<u8>),
-    /// Fit test result, left and right status (PROTOCOL.md section 20: 1 good, 0 average, 6 poor, else an error; 0xFF missing).
+    /// Fit test result, left and right status (OPPO-PROTOCOL.md section 20: 1 good, 0 average, 6 poor, else an error; 0xFF missing).
     FitResult(u8, u8),
     PncStored(bool),
     PncAck(u8),
@@ -611,7 +611,7 @@ pub enum Event {
     Preferred(Option<[u8; 6]>),
 }
 
-/// These models put the game state at payload[3], not payload[1] (PROTOCOL.md section 10 push `05`) `[VENDOR]`, unverified.
+/// These models put the game state at payload[3], not payload[1] (OPPO-PROTOCOL.md section 10 push `05`) `[VENDOR]`, unverified.
 const GAME_STATE_AT_3: [&str; 4] = ["062410", "062810", "063010", "063410"];
 
 /// Push `05 <state>`, or `05 .. .. <state>` on [GAME_STATE_AT_3]. Non-zero = on.

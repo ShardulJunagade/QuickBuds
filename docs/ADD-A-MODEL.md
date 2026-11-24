@@ -21,7 +21,7 @@ Each earbud model is one line in `app/src/main/assets/models.json`. The app and 
 | `seqless` | `1`: the buds answer with their own sequence byte, not ours (realme Buds T100). |
 | `ancModes`, `gestures`, `eqPresets`, `codecs` | Noise modes, gesture options, equalizer presets and codecs. Copy them from a model of the same family. |
 
-[FEATURE-SYNC.md](./FEATURE-SYNC.md) explains how the app writes a setting and confirms it. [PROTOCOL.md](./PROTOCOL.md) lists the commands.
+[FEATURE-SYNC.md](./FEATURE-SYNC.md) explains how the app writes a setting and confirms it. [OPPO-PROTOCOL.md](./OPPO-PROTOCOL.md) lists the commands.
 
 ## Check your change
 

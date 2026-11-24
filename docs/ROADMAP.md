@@ -1,6 +1,6 @@
 # QuickBuds — Roadmap
 
-The parked and unverified work. Finished work leaves this file. Protocol findings go in [PROTOCOL.md](./PROTOCOL.md).
+The parked and unverified work. Finished work leaves this file. Protocol findings go in [OPPO-PROTOCOL.md](./OPPO-PROTOCOL.md).
 
 **The north star is parity with HeyMelody.** Our own improvements come next, other models after that.
 
@@ -11,7 +11,7 @@ The parked and unverified work. Finished work leaves this file. Protocol finding
   ([PACKET-CAPTURE.md](./PACKET-CAPTURE.md#send-a-snoop-log-for-a-missing-feature)).
 - **Protocol: merge each verified finding into the one layer.** The layer is `protocol/`. Build a facts ledger. It lists
   every command, push and feature against every model, with the gaps marked. Then add each verified fact to the layer and
-  to `docs/PROTOCOL.md`.
+  to `docs/OPPO-PROTOCOL.md`.
 - **Desktop (Tauri):** test the app on Windows.
 - **Captures wanted:**
   - Buds push `0x050E` and answer `0x012C` (realme Air6, Air7 Pro and Air8): the layouts are unknown, so QuickBuds does
