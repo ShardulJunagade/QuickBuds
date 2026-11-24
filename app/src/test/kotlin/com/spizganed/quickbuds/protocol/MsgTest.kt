@@ -58,7 +58,7 @@ class MsgTest {
     }
 
     @Test fun pushesMatchTheDecoders() {
-        // Battery, from PROTOCOL.md section 13: level 0 left out, charging bit.
+        // Battery, from OPPO-PROTOCOL.md section 13: level 0 left out, charging bit.
         val p = intArrayOf(1, 3, 1, 0x64, 2, 0xE4, 3, 0)
         val new = dec(push(*p)) as Msg.Battery
         val old = BatteryParser.parseActive(OpoProtocol.buildPacket(0x0204, 0xFF, b(*p)))!!

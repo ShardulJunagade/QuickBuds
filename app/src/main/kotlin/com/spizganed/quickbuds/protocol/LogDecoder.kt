@@ -21,7 +21,7 @@ object LogDecoder {
         0x812B to "Game sound", 0x812F to "Batch reply (answers follow as RX[batch])", 0x8132 to "Preferred device",
         0x8133 to "Tap sensitivity", 0x8134 to "Head gestures", 0x8200 to "Offered events", 0x8205 to "Notifications registered", 0x8201 to "One event registered",
         0x8427 to "Alert volume ack",
-        // Pushes and requests from the buds (PROTOCOL.md section 11), and our answers.
+        // Pushes and requests from the buds (OPPO-PROTOCOL.md section 11), and our answers.
         0x0500 to "Time request (answered)", 0x8500 to "Time answer", 0x050C to "App list request (answered)",
         0x850C to "App list answer", 0x051C to "Capabilities request (answered)", 0x851C to "Capabilities answer",
         0x051D to "Spatial mode request (answered: not known)", 0x851D to "Spatial mode answer",
@@ -276,7 +276,7 @@ object LogDecoder {
                 // it with the model's table (AncModes).
                 //
                 // The caveat, stated so the line is not over-trusted: the switch-list query
-                // (`02 01`) answers `02 <kind> <mask LE>` (PROTOCOL.md §14), a mask and
+                // (`02 01`) answers `02 <kind> <mask LE>` (OPPO-PROTOCOL.md §14), a mask and
                 // not a mode, so the name is only meaningful for the current-mode query.
                 val hex = OpoProtocol.bytesToHex(payload)
                 "ANC query response (0x810C): ${AncEventParser.describe(payload)} [$hex]"

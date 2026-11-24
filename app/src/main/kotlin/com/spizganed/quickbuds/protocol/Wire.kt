@@ -1,7 +1,7 @@
 package com.spizganed.quickbuds.protocol
 
 /**
- * The link layer of docs/PROTOCOL.md §2: frames, slices, reassembly. No Bluetooth, no commands.
+ * The link layer of docs/OPPO-PROTOCOL.md §2: frames, slices, reassembly. No Bluetooth, no commands.
  * Plain Kotlin, so a JVM test runs it.
  */
 object Wire {
@@ -89,9 +89,9 @@ object Wire {
  * Handles partial frames, multiple frames in one read, and garbage before headers.
  *
  * `TotalLen` (byte 1) is LEB128, so a frame over 127 bytes has a longer header (Golden Sound's
- * ear-scan data, PROTOCOL.md §20). Every frame comes out [normalise]d, so the rest of the app
+ * ear-scan data, OPPO-PROTOCOL.md §20). Every frame comes out [normalise]d, so the rest of the app
  * keeps its fixed layout: cmd at 4-5, seq at 6, payload length at 7-8, payload from 9.
- * Slices of one message (PROTOCOL.md §2) are joined into one such frame.
+ * Slices of one message (OPPO-PROTOCOL.md §2) are joined into one such frame.
  */
 class OppoPacketFramer {
     private var pending = ByteArray(0)
@@ -128,7 +128,7 @@ class OppoPacketFramer {
             val (totalLen, lenBytes) = length
 
             if (pending.size < 2 + lenBytes) break
-            // Slice byte (PROTOCOL.md §2): 0 a whole message, 1 first, 2 middle, 3 last slice. A slice has 3 header bytes, a message 7.
+            // Slice byte (OPPO-PROTOCOL.md §2): 0 a whole message, 1 first, 2 middle, 3 last slice. A slice has 3 header bytes, a message 7.
             val slice = pending[1 + lenBytes].toInt()
             val sliced = slice in 1..3
             val frameLen = 1 + lenBytes + totalLen

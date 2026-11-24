@@ -66,7 +66,7 @@ Details and how to turn it off: [PRIVACY.md](./docs/PRIVACY.md).
 ## For developers
 
 - [CONTRIBUTING.md](./docs/CONTRIBUTING.md): build, tests, translations and the rules.
-- [PROTOCOL.md](./docs/PROTOCOL.md): the wire format, each claim with its source.
+- [OPPO-PROTOCOL.md](./docs/OPPO-PROTOCOL.md): the OPPO, OnePlus and realme wire format, each claim with its source.
 - [ROADMAP.md](./docs/ROADMAP.md): the plan and the features decided against.
 - [PACKET-CAPTURE.md](./docs/PACKET-CAPTURE.md): how to capture the earbuds' traffic.
 
@@ -76,7 +76,7 @@ Everything to build and release QuickBuds is in this repository, except the sign
 
 The first protocol hints came from [OppoPodsManager](https://github.com/Zhaoyi-ya/OppoPodsManager),
 [Pods-Protocol-Reverse-Engineering](https://github.com/Star-ZER0/Pods-Protocol-Reverse-Engineering) and
-[OppoPods](https://github.com/Leaf-lsgtky/OppoPods). Today each fact in PROTOCOL.md rests on a capture, a device test
+[OppoPods](https://github.com/Leaf-lsgtky/OppoPods). Today each fact in OPPO-PROTOCOL.md rests on a capture, a device test
 or the vendor apps, studied for interoperability only. The PC app uses [Tauri](https://tauri.app) and
 [tray-icon](https://github.com/tauri-apps/tray-icon). Fonts: [Doto](https://github.com/oliverlalan/Doto) and
 [Google Sans Flex](https://github.com/googlefonts/googlesans-flex) (SIL Open Font License 1.1).

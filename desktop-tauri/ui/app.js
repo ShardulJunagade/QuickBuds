@@ -285,7 +285,7 @@ function ring(g,pct,label,sub){const none=pct==null;if(none)pct=0;const len=213.
 function segm(key,items,extra=''){return `<div class="seg ${extra}" data-seg="${key}" role="radiogroup" style="--n:${items.length}"><span class="ind"></span>${items.map(([i,l],n)=>`<button class="cell press" role="radio" data-act="pick" data-k="${key}" data-v="${n}">${i?ic(i):''}${l}</button>`).join('')}</div>`;}
 const ancCard=()=>`<div class="card">${segm('anc',[['off',$t('anc_seg_off')],['anc',$t('anc_seg_anc')],['adaptive',$t('anc_seg_adapt')],['transp',$t('anc_seg_trans')]],'big')}${segm('level',[['low',$t('anc_mode_low')],['anc',$t('anc_mode_medium')],['high',$t('anc_mode_high')],['smart',$t('anc_mode_smart')]],'lvls big')}</div>`;
 const LBL={};
-const lbl=k=>({ll:$t('row_game_title'),hq:$t('row_hires_title'),sp:$t('row_spatial_title'),hp:$t('row_golden_title'),auto:$t('theme_auto'),dual:$t('dual_title'),wear:$t('wear_firmware_title'),svc:$t('desktop_autostart_title','Start with your computer'),hide:$t('settings_clear_battery_title'),devtools:$t('settings_devtools_title'),count:$t('settings_ping_title'),upd:$t('update_auto_title'),bass:$t('eq_basswave'),wind:$t('row_wind_noise_title'),fblog:$t('problem_log_title')})[k]||k;
+const lbl=k=>({ll:$t('row_game_title'),hq:$t('row_hires_title'),sp:$t('row_spatial_title'),hp:$t('row_golden_title'),auto:$t('theme_auto'),dual:$t('dual_title'),wear:$t('wear_firmware_title'),svc:$t('desktop_autostart_title','Start with your computer'),hide:$t('settings_clear_battery_title'),devtools:$t('settings_devtools_title'),count:$t('settings_ping_title'),upd:$t('update_auto_title'),beta:$t('update_beta_title'),bass:$t('eq_basswave'),wind:$t('row_wind_noise_title'),fblog:$t('problem_log_title')})[k]||k;
 const sw=k=>`<button class="sw" role="switch" data-act="toggle" data-k="${k}" aria-label="${lbl(k)}"></button>`;
 const swRow=(i,t,s,k)=>`<div class="row">${i?ic(i):''}<div class="txt"><div class="t">${t}</div>${s?`<div class="s">${s}</div>`:''}</div>${sw(k)}</div>`;
 const navRow=(i,t,s,act)=>`<button class="row press" ${act}>${ic(i)}<div class="txt"><div class="t">${t}</div>${s?`<div class="s">${s}</div>`:''}</div>${ic('chev','ch')}</button>`;
@@ -442,7 +442,7 @@ function buildWindow(){
     <div class="ph"><h2>${$t('update_title')}</h2></div>
     <div class="card pad updc"><div class="updv"><div><div class="s">${$t('update_installed')}</div><div class="pct" id="updInst">–</div></div><div><div class="s">${$t('update_latest')}</div><div class="pct" id="updLatest">–</div></div></div>
       <div class="s" id="updStatus"></div><div class="updact"><button class="btn pri press" id="updBtn" data-act="updgo">${$t('update_check')}</button><div class="prog" id="updProg" role="progressbar" aria-valuemin="0" aria-valuemax="100"><i></i></div></div></div>
-    <div class="group"><div class="row">${ic('update')}<div class="txt"><div class="t">${$t('update_auto_title')}</div><div class="s">${$t('update_auto_sub')}</div></div>${sw('upd')}</div></div>
+    <div class="group"><div class="row">${ic('update')}<div class="txt"><div class="t">${$t('update_auto_title')}</div><div class="s">${$t('update_auto_sub')}</div></div>${sw('upd')}</div><div class="row">${ic('update')}<div class="txt"><div class="t">${$t('update_beta_title')}</div><div class="s">${$t('update_beta_sub')}</div></div>${sw('beta')}</div></div>
     <div class="lbl">${$t('update_notes')}</div>
     <div class="card pad prose" id="updNotes">${$t('update_no_notes')}</div>
   </section>
@@ -1149,7 +1149,7 @@ if(window.__TAURI__){
   let AS=null;   // get_settings
   const CORNERS=()=>['panel_corner_auto','panel_corner_tl','panel_corner_tr','panel_corner_bl','panel_corner_br'].map((k,i)=>[i,$t(k)]);
   const loadSettings=()=>T.core.invoke('get_settings').then(st=>{AS=st;
-    S.ancPick=st.anc_pick_first;S.count=st.usage_ping;S.hide=st.clear_battery;S.devtools=st.dev_tools_button;S.upd=st.update_auto;S.svc=st.autostart;S.lang=st.language;
+    S.ancPick=st.anc_pick_first;S.count=st.usage_ping;S.hide=st.clear_battery;S.devtools=st.dev_tools_button;S.upd=st.update_auto;S.beta=st.update_beta;S.svc=st.autostart;S.lang=st.language;
     const iv=byId('updInst');if(iv)iv.textContent=st.version;
     const cb=byId('cornerBtn');if(cb)cb.textContent=CORNERS()[st.panel_corner||0][1];
     const ab=byId('aboutVer');if(ab)ab.textContent=$t('about_version').replace('%1$s',st.version);
@@ -1167,8 +1167,8 @@ if(window.__TAURI__){
     dialog(`<h3>${esc(c.title)}</h3><div class="s" style="text-align:center;margin:0;white-space:pre-line">${esc(c.body)}</div><div class="acts two"><button class="btn press" data-close>${esc(c.later)}</button><button class="btn pri press" id="spOk">${esc(c.action)}</button></div><div class="acts"><button class="btn press" id="spNever">${esc(c.never)}</button></div>`,
       (d,close)=>{d.querySelector('#spOk').addEventListener('click',()=>{T.core.invoke('support_off',{card:c.card});T.core.invoke('open_url',{url:c.url});close();});
         d.querySelector('#spNever').addEventListener('click',()=>{T.core.invoke('support_off',{card:c.card});close();});});});
-  const SETKEY={ancPick:'anc_pick_first',count:'usage_ping',hide:'clear_battery',devtools:'dev_tools_button',upd:'update_auto'};
-  QBLIVE.setting=(k,on)=>{if(SETKEY[k])T.core.invoke('set_setting',{key:SETKEY[k],value:on});if(k==='svc')T.core.invoke('set_autostart',{on});};
+  const SETKEY={ancPick:'anc_pick_first',count:'usage_ping',hide:'clear_battery',devtools:'dev_tools_button',upd:'update_auto',beta:'update_beta'};
+  QBLIVE.setting=(k,on)=>{if(SETKEY[k])T.core.invoke('set_setting',{key:SETKEY[k],value:on}).then(()=>{if(k==='beta'&&!upd.dl)updCheck();});if(k==='svc')T.core.invoke('set_autostart',{on});};
   QBLIVE.cornerDialog=()=>pickDialog($t('panel_corner_title'),CORNERS(),AS?AS.panel_corner:0,v=>T.core.invoke('set_panel_corner',{index:+v}).then(loadSettings));
   QBLIVE.langDialog=()=>pickDialog($t('settings_language_title'),LANGS.map((l,i)=>[i,i===0?$t('language_system'):l]),AS?AS.language:0,v=>T.core.invoke('set_language',{index:+v}),'scroll');
   QBLIVE.issuesDialog=function(){const list=(this.ex&&this.ex.issues)||[];

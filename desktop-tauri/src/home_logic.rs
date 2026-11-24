@@ -1,4 +1,4 @@
-//! What the Overview's Hi-Res and 3D audio switches write, from the buds' state and the model (PROTOCOL.md section 18). No UI here.
+//! What the Overview's Hi-Res and 3D audio switches write, from the buds' state and the model (OPPO-PROTOCOL.md section 18). No UI here.
 
 use crate::icons;
 use crate::session::{Cmd, Snapshot};
@@ -26,25 +26,25 @@ pub(crate) const ROWS: &[(u8, Option<&str>, &str, &str, &str, Option<&str>, bool
     (FEATURE_POWER_SAVING, None, icons::POWER, "row_power_saving_title", "row_power_saving_sub", Some("power_saving_confirm"), true),
 ];
 
-/// Our `spatialToggle` key (realme): Hi-Res and 3D audio are written alone, never together (PROTOCOL.md section 18).
+/// Our `spatialToggle` key (realme): Hi-Res and 3D audio are written alone, never together (OPPO-PROTOCOL.md section 18).
 pub(crate) fn exclusive(s: &Snapshot) -> bool { !crate::profile::Profile(s.model).spatial_toggle() }
 
-/// 3D audio as HeyMelody picks it (PROTOCOL.md section 18): buds whose bitmap has `0x012A` (or a hand-picked model with head
+/// 3D audio as HeyMelody picks it (OPPO-PROTOCOL.md section 18): buds whose bitmap has `0x012A` (or a hand-picked model with head
 /// tracking) take a type through `0x0422`, the rest feature `1B`.
 pub(crate) fn spatial_by_type(s: &Snapshot) -> bool { crate::row_rules::spatial_by_type(s.model, Some(crate::row_rules::bitmap(s))) }
 
 /// The game-mode id the buds write and read. A model's `gameId` wins, for a model whose capture proves another id
-/// (PROTOCOL.md section 16).
+/// (OPPO-PROTOCOL.md section 16).
 pub(crate) fn game_id(s: &Snapshot) -> u8 { buds_core::oppo::driver::game_id(s) }
 
 /// A OnePlus or OPPO model whose bitmap lacks `0xEF03`: the phone makes the 3D effect, and only OPPO and OnePlus
-/// phones can (PROTOCOL.md section 18). The `1B` switch then does nothing audible, so the row is hidden.
+/// phones can (OPPO-PROTOCOL.md section 18). The `1B` switch then does nothing audible, so the row is hidden.
 pub(crate) fn phone_spatial(s: &Snapshot) -> bool { crate::row_rules::phone_spatial(s.model, s.caps.0.as_deref()) }
 
 /// The model's `spatialModes` has `2`: Off / Fixed / Head tracking instead of a plain switch.
 pub(crate) fn head_tracking(s: &Snapshot) -> bool { crate::row_rules::spatial_head_tracking(s.model) }
 
-/// The codec picker replaces the Hi-Res write on `hiRes` models with the `0x0123` read (PROTOCOL.md section 18).
+/// The codec picker replaces the Hi-Res write on `hiRes` models with the `0x0123` read (OPPO-PROTOCOL.md section 18).
 pub(crate) fn codec_picker(s: &Snapshot) -> bool { crate::row_rules::codec_picker(s.model, Some(crate::row_rules::bitmap(s))) }
 
 pub(crate) fn spatial_on(s: &Snapshot) -> bool {

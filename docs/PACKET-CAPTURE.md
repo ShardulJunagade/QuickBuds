@@ -88,7 +88,7 @@ issue. Share only the filtered frames below, then delete the zip and the phone's
 
 ### Pull out the frames
 
-Every QuickBuds / HeyMelody frame starts with `AA` (PROTOCOL.md §2):
+Every QuickBuds / HeyMelody frame starts with `AA` (OPPO-PROTOCOL.md §2):
 
 ```bash
 tshark -r btsnoop_hci.log -Y "btrfcomm && data.data[0] == aa" \
@@ -109,7 +109,7 @@ tshark -r btsnoop_hci.log -Y btl2cap -T fields -e btl2cap.cid | sort | uniq -c
 tshark -r btsnoop_hci.log -d btl2cap.cid==0x3040,btrfcomm -d btl2cap.cid==0x0071,btrfcomm -Y btrfcomm ...
 ```
 
-Frames over 127 bytes have a two-byte length (LEB128, PROTOCOL.md §2). They can arrive in several
+Frames over 127 bytes have a two-byte length (LEB128, OPPO-PROTOCOL.md §2). They can arrive in several
 RFCOMM frames. Join them per direction before you cut at `AA`. Other RFCOMM channels carry HFP's AT
 commands. Ignore those.
 
@@ -118,7 +118,7 @@ tshark on the phone (Termux): `pkg install x11-repo && pkg install wireshark-qt`
 ### What to send
 
 Send the tshark output, or the lines for your actions. Add your notes: the setting, the old and new value,
-and the time. That is enough to add a command to PROTOCOL.md.
+and the time. That is enough to add a command to OPPO-PROTOCOL.md.
 
 ## Send a snoop log for a connect problem
 
@@ -243,4 +243,4 @@ Then write down the time of each change.
 ## Still open, and capturable
 
 - `act 0x03` in the on-call group (`btn 0x06`): a third slot HeyMelody's UI has never used.
-- Everything in PROTOCOL.md §12, on buds other than the Buds 4 in particular.
+- Everything in OPPO-PROTOCOL.md §12, on buds other than the Buds 4 in particular.

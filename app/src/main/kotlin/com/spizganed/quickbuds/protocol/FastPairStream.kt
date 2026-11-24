@@ -2,7 +2,7 @@ package com.spizganed.quickbuds.protocol
 
 /**
  * The Google Fast Pair Message Stream (public spec): `<group> <code> <length u16 BE> <data>`.
- * QuickBuds reads only the battery message when another app holds `079A` (PROTOCOL.md section 1).
+ * QuickBuds reads only the battery message when another app holds `079A` (OPPO-PROTOCOL.md section 1).
  */
 object FastPairStream {
     const val UUID = "df21fe2c-2515-4fdb-8886-f12c4d67927c"

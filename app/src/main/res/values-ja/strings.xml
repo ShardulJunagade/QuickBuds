@@ -209,6 +209,8 @@
     <string name="update_permission_action">設定を開く</string>
     <string name="update_auto_title">アップデートを確認</string>
     <string name="update_auto_sub">6時間ごととアプリを開いたとき</string>
+    <string name="update_beta_title">ベータ版</string>
+    <string name="update_beta_sub">安定版の前にテスト版を受け取ります。オフにすると次の安定版で戻ります。</string>
     <string name="update_found_title">QuickBuds %1$s が利用可能です</string>
     <string name="update_found_body">%1$s をお使いです。今すぐダウンロードしますか？</string>
     <string name="update_found_view">表示</string>

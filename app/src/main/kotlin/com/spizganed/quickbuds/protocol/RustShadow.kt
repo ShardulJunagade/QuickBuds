@@ -175,7 +175,7 @@ object RustShadow {
         JSONObject().put("id", p.id).put("name", p.name).put("freqs", JSONArray(p.freqs)).put("gains", JSONArray(p.gains))
             .put("selected", p.selected).put("tag", JSONArray(p.tag.map { it.toInt() and 0xFF }))
 
-    /** A raw wear status as the core names it (PROTOCOL.md section 13). */
+    /** A raw wear status as the core names it (OPPO-PROTOCOL.md section 13). */
     private fun wear(raw: Int) = when (raw) {
         3, 7 -> "ear"
         0, 4 -> "case"

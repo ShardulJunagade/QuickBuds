@@ -1,7 +1,7 @@
 # Architecture
 
 QuickBuds has four parts. This file shows how they connect and why. The wire format is in
-[PROTOCOL.md](./PROTOCOL.md). The setting engine is in [FEATURE-SYNC.md](./FEATURE-SYNC.md).
+[OPPO-PROTOCOL.md](./OPPO-PROTOCOL.md). The setting engine is in [FEATURE-SYNC.md](./FEATURE-SYNC.md).
 
 ## The parts
 
@@ -25,7 +25,7 @@ The driver runs one UI command at a time. Commands that arrive during a command'
 the last of several quick EQ picks is sent (`core/src/oppo/eq_logic.rs`).
 
 The Android app runs its own Kotlin copy of the rules (`app/.../protocol/`: `Wire.kt`, `Commands.kt`, `Messages.kt`,
-`FeatureSync.kt`). A protocol change updates both copies and PROTOCOL.md.
+`FeatureSync.kt`). A protocol change updates both copies and OPPO-PROTOCOL.md.
 The app also carries the core as a native library (`core-jni/`, `libbuds_core_jni.so`) in shadow mode
 (`protocol/RustShadow.kt`). The read thread gives the core the same bytes as the Kotlin layer. The core's frames go
 nowhere. 2 s after the last bytes, the app compares the core's shared state (`core/src/model.rs`) with its own:
@@ -49,7 +49,7 @@ Both apps decode a frame in one place. Android: `Decode.decode`, then `BudsConne
 One setting does not go to the buds. Buds whose bitmap lacks `0xEF03` cannot make 3D audio; the phone does.
 `app/.../bluetooth/PhoneSpatial.kt` reads the Android `Spatializer` and writes an OPLUS audio parameter. Only OPPO,
 OnePlus and realme phones have that spatializer, so the row shows only there. Why: the switch on the buds plays
-nothing on other phones (PROTOCOL.md section 18). The desktop app hides the row.
+nothing on other phones (OPPO-PROTOCOL.md section 18). The desktop app hides the row.
 Phone-made 3D audio and high-quality audio exclude each other, as on the buds: one turns the other off after a dialog.
 
 One request goes the other way: the buds ask the phone to ring. realme buds with the `findPhone` flag send `0x0502 05`
@@ -58,7 +58,7 @@ notification with a Stop action. Why: the ring needs a phone, so the desktop app
 
 A connect tries `079A`, then `1107` (`ConnectPolicy.connectUuids`, `desktop-tauri/src/bt.rs`). Plain SPP `1101` comes last,
 and only when the buds' service list has neither. Why: some realme buds carry the protocol only on `1101`, while on
-OnePlus and OPPO buds `1101` carries other frames (PROTOCOL.md section 1).
+OnePlus and OPPO buds `1101` carries other frames (OPPO-PROTOCOL.md section 1).
 
 A second link is a fallback. When another app holds `079A` (every try fails fast with `read ret -1`) and the buds' SDP
 lists the Fast Pair Message Stream, `app/.../bluetooth/FastPairBattery.kt` opens that stream and passes its battery
@@ -166,10 +166,17 @@ The user can turn the count off in Settings.
 5. Desktop picks the file for its system (`-windows-x64.zip` or `-linux-x64.AppImage`),
    checks `SHA256SUMS` and replaces its own program. On Linux only an AppImage replaces itself. A Linux build that is
    not an AppImage, or a program in a folder it cannot write to, opens the release page instead.
+6. Beta channel (switch "Beta versions", default off). A beta is a GitHub pre-release with a tag like
+   `v6.4.0-beta.1`. With the switch on, the app asks the GitHub release list and takes the highest version,
+   pre-releases included. The Worker `/latest` answers only stable releases, so the beta path skips it.
+   The order is `6.3.0` < `6.4.0-beta.1` < `6.4.0-beta.2` < `6.4.0`.
+7. Back to stable. Android blocks a lower `versionCode`, so a beta install stays until the next stable release.
+   `versionCode` comes from `versionName` (`app/build.gradle.kts`): a beta gets a code below its own stable.
+   Desktop has no such block: with the switch off, a beta build offers the latest stable release at once.
 
 ## Rules that keep the parts in step
 
-- A protocol change updates `core/`, the Kotlin copy and PROTOCOL.md together.
+- A protocol change updates `core/`, the Kotlin copy and OPPO-PROTOCOL.md together.
 - Docs change in the same commit as the code.
 - Which rows show, and which ids `0x010D` asks, is one rule set: `protocol/RowRules.kt` and its port
   `core/src/oppo/row_rules.rs`. Every screen, widget and tile asks it. Both run `testdata/row_fixtures.json`.

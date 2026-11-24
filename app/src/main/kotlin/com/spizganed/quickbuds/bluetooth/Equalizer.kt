@@ -7,7 +7,7 @@ import com.spizganed.quickbuds.protocol.EqState
 import com.spizganed.quickbuds.protocol.OpoProtocol
 
 /**
- * The equalizer of the linked buds (PROTOCOL.md §17): its state, the snapshot that paints the screen before a bind,
+ * The equalizer of the linked buds (OPPO-PROTOCOL.md §17): its state, the snapshot that paints the screen before a bind,
  * and the rules for quick picks. No socket and no Android here, so a test drives it with a fake clock and sender.
  *
  *  - Each write updates the state FIRST, then sends and re-reads. The replies land one by one and each repaints;

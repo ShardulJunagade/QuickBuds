@@ -6,11 +6,11 @@ import org.json.JSONObject
 
 /*
  * The replies to the buds' requests and the batch layer: the one reply layer.
- * The app behaviour is the contract. PROTOCOL.md section 11 documents the request answers.
+ * The app behaviour is the contract. OPPO-PROTOCOL.md section 11 documents the request answers.
  */
 
 object Replies {
-    /** Time request `0x0500` from the buds (PROTOCOL.md §11). */
+    /** Time request `0x0500` from the buds (OPPO-PROTOCOL.md §11). */
     const val REQ_TIME = 0x0500
 
     /** Command groups HeyMelody knows, as the command's high byte. A request from any other group gets `01`. */

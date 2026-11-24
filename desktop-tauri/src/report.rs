@@ -70,7 +70,7 @@ fn host() -> Option<String> {
     name.filter(|n| n.len() >= 3)
 }
 
-/// Device list and device manager packets (PROTOCOL.md section 19) hold addresses and names: only the header stays.
+/// Device list and device manager packets (OPPO-PROTOCOL.md section 19) hold addresses and names: only the header stays.
 /// The `0x0204` push carries them in sub `06` (device list) and sub `F2` (connected-devices info).
 fn device_bytes(l: &Line) -> bool {
     if l.bytes.len() < 10 || l.bytes[0] != 0xAA { return false; }

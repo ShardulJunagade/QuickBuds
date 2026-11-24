@@ -1,4 +1,4 @@
-//! The wire format (docs/PROTOCOL.md section 2): `AA <TotalLen LEB128> 00 00 <cmd lo> <cmd hi> <seq> <len lo> <len hi> <payload>`.
+//! The wire format (docs/OPPO-PROTOCOL.md section 2): `AA <TotalLen LEB128> 00 00 <cmd lo> <cmd hi> <seq> <len lo> <len hi> <payload>`.
 //! TotalLen counts everything after itself: 7 + payload.
 //! Framing, the decode bridge to `buds_core::msg`, and the answers. The old builders also stay as the
 //! reference of the core tests; the senders use `buds_core::cmd`. Shared ids and types are in `types.rs`.
@@ -7,7 +7,7 @@
 use crate::types::*;
 use serde_json::Value;
 
-/// `0x0404 01 01 <bit as LE bitmask>`; the bit is the model's SET `slot`, never a list position (PROTOCOL.md section 14).
+/// `0x0404 01 01 <bit as LE bitmask>`; the bit is the model's SET `slot`, never a list position (OPPO-PROTOCOL.md section 14).
 pub fn anc_payload(bit: u8) -> Vec<u8> {
     let mut p = vec![0; 2 + bit as usize / 8 + 1];
     p[0] = 1;
@@ -143,7 +143,7 @@ pub fn decode(p: &[u8]) -> Option<Event> {
     })
 }
 
-/// `0x012F` payload (PROTOCOL.md "Batch query", section 12): `<count>`, then `<cmd LE> <len LE> <payload>` per query.
+/// `0x012F` payload (OPPO-PROTOCOL.md "Batch query", section 12): `<count>`, then `<cmd LE> <len LE> <payload>` per query.
 pub fn batch_payload(queries: &[(u16, Vec<u8>)]) -> Vec<u8> {
     let mut b = vec![queries.len() as u8];
     for (cmd, pl) in queries {
@@ -156,7 +156,7 @@ pub fn batch_payload(queries: &[(u16, Vec<u8>)]) -> Vec<u8> {
 
 
 /// HeyMelody's answer `(cmd, payload)` to a frame the buds send on their own, or `None`
-/// (PROTOCOL.md section 11 "Requests from the buds and replies"). `[VENDOR]`
+/// (OPPO-PROTOCOL.md section 11 "Requests from the buds and replies"). `[VENDOR]`
 pub fn answer_for(p: &[u8], unix: u32) -> Option<(u16, Vec<u8>)> {
     let cmd = cmd_of(p);
     let pl = payload_of(p);
@@ -191,7 +191,7 @@ fn json_ack(json: &[u8]) -> Vec<u8> {
 }
 
 /// Splits the RFCOMM byte stream into packets. Bytes before an `AA` are dropped into `discarded` (for the log).
-/// Slices of one message (PROTOCOL.md section 2: slice byte 1 first, 2 middle, 3 last) come out as one whole packet.
+/// Slices of one message (OPPO-PROTOCOL.md section 2: slice byte 1 first, 2 middle, 3 last) come out as one whole packet.
 #[derive(Default)]
 pub struct Framer { buf: Vec<u8>, slices: Option<Vec<u8>>, pub discarded: Vec<u8> }
 
@@ -457,7 +457,7 @@ mod tests {
 
     #[test]
     fn framer_joins_slices() {
-        // PROTOCOL.md §2: a 1500-byte message in slices of 3 + data bytes; the whole packet has a one-byte length.
+        // OPPO-PROTOCOL.md §2: a 1500-byte message in slices of 3 + data bytes; the whole packet has a one-byte length.
         let payload: Vec<u8> = (0..300).map(|i| i as u8).collect();
         let mut msg = vec![0x15, 0x81, 4, 0x2C, 0x01];
         msg.extend(&payload);
@@ -480,7 +480,7 @@ mod tests {
 
     #[test]
     fn codecs() {
-        // Buds 4 `0x8123` = `00 46 01`: AAC, LDAC, LHDC (bit 8 is past the table); PROTOCOL.md section 21.7 trusts it only on `hiRes`.
+        // Buds 4 `0x8123` = `00 46 01`: AAC, LDAC, LHDC (bit 8 is past the table); OPPO-PROTOCOL.md section 21.7 trusts it only on `hiRes`.
         assert_eq!(codecs_of(0x0146), [2, 3, 7]);
         assert_eq!(codecs_of(0b1100_0000), [8]);
         assert_eq!(codecs_of(0b0100_0001), [1, 7]);

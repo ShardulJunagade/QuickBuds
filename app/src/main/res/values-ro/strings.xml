@@ -209,6 +209,8 @@
     <string name="update_permission_action">Deschide setările</string>
     <string name="update_auto_title">Caută actualizări</string>
     <string name="update_auto_sub">La fiecare 6 ore și la deschiderea aplicației</string>
+    <string name="update_beta_title">Versiuni beta</string>
+    <string name="update_beta_sub">Versiuni de test înainte de cea stabilă. Dezactivează pentru a reveni cu următoarea versiune stabilă.</string>
     <string name="update_found_title">QuickBuds %1$s este disponibil</string>
     <string name="update_found_body">Aveți %1$s. Descărcați acum?</string>
     <string name="update_found_view">Vezi</string>

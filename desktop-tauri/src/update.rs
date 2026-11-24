@@ -41,25 +41,44 @@ fn curl(args: &[&str]) -> Result<Vec<u8>, String> {
 /// "4.3.1" from "v4.3.1" or "desktop-v4.3.1"; `None` for any other tag.
 fn version_of(tag: &str) -> Option<&str> { tag.strip_prefix("desktop-v").or_else(|| tag.strip_prefix('v')) }
 
-fn parts(v: &str) -> Vec<u32> { v.split(['.', '-']).map_while(|p| p.parse().ok()).collect() }
+/// "6.4.0-beta.2" → [6, 4, 0, 2]; a stable "6.4.0" → [6, 4, 0, MAX], so it sorts above its betas.
+/// Other suffixes ("-debug") count as stable.
+fn parts(v: &str) -> Vec<u32> {
+    let (num, pre) = v.split_once('-').unwrap_or((v, ""));
+    let mut p: Vec<u32> = num.split('.').map(|x| x.parse().unwrap_or(0)).collect();
+    p.resize(3.max(p.len()), 0);
+    p.push(pre.strip_prefix("beta").map(|b| b.trim_start_matches('.')).and_then(|b| b.parse().ok()).unwrap_or(u32::MAX));
+    p
+}
 
 pub fn newer(remote: &str, local: &str) -> bool { parts(remote) > parts(local) }
 
-/// The newest release that carries this platform's archive. The Worker answers one release; when it fails
-/// or that release has no archive for this platform, GitHub answers once.
-pub fn latest() -> Result<Release, String> {
+/// True for a beta version ("6.4.0-beta.1").
+pub fn is_beta(v: &str) -> bool { parts(v).last() != Some(&u32::MAX) }
+
+/// The newest release that carries this platform's archive. Stable: the Worker answers one release; when it
+/// fails or that release has no archive for this platform, GitHub answers once. Beta: GitHub answers the list,
+/// pre-releases included; when GitHub fails, the stable path answers.
+pub fn latest(beta: bool) -> Result<Release, String> {
+    let list = || -> Result<Value, String> {
+        serde_json::from_slice(&curl(&["-H", "Accept: application/vnd.github+json", API])?).map_err(|e| e.to_string())
+    };
+    if beta {
+        match list() {
+            Ok(l) => if let Some(r) = pick(&l, asset(), true) { return Ok(r); },
+            Err(e) => eprintln!("update: beta list failed: {e}"),
+        }
+    }
     let one = curl(&[WORKER]).and_then(|b| serde_json::from_slice::<Value>(&b).map_err(|e| e.to_string()));
     if let Ok(r) = one {
-        if let Some(r) = pick_one(&r, asset()) { return Ok(r); }
+        if let Some(r) = pick_one(&r, asset(), false) { return Ok(r); }
     }
-    let list: Value = serde_json::from_slice(&curl(&["-H", "Accept: application/vnd.github+json", API])?)
-        .map_err(|e| e.to_string())?;
-    pick(&list, asset()).ok_or_else(|| "no release found".into())
+    pick(&list()?, asset(), false).ok_or_else(|| "no release found".into())
 }
 
-/// One release, when it is public and carries this platform's archive.
-fn pick_one(r: &Value, asset: &str) -> Option<Release> {
-    if r["draft"] == true || r["prerelease"] == true { return None; }
+/// One release, when it is public and carries this platform's archive. A pre-release counts only when `beta`.
+fn pick_one(r: &Value, asset: &str, beta: bool) -> Option<Release> {
+    if r["draft"] == true || (r["prerelease"] == true && !beta) { return None; }
     let version = version_of(r["tag_name"].as_str()?)?.to_string();
     let urls: Vec<&str> = r["assets"].as_array()?.iter().filter_map(|a| a["browser_download_url"].as_str()).collect();
     let url = urls.iter().find(|u| u.ends_with(asset))?.to_string();
@@ -68,9 +87,9 @@ fn pick_one(r: &Value, asset: &str) -> Option<Release> {
     Some(Release { version, url, sums, notes })
 }
 
-fn pick(list: &Value, asset: &str) -> Option<Release> {
+fn pick(list: &Value, asset: &str, beta: bool) -> Option<Release> {
     list.as_array()?.iter()
-        .filter_map(|r| pick_one(r, asset))
+        .filter_map(|r| pick_one(r, asset, beta))
         .max_by(|a, b| parts(&a.version).cmp(&parts(&b.version)))
 }
 
@@ -282,6 +301,25 @@ mod download_tests {
             }
         });
         format!("http://{addr}/QuickBuds-linux-x64.AppImage")
+    }
+
+    #[test]
+    fn a_beta_sorts_below_its_stable_and_above_the_last_stable() {
+        assert!(newer("6.4.0-beta.1", "6.3.0"));
+        assert!(newer("6.4.0-beta.2", "6.4.0-beta.1"));
+        assert!(newer("6.4.0", "6.4.0-beta.2"));
+        assert!(!newer("6.3.0", "6.4.0-beta.1"));
+        assert!(!newer("6.3", "6.3.0"));
+        assert!(is_beta("6.4.0-beta.1") && !is_beta("6.4.0"));
+    }
+
+    #[test]
+    fn the_beta_channel_picks_a_pre_release() {
+        let a = |tag: &str, pre: bool| serde_json::json!({ "tag_name": tag, "prerelease": pre,
+            "assets": [{ "browser_download_url": format!("https://x/{tag}-linux-x64.AppImage") }] });
+        let list = serde_json::json!([a("v6.4.0-beta.1", true), a("v6.3.0", false), a("desktop-v6.3.1", false)]);
+        assert_eq!(pick(&list, "-linux-x64.AppImage", false).unwrap().version, "6.3.1");
+        assert_eq!(pick(&list, "-linux-x64.AppImage", true).unwrap().version, "6.4.0-beta.1");
     }
 
     #[test]

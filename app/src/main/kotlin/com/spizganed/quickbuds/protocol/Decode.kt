@@ -3,7 +3,7 @@ package com.spizganed.quickbuds.protocol
 import com.spizganed.quickbuds.protocol.Wire.Message
 
 /**
- * The typed reading of docs/PROTOCOL.md: decodes what the buds send. The topic decoders of this
+ * The typed reading of docs/OPPO-PROTOCOL.md: decodes what the buds send. The topic decoders of this
  * package do the parsing. The replies and batch come from [Replies]. Input is a [Message] from the
  * link layer; output is [Msg]. The Rust port is `core/src/msg.rs`.
  */

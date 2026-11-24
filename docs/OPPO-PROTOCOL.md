@@ -1,4 +1,4 @@
-# PROTOCOL.md — the earbud wire format
+# OPPO-PROTOCOL.md — the OPPO, OnePlus and realme wire format
 
 Matches QuickBuds 5.4.5 (version code 52).
 

@@ -209,6 +209,8 @@
     <string name="update_permission_action">Mở cài đặt</string>
     <string name="update_auto_title">Kiểm tra bản cập nhật</string>
     <string name="update_auto_sub">Mỗi 6 giờ và khi mở ứng dụng</string>
+    <string name="update_beta_title">Phiên bản beta</string>
+    <string name="update_beta_sub">Bản thử nghiệm trước bản ổn định. Tắt để quay lại với bản ổn định tiếp theo.</string>
     <string name="update_found_title">Đã có QuickBuds %1$s</string>
     <string name="update_found_body">Bạn đang dùng %1$s. Tải xuống ngay?</string>
     <string name="update_found_view">Xem</string>

@@ -209,6 +209,8 @@
     <string name="update_permission_action">Apri impostazioni</string>
     <string name="update_auto_title">Cerca aggiornamenti</string>
     <string name="update_auto_sub">Ogni 6 ore e all\'apertura dell\'app</string>
+    <string name="update_beta_title">Versioni beta</string>
+    <string name="update_beta_sub">Versioni di prova prima della stabile. Disattiva per tornare con la prossima versione stabile.</string>
     <string name="update_found_title">QuickBuds %1$s è disponibile</string>
     <string name="update_found_body">Hai la versione %1$s. Scaricarla ora?</string>
     <string name="update_found_view">Vedi</string>

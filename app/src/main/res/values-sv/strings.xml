@@ -209,6 +209,8 @@
     <string name="update_permission_action">Öppna inställningar</string>
     <string name="update_auto_title">Sök efter uppdateringar</string>
     <string name="update_auto_sub">Var 6:e timme och när appen öppnas</string>
+    <string name="update_beta_title">Betaversioner</string>
+    <string name="update_beta_sub">Testversioner före den stabila. Stäng av för att gå tillbaka med nästa stabila version.</string>
     <string name="update_found_title">QuickBuds %1$s finns tillgänglig</string>
     <string name="update_found_body">Du har %1$s. Hämta den nu?</string>
     <string name="update_found_view">Visa</string>

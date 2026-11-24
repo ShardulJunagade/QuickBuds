@@ -995,7 +995,7 @@ class MainActivity : Activity(), BudsConnectionManager.Listener {
         windSubtitle = null
         goldenSubtitle = null
 
-        // --- Wind noise reduction, feature 0x1A (realme Link data, PROTOCOL.md §16), under noise control ---
+        // --- Wind noise reduction, feature 0x1A (realme Link data, OPPO-PROTOCOL.md §16), under noise control ---
         val wind = SettingRowFactory.buildSwitch(this, false)
         windSwitch = wind
         // A tap asks for the opposite value; the switch moves only when the buds report one.
@@ -1020,7 +1020,7 @@ class MainActivity : Activity(), BudsConnectionManager.Listener {
         )
 
         // --- 2. Hi-Res codec + 3. Spatial / 3D audio ---
-        // Both are 0x0403 feature switches (0x18 / 0x1B), [CAPTURE] 2026-09-23, PROTOCOL.md §16.
+        // Both are 0x0403 feature switches (0x18 / 0x1B), [CAPTURE] 2026-09-23, OPPO-PROTOCOL.md §16.
         // They are mutually exclusive: turning one on while the other is on also turns the
         // other off, in the order HeyMelody sends them. Any codec change makes the buds drop
         // and reconnect, so those writes go through a warning first — as HeyMelody does.
@@ -1045,7 +1045,7 @@ class MainActivity : Activity(), BudsConnectionManager.Listener {
         spatialSubtitle = spatialRow.findViewWithTag<TextView>(SettingRowFactory.SUBTITLE_TAG)
         addRow("spatial", spatialRow)
 
-        // --- Golden Sound: the hearing profile on the buds, feature 0x0B [VENDOR] (PROTOCOL.md §20) ---
+        // --- Golden Sound: the hearing profile on the buds, feature 0x0B [VENDOR] (OPPO-PROTOCOL.md §20) ---
         // The row opens the Golden Sound screen (profiles, hearing test); the switch toggles it.
         val golden = SettingRowFactory.buildSwitch(this, false)
         goldenSwitch = golden
@@ -1476,20 +1476,20 @@ class MainActivity : Activity(), BudsConnectionManager.Listener {
         /** The rows the buds' own answers support: [Rows.of]. */
         fun rowsOf(c: Context): Set<String> = Rows.of(c)
 
-        /** These buds' 3D effect comes from this phone's spatializer, not from the buds (PROTOCOL.md section 18). */
+        /** These buds' 3D effect comes from this phone's spatializer, not from the buds (OPPO-PROTOCOL.md section 18). */
         fun phoneSpatial(c: Context) =
             RowRules.phoneSpatial(ModelCatalog.current(c)?.json, Capabilities.commands(c)) &&
                 com.spizganed.quickbuds.bluetooth.PhoneSpatial.supported(c)
 
         /**
-         * Spatial audio as HeyMelody picks it (PROTOCOL.md §18): buds whose bitmap has `0x012A` (or a
+         * Spatial audio as HeyMelody picks it (OPPO-PROTOCOL.md §18): buds whose bitmap has `0x012A` (or a
          * model with head tracking) take a type through `0x0422`, the rest feature `0x1B`.
          */
         fun spatialByType(c: Context) =
             RowRules.spatialByType(ModelCatalog.current(c)?.json, Capabilities.commands(c))
 
         /**
-         * Our own key `spatialToggle` (realme Link data, PROTOCOL.md §18): spatial is feature `1B` alone and
+         * Our own key `spatialToggle` (realme Link data, OPPO-PROTOCOL.md §18): spatial is feature `1B` alone and
          * Hi-Res `18` alone, never written together, whatever the bitmap says.
          */
         fun spatialSwitchOnly(c: Context) = ModelCatalog.profile(c).spatialToggle
@@ -1499,7 +1499,7 @@ class MainActivity : Activity(), BudsConnectionManager.Listener {
             RowRules.spatialHeadTracking(ModelCatalog.current(c)?.json)
 
         /**
-         * `[VENDOR]` HeyMelody's "High-quality audio" screen on `hiRes` models (PROTOCOL.md §18): the row
+         * `[VENDOR]` HeyMelody's "High-quality audio" screen on `hiRes` models (OPPO-PROTOCOL.md §18): the row
          * picks the codec, and the switch (Hi-Res) is live only with LDAC or LHDC V5, as there.
          */
         fun codecPicker(c: Context) =

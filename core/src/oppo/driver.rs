@@ -58,7 +58,7 @@ pub enum Cmd {
     SpatialType(u8),
     /// `0x041A` codec and Hi-Res; the buds restart and the link comes back by itself.
     Codec(u8, bool),
-    /// The Hi-Res switch: one engine operation; `drop_spatial` writes 3D audio off first (PROTOCOL.md section 18).
+    /// The Hi-Res switch: one engine operation; `drop_spatial` writes 3D audio off first (OPPO-PROTOCOL.md section 18).
     Hires { on: bool, drop_spatial: bool },
     HeadMotion(u8),
     /// `0x0405` start / stop.
@@ -109,7 +109,7 @@ pub struct Snapshot {
     pub name: String,
     /// Left, right, case: (level, charging).
     pub battery: [Option<(u8, bool)>; 3],
-    /// Left, right, case: raw wear status (PROTOCOL.md section 13); None until the buds report it. Raw 0 is a bud
+    /// Left, right, case: raw wear status (OPPO-PROTOCOL.md section 13); None until the buds report it. Raw 0 is a bud
     /// asleep in the closed case, not an unknown state.
     pub wear: [Option<u8>; 3],
     /// The events the buds offer (`0x8200`), once read.
@@ -139,13 +139,13 @@ pub struct Snapshot {
     /// (selected, offered types) from `0x812B`.
     pub game_sound: Option<(u8, Vec<u8>)>,
     pub head_motion: Option<u8>,
-    /// The level Smart chose (`ANC-Light` ...), PROTOCOL.md section 14.
+    /// The level Smart chose (`ANC-Light` ...), OPPO-PROTOCOL.md section 14.
     pub smart_level: Option<String>,
-    /// Counts ANC writes refused with no bud in an ear (status 14, PROTOCOL.md section 14): each one shows the hint.
+    /// Counts ANC writes refused with no bud in an ear (status 14, OPPO-PROTOCOL.md section 14): each one shows the hint.
     pub anc_refused: u32,
     /// `0x812A` / push `0x0510`: 0 off, 1 fixed, 2 head tracking.
     pub spatial_type: Option<u8>,
-    /// The current codec (`0x8114`) and the offered ones (`0x8123`), PROTOCOL.md section 18 Codec picker.
+    /// The current codec (`0x8114`) and the offered ones (`0x8123`), OPPO-PROTOCOL.md section 18 Codec picker.
     pub codec: Option<u8>,
     pub codecs: Vec<u8>,
     /// The last fit test result, and a count that changes with each one.
@@ -167,12 +167,12 @@ pub struct Snapshot {
 }
 
 /// The game-mode id the buds write and read. A model's `gameId` wins, for a model whose capture proves another id
-/// (PROTOCOL.md section 16).
+/// (OPPO-PROTOCOL.md section 16).
 pub fn game_id(s: &Snapshot) -> u8 {
     Profile(s.model).game_id().unwrap_or_else(|| s.caps.game_mode_id())
 }
 
-/// A raw wear status (PROTOCOL.md section 13): 3 and 7 in the ear, 4 in the case, 0 in the closed case, 1 and 5 out.
+/// A raw wear status (OPPO-PROTOCOL.md section 13): 3 and 7 in the ear, 4 in the case, 0 in the closed case, 1 and 5 out.
 fn wear(raw: Option<u8>) -> Wear {
     match raw {
         Some(3 | 7) => Wear::InEar,
@@ -317,7 +317,7 @@ pub struct Driver {
     notice: Option<Notice>,
     last_tick: u64,
     // One link's state.
-    /// The byte stream into whole packets (docs/PROTOCOL.md section 2).
+    /// The byte stream into whole packets (docs/OPPO-PROTOCOL.md section 2).
     framer: Framer,
     seq: u8,
     /// The last ANC level sent, to name a report that says only "noise cancelling".
@@ -429,7 +429,7 @@ impl Driver {
         let outs = self.engine.reconnect(now);
         self.exec(outs);
         self.out.push(Effect::State);
-        // PROTOCOL.md "Init sequence", section 6: 300 ms before the first frame, then 200 ms apart; reads only if listed.
+        // OPPO-PROTOCOL.md "Init sequence", section 6: 300 ms before the first frame, then 200 ms apart; reads only if listed.
         self.steps.extend([Step::Wait(300)]);
         for f in [cmd::handshake(), cmd::product_id(), cmd::broadcast_codes()] {
             self.steps.extend([Step::Tx(f.0, None, f.1), Step::Wait(200)]);
@@ -651,7 +651,7 @@ impl Driver {
             (CMD_QUERY_STATUS, Some(0x00), status_query(self.s.model)),
             (CMD_QUERY_ANC, None, cmd::anc_read(1, 1).1),
         ];
-        // The level Smart chose, PROTOCOL.md section 14.
+        // The level Smart chose, OPPO-PROTOCOL.md section 14.
         if self.s.modes.supports("ANC-Smart") { queries.push((CMD_QUERY_ANC, None, cmd::anc_read(4, 1).1)); }
         queries.extend([
             (CMD_QUERY_ALERT_VOLUME, None, vec![]),
@@ -710,7 +710,7 @@ impl Driver {
         let human = e.as_ref().map(describe).or_else(|| describe_other(p));
         // Some buds drop the link a few seconds after an unanswered request (issue #2: the time request).
         let answer = answer_for(p, unix).map(|a| (a, seq_of(p)));
-        // A refused ANC write (status 14 with no bud in an ear): read the real mode back (PROTOCOL.md section 14).
+        // A refused ANC write (status 14 with no bud in an ear): read the real mode back (OPPO-PROTOCOL.md section 14).
         let refused = cmd_of(p) == CMD_SET_ANC | 0x8000 && payload_of(p).first().is_some_and(|&st| st != 0);
         let need_ear = refused && payload_of(p).first() == Some(&0x0E);
         self.out.push(Effect::Log { dir: "RX", bytes: p.to_vec(), human });
@@ -735,7 +735,7 @@ impl Driver {
             }
         }
         if let Some(((cmd, pl), seq)) = answer { self.send(cmd, Some(seq), &pl); }
-        // The all-zero wear push comes just before a lid close drops the link (PROTOCOL.md section 13): read the
+        // The all-zero wear push comes just before a lid close drops the link (OPPO-PROTOCOL.md section 13): read the
         // case level now, so the last level is not 0 or blank.
         if cmd_of(p) == EVT_PUSH && self.s.caps.supports(CMD_QUERY_BATTERY) {
             if let Some(Event::Wear(v)) = &e {
@@ -747,7 +747,7 @@ impl Driver {
             }
         }
         // Find phone (realme): `0x0502 05` rings the phone, `06` stops it. HeyMelody models use 0x0502 for the
-        // camera, so only a model with the `findPhone` flag acts on it (PROTOCOL.md section 11).
+        // camera, so only a model with the `findPhone` flag acts on it (OPPO-PROTOCOL.md section 11).
         if cmd_of(p) == REQ_FIND_PHONE {
             let action = payload_of(p).first().copied();
             self.note(format!("FIND PHONE: action={action:?}"));
@@ -946,7 +946,7 @@ impl Driver {
                 st
             }
             Cmd::Hires { on, drop_spatial } => {
-                // One engine operation; the Hi-Res write restarts the link. 3D audio off goes first (PROTOCOL.md section 18).
+                // One engine operation; the Hi-Res write restarts the link. 3D audio off goes first (OPPO-PROTOCOL.md section 18).
                 let writes = if drop_spatial { vec![(FEATURE_SPATIAL, 0), (FEATURE_HIRES, on as u8)] } else { vec![(FEATURE_HIRES, on as u8)] };
                 let op = Operation { key: FEATURE_HIRES, writes, confirm: Confirm::Read, restarts: true };
                 let outs = self.engine.tap(op, self.now);

@@ -209,6 +209,8 @@
     <string name="update_permission_action">Ayarları aç</string>
     <string name="update_auto_title">Güncellemeleri kontrol et</string>
     <string name="update_auto_sub">6 saatte bir ve uygulama açıldığında</string>
+    <string name="update_beta_title">Beta sürümleri</string>
+    <string name="update_beta_sub">Kararlı sürümden önce test sürümleri. Kapatınca bir sonraki kararlı sürümle geri dönersiniz.</string>
     <string name="update_found_title">QuickBuds %1$s mevcut</string>
     <string name="update_found_body">Sürümünüz %1$s. Şimdi indirilsin mi?</string>
     <string name="update_found_view">Görüntüle</string>

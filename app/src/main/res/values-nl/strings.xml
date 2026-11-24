@@ -209,6 +209,8 @@
     <string name="update_permission_action">Instellingen openen</string>
     <string name="update_auto_title">Controleren op updates</string>
     <string name="update_auto_sub">Elke 6 uur en wanneer de app opent</string>
+    <string name="update_beta_title">Bètaversies</string>
+    <string name="update_beta_sub">Testversies vóór de stabiele versie. Zet uit om terug te gaan met de volgende stabiele versie.</string>
     <string name="update_found_title">QuickBuds %1$s is beschikbaar</string>
     <string name="update_found_body">Je hebt %1$s. Nu downloaden?</string>
     <string name="update_found_view">Bekijken</string>

@@ -209,6 +209,8 @@
     <string name="update_permission_action">Открыть настройки</string>
     <string name="update_auto_title">Проверять обновления</string>
     <string name="update_auto_sub">Каждые 6 часов и при открытии приложения</string>
+    <string name="update_beta_title">Бета-версии</string>
+    <string name="update_beta_sub">Тестовые версии до стабильной. Выключите, чтобы вернуться со следующей стабильной версией.</string>
     <string name="update_found_title">Доступна QuickBuds %1$s</string>
     <string name="update_found_body">У вас версия %1$s. Скачать сейчас?</string>
     <string name="update_found_view">Посмотреть</string>

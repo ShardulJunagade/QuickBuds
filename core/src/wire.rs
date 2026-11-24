@@ -1,10 +1,10 @@
-//! The link layer of docs/PROTOCOL.md §2: frames, slices, reassembly. No Bluetooth, no commands.
+//! The link layer of docs/OPPO-PROTOCOL.md §2: frames, slices, reassembly. No Bluetooth, no commands.
 
 /// One message: what a frame, or the slices of one message, carry.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Message { pub cmd: u16, pub seq: u8, pub payload: Vec<u8> }
 
-/// The largest frame the sender writes unless the buds report a smaller one (PROTOCOL.md section 2).
+/// The largest frame the sender writes unless the buds report a smaller one (OPPO-PROTOCOL.md section 2).
 pub const BUDGET: usize = 660;
 /// A longer `Len` is noise, not a frame.
 const MAX_LEN: usize = 4096;
@@ -123,7 +123,7 @@ mod tests {
 
     #[test]
     fn captured_frames() {
-        // PROTOCOL.md section 2 examples
+        // OPPO-PROTOCOL.md section 2 examples
         assert_eq!(encode(&Message { cmd: 0x0100, seq: 1, payload: vec![] }, BUDGET), [vec![0xAA, 7, 0, 0, 0, 1, 1, 0, 0]]);
         assert_eq!(encode(&Message { cmd: 0x0404, seq: 6, payload: vec![1, 1, 1] }, BUDGET),
             [vec![0xAA, 0x0A, 0, 0, 4, 4, 6, 3, 0, 1, 1, 1]]);

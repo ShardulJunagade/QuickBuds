@@ -1,6 +1,6 @@
 //! Which action each gesture does, per bud: the model's rows and options (HeyMelody's `control` / `callControl` lists),
 //! the current bindings from the buds' table (`0x8108`) and hold cycle (`0x810C 02`), and the writes.
-//! `fn` values are measured (PROTOCOL.md section 15): never derive new ones. No UI here.
+//! `fn` values are measured (OPPO-PROTOCOL.md section 15): never derive new ones. No UI here.
 
 use crate::icons;
 use crate::session::{Cmd, Snapshot};

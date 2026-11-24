@@ -209,6 +209,8 @@
     <string name="update_permission_action">打开设置</string>
     <string name="update_auto_title">检查更新</string>
     <string name="update_auto_sub">每 6 小时以及打开应用时</string>
+    <string name="update_beta_title">测试版</string>
+    <string name="update_beta_sub">在稳定版之前获取测试版。关闭后，下一个稳定版发布时回到稳定版。</string>
     <string name="update_found_title">QuickBuds %1$s 可用</string>
     <string name="update_found_body">您当前为 %1$s。现在下载吗？</string>
     <string name="update_found_view">查看</string>
