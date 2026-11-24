@@ -45,7 +45,7 @@ Source: OpenSCQ30 (`lib/src/devices/soundcore/`). Each model is a table in `core
 
 ### Where the controls are
 
-Android has 4 Soundcore screens: `SoundcoreSettingsActivity` (noise control details, the cycle, the switches and
+Android has 4 Soundcore screens: `SoundcoreSettingsActivity` (find my earbuds, noise control details, the cycle, the switches and
 choices, auto power off, volume limit, firmware), `SoundcoreButtonsActivity`, `SoundcoreEqActivity` and
 `SoundcoreDualActivity`. They use the same row, card and sheet parts as the OPPO screens, so they look the same.
 The home screen keeps its rows: noise control, low latency (gaming mode), high-quality audio (LDAC), the equalizer,

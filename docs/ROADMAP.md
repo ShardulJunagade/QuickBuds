@@ -36,7 +36,7 @@ The parked and unverified work. Finished work leaves this file. Protocol finding
 ## Parked
 
 - **Other brands:** the order and the sources are in [BRANDS.md](./BRANDS.md). Soundcore (issue #32) is first: all
-  40 OpenSCQ30 earbuds and headphones work on Android. Next: Soundcore in the desktop app.
+  40 OpenSCQ30 earbuds and headphones work on Android. Next: Soundcore in the desktop app, and a HearID hearing test.
 - **Generic fallback (issue #22):** battery and connection state from Fast Pair and the standard battery service, for
   earbuds that QuickBuds does not know. Experimental, after the other brands.
   The Fast Pair Message Stream reader exists: it gives the battery when another app holds the earbuds (issue #18).
