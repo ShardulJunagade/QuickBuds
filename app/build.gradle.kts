@@ -17,7 +17,7 @@ val keyProps = Properties().apply {
     if (f.exists()) f.inputStream().use { load(it) }
 }
 
-// versionCode from versionName: M*1000000 + m*10000 + p*100 + b. A beta "6.4.0-beta.3" has b = 3, a stable b = 99.
+// versionCode from versionName: M*1000000 + m*10000 + p*100 + b. A beta "6.4.0" has b = 3, a stable b = 99.
 // So a beta sorts above the last stable and below its own stable: Android installs the next stable over a beta.
 fun versionCodeOf(name: String): Int {
     val m = Regex("""^(\d+)\.(\d+)\.(\d+)(?:-beta\.(\d+))?$""").matchEntire(name)
@@ -39,7 +39,7 @@ android {
         // THE ONLY PLACE the version is declared. It used to live on <application> in the manifest,
         // where Android ignores it: every PC build up to 2026-09-23 shipped with NO version, which
         // UpdateActivity (reads PackageManager) and bundletool ("Version code not found") both hit.
-        versionName = "6.4.0-beta.3"
+        versionName = "6.4.0"
         versionCode = versionCodeOf(versionName!!)
     }
 
