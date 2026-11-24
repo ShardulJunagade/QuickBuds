@@ -191,6 +191,7 @@ pub fn common(s: &Snapshot, phone_spatial: bool) -> Common {
         crate::oppo::row_rules::rows(&crate::oppo::row_rules::Input {
             model: s.model, reply: (!s.features.is_empty()).then_some(&reply), bitmap: s.caps.0.as_deref(),
             product_anc: !s.modes.is_empty(), phone_spatial_ok: phone_spatial, manual: s.manual, gestures: None,
+            firmware: s.firmware.as_deref(),
         })
     } else { Default::default() };
     Common {

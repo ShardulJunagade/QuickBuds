@@ -33,6 +33,8 @@ impl<'a> Profile<'a> {
     pub fn personal_anc(&self) -> bool { self.flag("personalAnc") }
     pub fn find_phone(&self) -> bool { self.flag("findPhone") }
     pub fn wind_mode(&self) -> bool { self.flag("windMode") }
+    /// The lowest firmware with the wind switch (realme Link's gate). Older firmware answers `1A=0` for any id.
+    pub fn wind_firmware(&self) -> Option<&'a str> { self.0.and_then(|m| m["windFirmware"].as_str()) }
     /// A write-only row flag (`volumeEnhancer`, `autoAnswer`): the buds do not report it.
     pub fn write_only(&self, key: &str) -> bool { self.flag(key) }
     pub fn hi_res(&self) -> bool { self.flag("hiRes") }

@@ -20,6 +20,7 @@ object Rows {
         AncModes.of(c).slots().takeIf { it.isNotEmpty() },
         PhoneSpatial.supported(c),
         manual = ModelCatalog.manual(c) != null,
-        gestures = !GestureModel.of(c).isEmpty
+        gestures = !GestureModel.of(c).isEmpty,
+        firmware = Capabilities.firmware(c)
     )
 }

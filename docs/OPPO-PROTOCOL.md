@@ -1156,6 +1156,7 @@ Every rule in this section names the model id, the byte and the value. A topic s
 
 - realme Link rows: dynamic sound `1D`, enhance voice `09`, wind noise `1A`, game mode `06`, wear `04`, dual `11`, Hi-Res `18`, 3D sound `1B`; a second enhance voice setter writes `0C`; power saving is reported as `05` `[VENDOR]`.
 - Models with `windMode`: `0x010D` asks `1A` only for them. realme Buds Air7 Pro `064C12`, T310 `063C12` and T500 Pro `066452` have the wind-noise row in realme Link (T500 Pro: issue 30). Report #46 says the vendor app shows it `[VENDOR]`. No capture proves that every `windMode` model answers `[GUESS]`.
+- A `windFirmware` gate hides the row below that firmware, part by part. realme Buds Wireless 3 `050812` on `1.1.0.65` answers `1A=0` for any id; realme Link shows the row from `1.1.0.100` (report 225) `[VENDOR]`.
 - realme models with a hearing profile `[VENDOR]`: Air8 Pro `066C12`, Air7 Pro `064C12`, Air 5 Pro `061C12`, Air6 Pro `063012`. The T500 Pro `066452` does not list one (report #21), and its buds do not answer the tones.
 - OPPO Enco Buds3 Pro: `1B` is in the status reply and reports `1B=1`, but `0x012A` is absent; two owners hear no 3D audio (reports #60 #61). The row is hidden through `statusQuery` `05 11 06` `[CAPTURE]`.
 - `06` is game mode on every model except where the bitmap has `0x0423`; there it is `28`. Both default lists ask `06` and `28` next to each other `[VENDOR]`.

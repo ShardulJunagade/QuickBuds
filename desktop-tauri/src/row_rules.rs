@@ -17,6 +17,7 @@ pub fn of(s: &Snapshot) -> BTreeSet<&'static str> {
     rows(&Input {
         model: s.model, reply: Some(&reply), bitmap: Some(bitmap(s)), product_anc: !s.modes.is_empty(), phone_spatial_ok: false,
         manual: s.manual, gestures: Some(!crate::gesture_logic::Model::of(s).rows.is_empty()),
+        firmware: s.firmware.as_deref(),
     })
 }
 
