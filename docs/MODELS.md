@@ -13,7 +13,7 @@ Use Settings › Bluetooth › your earbuds for the rest.
 A model is confirmed when its owner sends a model test from the app. To confirm yours, see
 [REPORTING.md](./REPORTING.md).
 
-## Confirmed (49 models)
+## Confirmed (50 models)
 
 ### OnePlus (16 models)
 
@@ -47,7 +47,7 @@ A model is confirmed when its owner sends a model test from the app. To confirm 
 - **OPPO Enco Free3**: confirmed by its owner on Android: battery, noise control, low latency, high-quality audio, hearing profile, equalizer, gestures, wear detection, find my earbuds.
 - **OPPO Enco X**: confirmed by its owner on Android: battery, noise control, high-quality audio, hearing profile, equalizer, gestures, wear detection, find my earbuds.
 
-### realme (23 models)
+### realme (24 models)
 
 - **realme Buds Air 3 Neo**: confirmed by its owner on Android: battery. Wear detection does not work.
 - **realme Buds Air 3S**: confirmed by its owner on Android: battery, equalizer, gestures, find my earbuds.
@@ -71,9 +71,10 @@ A model is confirmed when its owner sends a model test from the app. To confirm 
 - **realme Buds T500**: confirmed by its owner on Android: battery, low latency, equalizer, gestures.
 - **realme Buds T500 Pro**: confirmed by its owner on Android and Linux: battery, noise control, wind noise reduction, low latency, high-quality audio, 3D audio, hearing profile, equalizer, dual connection, gestures, wear detection, find my earbuds.
 - **realme Buds Wireless 3**: confirmed by its owner on Android: battery, noise control, low latency, high-quality audio, 3D audio, hearing profile, equalizer, dual connection, wear detection.
+- **realme Buds Wireless 5 ANC**: confirmed by its owner on Android: battery, noise control, wind noise reduction, 3D audio, equalizer, dual connection, gestures, find my earbuds. Low latency is fixed in 6.4.0, not confirmed yet.
 - **realme Cobble Speaker**: confirmed by its owner on Android: battery, low latency.
 
-## Not confirmed yet (94 models)
+## Not confirmed yet (93 models)
 
 The app detects these models. Their features come from HeyMelody's and realme Link's data. Some may not work.
 
@@ -85,6 +86,6 @@ OnePlus Bullets Wireless Z2, OnePlus Buds, OnePlus Buds Z, OnePlus Buds Pro, One
 
 OPPO Enco Quiet, OPPO Enco M31, OPPO Enco M32, OPPO Enco M33, OPPO Enco Free, OPPO O-Free, OPPO Enco W31, OPPO Enco W51, OPPO Enco W11, OPPO Enco Air, OPPO Enco Play, OPPO Enco Free2, OPPO Enco Buds, OPPO Enco Air Lite, OPPO Enco W31 Lite, OPPO Enco R, OPPO Enco Air2, OPPO Enco Air2 Pro, OPPO Enco X2, OPPO Enco Free2i, OPPO Enco Air2i, OPPO Enco Air3, OPPO Enco R Pro, OPPO Enco R2, OPPO Enco X3i, OPPO Enco Air2（新声版）, OPPO Enco X3, OPPO Enco Air3s, OPPO Enco Air4 Pro, OPPO Enco R3, OPPO Enco Air 3i, OPPO Enco Free4, OPPO Enco Air4, OPPO Enco Air4i, OPPO Enco R3 Pro, OPPO Enco Buds3 Pro+, OPPO Enco Buds3, OPPO Enco R4, OPPO Enco Air4（新声版）, OPPO Enco R5, OPPO Enco Clip, OPPO Enco X3s, OPPO Enco Free4（丹拿版）, OPPO Enco Air5s, OPPO Enco Clip2, OPPO Enco Air5s（星光版）, OPPO Enco X4, OPPO Enco Air4s, OPPO Enco Buds3s
 
-### realme (28 models)
+### realme (27 models)
 
-realme Buds Wireless 2S, realme Buds Wireless 3 Neo, realme Buds Wireless 5 ANC, realme Buds Wireless 6 Neo, realme Buds Wireless 6, realme Buds Wireless 6 ANC, realme Buds Air 3, realme Buds Q2s, realme Buds N1 Pro, realme Buds N1, realme Buds T200 Lite, realme TechLife Buds, realme Buds T500 Pro Harry Potter Edition, realme TechLife Buds T500 Pro, realme Buds Air 2 Neo, realme Buds Air, realme Buds Q2, realme Buds Air Pro, realme Brick Speaker, realme Buds Air 2, realme Buds Wireless 2, realme Buds Wireless 2 Neo, DIZO Wireless, DIZO GoPods D, DIZO GoPods, realme Pocket Speaker, realme Buds Wireless Pro, realme Buds Air Neo
+realme Buds Wireless 2S, realme Buds Wireless 3 Neo, realme Buds Wireless 6 Neo, realme Buds Wireless 6, realme Buds Wireless 6 ANC, realme Buds Air 3, realme Buds Q2s, realme Buds N1 Pro, realme Buds N1, realme Buds T200 Lite, realme TechLife Buds, realme Buds T500 Pro Harry Potter Edition, realme TechLife Buds T500 Pro, realme Buds Air 2 Neo, realme Buds Air, realme Buds Q2, realme Buds Air Pro, realme Brick Speaker, realme Buds Air 2, realme Buds Wireless 2, realme Buds Wireless 2 Neo, DIZO Wireless, DIZO GoPods D, DIZO GoPods, realme Pocket Speaker, realme Buds Wireless Pro, realme Buds Air Neo
