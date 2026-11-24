@@ -43,8 +43,11 @@ object ConnectPolicy {
         return if (vendor || named) Brand.SOUNDCORE else Brand.OPPO
     }
 
-    /** The Soundcore service UUIDs of one connect: the vendor ones the buds list, then plain SPP. */
+    /**
+     * The Soundcore service UUIDs of one connect: the vendor ones the buds list, else plain SPP (OpenSCQ30's rule).
+     * Buds with the vendor service do not answer on SPP: a fallback there gave a link with no state.
+     */
     fun soundcoreUuids(offered: List<String>): List<String> =
-        offered.map { it.uppercase() }.filter { it.startsWith(SOUNDCORE_UUID_PREFIX) } + OpoProtocol.SPP_UUID_PLAIN
+        offered.map { it.uppercase() }.filter { it.startsWith(SOUNDCORE_UUID_PREFIX) }.ifEmpty { listOf(OpoProtocol.SPP_UUID_PLAIN) }
 }
 

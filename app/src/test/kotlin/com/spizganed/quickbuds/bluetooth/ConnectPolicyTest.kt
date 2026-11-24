@@ -53,6 +53,8 @@ class ConnectPolicyTest {
         assertEquals(ConnectPolicy.Brand.SOUNDCORE, ConnectPolicy.brand(listOf(sc), "Liberty 5"))
         assertEquals(ConnectPolicy.Brand.SOUNDCORE, ConnectPolicy.brand(emptyList(), "soundcore Space A40"))
         assertEquals(ConnectPolicy.Brand.OPPO, ConnectPolicy.brand(listOf(OpoProtocol.SPP_UUID_PRIMARY), "OnePlus Buds 4"))
-        assertEquals(listOf(sc.uppercase(), OpoProtocol.SPP_UUID_PLAIN), ConnectPolicy.soundcoreUuids(listOf(sc, OpoProtocol.SPP_UUID_PRIMARY)))
+        // The vendor service only: these buds give no state on plain SPP.
+        assertEquals(listOf(sc.uppercase()), ConnectPolicy.soundcoreUuids(listOf(sc, OpoProtocol.SPP_UUID_PLAIN)))
+        assertEquals(listOf(OpoProtocol.SPP_UUID_PLAIN), ConnectPolicy.soundcoreUuids(listOf(OpoProtocol.SPP_UUID_PLAIN)))
     }
 }

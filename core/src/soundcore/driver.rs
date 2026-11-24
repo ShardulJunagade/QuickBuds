@@ -397,8 +397,8 @@ impl Driver {
             Msg::Firmware { versions, serial } => { self.firmware = versions; self.serial = Some(serial); }
             Msg::Tws { both, .. } => self.tws = both,
             Msg::Other(p) => {
-                // An empty packet with a sent command is its acknowledgement.
-                if !p.body.is_empty() { self.note(format!("unknown packet {:02X} {:02X}", p.cmd[0], p.cmd[1])); }
+                // A command with the high bit set answers a write: empty, or with the written bytes (`0b 83`, `0b 84`).
+                if p.cmd[1] & 0x80 == 0 { self.note(format!("unknown packet {:02X} {:02X}", p.cmd[0], p.cmd[1])); }
                 return false;
             }
         }

@@ -69,8 +69,8 @@ pub fn decode(p: Packet) -> Msg {
     let b = &p.body;
     let m = match p.cmd {
         TWS_STATUS if b.len() == 2 => Some(Msg::Tws { host: b[0], both: b[1] != 0 }),
-        // Dual: left, right, and on newer firmware 2 more bytes (OpenSCQ30 ignores them).
-        BATTERY_LEVEL if matches!(b.len(), 1 | 2 | 4) => Some(Msg::Battery(b[..b.len().min(2)].to_vec())),
+        // Dual: left, right, and on newer firmware 1 or 2 more bytes (OpenSCQ30 ignores them; a Space A40 sends 3).
+        BATTERY_LEVEL if (1..=4).contains(&b.len()) => Some(Msg::Battery(b[..b.len().min(2)].to_vec())),
         BATTERY_CHARGING if matches!(b.len(), 1 | 2) => Some(Msg::Charging(b.iter().map(|&c| c == 1).collect())),
         FIRMWARE if b.len() == 26 => firmware(&b[..5]).zip(firmware(&b[5..10])).zip(serial(&b[10..]))
             .map(|((l, r), serial)| Msg::Firmware { versions: vec![l, r], serial }),
@@ -108,7 +108,9 @@ mod tests {
 
     #[test]
     fn an_odd_body_stays_other() {
-        assert!(matches!(decode(p(BATTERY_LEVEL, &[1, 2, 3])), Msg::Other(_)));
+        // A Space A40 sends 3 bytes (left, right, one more): a battery level. 5 bytes is no battery packet.
+        assert!(matches!(decode(p(BATTERY_LEVEL, &[4, 4, 0])), Msg::Battery(ref v) if v == &[4, 4]));
+        assert!(matches!(decode(p(BATTERY_LEVEL, &[1, 2, 3, 4, 5])), Msg::Other(_)));
         assert!(matches!(decode(p(FIRMWARE, b"2x.43")), Msg::Other(_)));
     }
 }

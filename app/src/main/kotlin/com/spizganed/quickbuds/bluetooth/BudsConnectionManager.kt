@@ -415,7 +415,9 @@ class BudsConnectionManager(private val context: Context) {
                 var socket: BluetoothSocket? = null
                 var lastError: String? = null
                 // Every socket try counts: the UUID tries (secure and insecure) and channel 15, then the app stops.
-                val totalTries = tries.size + 1
+                // Channel 15 is an OPPO fallback: on Soundcore buds it opens a service without their protocol.
+                val rawChannel = linkBrand == ConnectPolicy.Brand.OPPO
+                val totalTries = tries.size + if (rawChannel) 1 else 0
                 var failedTries = 0
                 val failures = mutableListOf<Pair<String?, Long>>()
                 fun tryFailed() {
@@ -453,7 +455,7 @@ class BudsConnectionManager(private val context: Context) {
                     }
                 }
 
-                if (socket == null) {
+                if (socket == null && rawChannel) {
                     val tryStart = SystemClock.elapsedRealtime()
                     try {
                         log("Trying RFCOMM channel 15...")
@@ -2191,6 +2193,8 @@ class BudsConnectionManager(private val context: Context) {
 
     /** Frames the core has no command for: sent as they are, in order (`hearing` re-reads the status after a switch). */
     private fun rustRaw(r: com.spizganed.quickbuds.protocol.RustDriver, vararg frames: ByteArray) {
+        // These are OPPO frames (codec query, volume enhancer, game EQ): a Soundcore link has no use for them.
+        if (linkBrand == ConnectPolicy.Brand.SOUNDCORE) return
         val list = org.json.JSONArray(frames.filter { it.size >= 9 }.map { f ->
             org.json.JSONArray().put(OpoProtocol.u16(f, 4)).put(com.spizganed.quickbuds.protocol.RustDriver.hex(payloadOf(f)))
         })

@@ -11,7 +11,7 @@ GPL-3.0-or-later".
 **Evidence tags:**
 - `[OPENSCQ30]`: OpenSCQ30's code or its tests.
 - `[RECORDED]`: a state packet from a real device in OpenSCQ30's tests or its device faker.
-- `[TESTED]`: a test on our own buds. None yet: the developer owns no Soundcore buds.
+- `[TESTED]`: a tester's log. The developer owns no Soundcore buds.
 - `[GUESS]`: unverified.
 
 **Models:** Space A40 (A3936) and Liberty 5 (A3957). Not tested on buds.
@@ -20,7 +20,8 @@ GPL-3.0-or-later".
 
 - Brand pick (`ConnectPolicy.brand`): the buds list a service UUID that starts with
   `0cf12d31-fac3-4553-bd80-d6832e7`, or their name starts with "soundcore". Else the OPPO driver runs `[OPENSCQ30]`.
-- Service: the vendor UUIDs the buds list, then plain SPP `00001101-0000-1000-8000-00805f9b34fb` `[OPENSCQ30]`.
+- Service: the vendor UUIDs the buds list. Only buds without one get plain SPP `00001101-0000-1000-8000-00805f9b34fb`
+  `[OPENSCQ30]`. A Space A40 with the vendor service gives no state on SPP `[TESTED]`. The OPPO channel 15 fallback is off.
 - The driver sends `01 01` (request state). No answer in 1.5 s: it sends it once more.
 - The answer's serial number (bytes 16 to 31) starts with the model number, for example `3936`. That picks the layout.
   A serial of an unknown model, or a short packet, gives a `NOTE` log line and no state.
@@ -42,7 +43,7 @@ The reader joins reads into frames and skips bytes up to the next header. A bad 
 (`DISCARDED RX` in the log) `[OPENSCQ30]`. The log has whole frames, `TX: 08 EE …` and `RX: 09 FF …`, with the
 command in brackets. The report Worker accepts a log that holds an `RX: 09 FF` line.
 
-The buds answer each write with an empty packet of the same command. The driver changes its copy of the state when it
+The buds answer each write with a packet of the same command: empty, or with the written bytes (`0b 83`, `0b 84`). The driver changes its copy of the state when it
 sends the write, as OpenSCQ30 does after the answer. A write that the buds refuse is not seen `[GUESS]`.
 
 ## 3. Pushes
@@ -51,7 +52,7 @@ sends the write, as OpenSCQ30 does after the answer. A write that the buds refus
 |---|---|---|
 | `01 01` | the state packet (section 4) | answer to the request; replaces the whole state |
 | `01 02` | host, both | TWS status: both buds connected to each other |
-| `01 03` | left, right (2 more bytes on newer firmware) | battery level |
+| `01 03` | left, right (1 or 2 more bytes on newer firmware; a Space A40 sends 3) | battery level |
 | `01 04` | left, right | charging, 1 = yes |
 | `01 05` | 2 firmware versions ("04.19"), 16-byte serial | firmware |
 | `01 11` | 1 byte | gaming mode changed on the buds |
