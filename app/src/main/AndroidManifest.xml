@@ -131,6 +131,26 @@
             android:screenOrientation="portrait" />
 
         <activity
+            android:name=".ui.SoundcoreSettingsActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".ui.SoundcoreButtonsActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".ui.SoundcoreEqActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".ui.SoundcoreDualActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+
+        <activity
             android:name=".ui.SettingsActivity"
             android:exported="false"
             android:screenOrientation="portrait" />

@@ -11,7 +11,8 @@ import com.spizganed.quickbuds.ui.ThemeRes
 /**
  * Which paired device is "the buds": the paired device named like the model picked by hand, else the address saved last (the buds
  * whose audio connected most recently, see [KeepAliveReceiver]), else the first bonded device that
- * offers one of the OPPO SPP UUIDs or carries a model name from `models.json`.
+ * offers one of the OPPO SPP UUIDs, carries a model name from `models.json`, or is a Soundcore device
+ * ([ConnectPolicy.brand]: its vendor service UUID or its name).
  */
 @SuppressLint("MissingPermission")
 object BudsDevice {
@@ -20,8 +21,10 @@ object BudsDevice {
     private val SPP_UUIDS = setOf(OpoProtocol.SPP_UUID_PRIMARY, OpoProtocol.SPP_UUID_FALLBACK)
 
     fun isBuds(context: Context, device: BluetoothDevice): Boolean = runCatching {
-        device.uuids?.any { it.uuid.toString().uppercase() in SPP_UUIDS } == true ||
-            ModelCatalog.all(context).any { it.name == device.name }
+        val uuids = device.uuids?.map { it.uuid.toString() }.orEmpty()
+        uuids.any { it.uppercase() in SPP_UUIDS } ||
+            ModelCatalog.all(context).any { it.name == device.name } ||
+            ConnectPolicy.brand(uuids, device.name) == ConnectPolicy.Brand.SOUNDCORE
     }.getOrDefault(false)
 
     fun remember(context: Context, device: BluetoothDevice) {
@@ -42,7 +45,7 @@ object BudsDevice {
             ?: bonded.firstOrNull { isBuds(context, it) }?.also { remember(context, it) }
     }
 
-    /** The paired devices that look like OPPO, OnePlus or realme earbuds, for the setup guide's picker. */
+    /** The paired devices that look like OPPO, OnePlus, realme or Soundcore earbuds, for the setup guide's picker. */
     fun candidates(context: Context): List<BluetoothDevice> = runCatching {
         context.getSystemService(BluetoothManager::class.java)?.adapter?.bondedDevices.orEmpty().filter { isBuds(context, it) }
     }.getOrDefault(emptyList())

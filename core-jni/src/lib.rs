@@ -370,7 +370,31 @@ fn sc_effects_json(effects: Vec<sc::Effect>) -> String {
     }).collect())
 }
 
-/// The Soundcore state: the shared state, with battery levels as a percent for the app's rings.
+/// The app's name for plain noise cancelling: the one ANC level a model without levels gets (`AncModes.kt`).
+/// The Soundcore strength is a setting of its own (`ancLevel`).
+const APP_ANC: &str = "ANC-Medium";
+
+/// A UI command for the Soundcore driver. The app's shared commands (`anc`, `lowLatency`, `hires`, `dual`) map to
+/// Soundcore settings; `sc` sets one setting by its `state_json` key, `scResetButtons` and `scDevice` are Soundcore only.
+fn sc_command(v: &Value) -> Option<sc::Cmd> {
+    let on = |k: &str| v[k].as_bool().map(Value::Bool);
+    Some(match v["c"].as_str()? {
+        "anc" => {
+            let m = v["mode"].as_str()?;
+            sc::Cmd::Anc(if m.starts_with("ANC") { sc::NOISE_ANC.into() } else { m.into() })
+        }
+        "lowLatency" => sc::Cmd::Set("gaming".into(), on("on")?),
+        "hires" => sc::Cmd::Set("ldac".into(), on("on")?),
+        "dual" => sc::Cmd::Set("dual".into(), on("on")?),
+        "sc" => sc::Cmd::Set(v["k"].as_str()?.into(), v["v"].clone()),
+        "scResetButtons" => sc::Cmd::ResetButtons,
+        "scDevice" => sc::Cmd::Device(v["a"].as_str()?.into(), v["mac"].as_str()?.into()),
+        _ => return None,
+    })
+}
+
+/// The Soundcore state: the shared state, with battery levels as a percent for the app's rings. `sc` holds every
+/// Soundcore setting (`soundcore::driver::Driver::state_json`).
 fn sc_state_json(d: &sc::Driver) -> String {
     let c = d.common();
     json!({
@@ -378,13 +402,13 @@ fn sc_state_json(d: &sc::Driver) -> String {
         "status": if c.connected { 2 } else { 0 },
         "battery": c.battery.map(|b| b.map_or(-1, |l| (l.value as i32 * 100) / l.max.max(1) as i32)),
         "charging": c.battery.map(|b| b.is_some_and(|l| l.charging)),
-        "anc": c.noise,
+        "anc": c.noise.map(|n| if n == sc::NOISE_ANC { APP_ANC.into() } else { n }),
         "noiseModes": c.noise_modes,
         "lowLatency": c.low_latency,
         "features": c.features,
         "model": c.model_id,
         "firmware": d.firmware.first(),
-        "ldac": d.ldac,
+        "sc": d.state_json(),
     }).to_string()
 }
 
@@ -445,8 +469,7 @@ pub extern "system" fn Java_com_spizganed_quickbuds_protocol_RustDriver_nativeCo
     let Some(v) = text(&mut env, &json).and_then(|t| serde_json::from_str::<Value>(&t).ok()) else { return std::ptr::null_mut() };
     let e = link(h, |l| {
         if l.soundcore {
-            let c = match command(&v)? { Cmd::Anc(m) => sc::Cmd::Anc(m), _ => return None };
-            Some(sc_effects_json(l.sc.command(now as u64, c)))
+            Some(sc_effects_json(l.sc.command(now as u64, sc_command(&v)?)))
         } else {
             Some(effects_json(l.oppo.command(now as u64, command(&v)?)))
         }

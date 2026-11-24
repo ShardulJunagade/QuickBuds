@@ -13,7 +13,8 @@ import org.json.JSONObject
  * ([com.spizganed.quickbuds.bluetooth.BudsConnectionManager]) owns the socket and the UI; this class feeds the
  * driver and runs its effects. All driver calls run on one thread, in order.
  *
- * Dev tools › Rust engine turns it on. Off (the default), the Kotlin layer drives the buds and [RustShadow] compares.
+ * On by default ([DEFAULT]); Dev tools › Rust engine turns it off. Off, the Kotlin layer drives the buds and
+ * [RustShadow] compares.
  */
 class RustDriver(private val shell: Shell) {
 
@@ -107,11 +108,13 @@ class RustDriver(private val shell: Shell) {
     companion object {
         private val loaded: Boolean = try { System.loadLibrary("buds_core_jni"); true } catch (_: Throwable) { false }
 
-        /** Dev tools › Rust engine (default off). The next connect reads it. */
+        /** Dev tools › Rust engine. The next connect reads it. */
         const val PREF = "devRustEngine"
+        /** The core drives the buds unless Dev tools turns it off; the Kotlin layer is the fallback. */
+        const val DEFAULT = true
 
         fun enabled(c: Context): Boolean =
-            loaded && c.getSharedPreferences(ThemeRes.PREFS_NAME, Context.MODE_PRIVATE).getBoolean(PREF, false)
+            loaded && c.getSharedPreferences(ThemeRes.PREFS_NAME, Context.MODE_PRIVATE).getBoolean(PREF, DEFAULT)
 
         /** The native library loaded: Soundcore buds, which only the core drives, can connect. */
         val libraryLoaded: Boolean get() = loaded

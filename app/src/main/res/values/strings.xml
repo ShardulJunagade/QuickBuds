@@ -750,4 +750,91 @@
     <string name="setup_tiles_title">Quick Settings tiles</string>
     <string name="setup_tiles_body">Add QuickBuds tiles to the quick panel. A tap switches the setting. Hold Noise control to pick any mode.</string>
     <string name="setup_tiles_old">Swipe down twice, tap the pencil, then drag the QuickBuds tiles into the panel.</string>
+    <!-- Soundcore screens (SoundcoreSettingsActivity and the other Soundcore screens). -->
+    <string name="sc_eq_signature" translatable="false">Soundcore Signature</string>
+    <string name="sc_hz" translatable="false">%d Hz</string>
+    <string name="sc_khz" translatable="false">%s kHz</string>
+    <string name="sc_db" translatable="false">%d dB</string>
+    <string name="sc_db_value" translatable="false">%s dB</string>
+    <string name="sc_firmware_lr" translatable="false">%1$s · %2$s</string>
+    <string name="sc_transparency_title">Transparency mode</string>
+    <string name="sc_transparency_full">Full transparency</string>
+    <string name="sc_transparency_vocal">Vocal mode</string>
+    <string name="sc_anc_mode_title">Noise cancelling mode</string>
+    <string name="sc_anc_manual">Manual</string>
+    <string name="sc_anc_adaptive">Adaptive</string>
+    <string name="sc_anc_transport">Transport</string>
+    <string name="sc_anc_level_title">Noise cancelling strength</string>
+    <string name="sc_level_weak">Weak</string>
+    <string name="sc_level_moderate">Moderate</string>
+    <string name="sc_level_strong">Strong</string>
+    <string name="sc_level_n">Level %d</string>
+    <string name="sc_transport_title">Transport type</string>
+    <string name="sc_transport_plane">Plane</string>
+    <string name="sc_transport_car">Car</string>
+    <string name="sc_adaptive_title">Noise around you</string>
+    <string name="sc_noise_low">Low</string>
+    <string name="sc_noise_medium">Medium</string>
+    <string name="sc_noise_high">High</string>
+    <string name="sc_wind_sub">Reduces wind noise in noise cancelling and transparency</string>
+    <string name="sc_wind_detected">Wind noise detected now</string>
+    <string name="sc_section_controls">Controls</string>
+    <string name="sc_buttons_sub">Taps and holds on each earbud</string>
+    <string name="sc_cycle_title">Noise control gesture</string>
+    <string name="sc_cycle_rule">The modes that the noise control gesture switches between. Pick at least 2.</string>
+    <string name="sc_mode_anc">Noise cancelling</string>
+    <string name="sc_mode_normal">Normal</string>
+    <string name="sc_reset_buttons_title">Reset gestures</string>
+    <string name="sc_reset_buttons_sub">Set the factory gestures again</string>
+    <string name="sc_reset_buttons_body">Every gesture on both earbuds goes back to its factory action.</string>
+    <string name="sc_reset">Reset</string>
+    <string name="sc_section_earbuds">Earbuds</string>
+    <string name="sc_touch_tone_title">Touch tone</string>
+    <string name="sc_touch_tone_sub">A sound when you tap an earbud</string>
+    <string name="sc_wearing_tone_title">Wearing tone</string>
+    <string name="sc_wearing_tone_sub">A sound when you put an earbud in</string>
+    <string name="sc_low_battery_title">Low battery prompt</string>
+    <string name="sc_low_battery_sub">A voice prompt when the battery is low</string>
+    <string name="sc_leak_title">Sound leak compensation</string>
+    <string name="sc_leak_sub">Keeps the bass when the fit is loose</string>
+    <string name="sc_auto_off_title">Auto power off</string>
+    <string name="sc_auto_off_body">The earbuds turn off when they are not used for this time.</string>
+    <string name="sc_minutes">%d min</string>
+    <string name="sc_section_volume">Volume</string>
+    <string name="sc_volume_limit_title">Limit high volume</string>
+    <string name="sc_volume_limit_sub">The earbuds keep the sound below the limit</string>
+    <string name="sc_volume_limit_db_title">Volume limit</string>
+    <string name="sc_refresh_title">Sound level reading</string>
+    <string name="sc_refresh_body">How often the earbuds measure the sound level.</string>
+    <string name="sc_refresh_realtime">Real time</string>
+    <string name="sc_refresh_10s">Every 10 s</string>
+    <string name="sc_refresh_1m">Every minute</string>
+    <string name="sc_section_about">About</string>
+    <string name="sc_serial_title">Serial number</string>
+    <string name="sc_buttons_pair_note">On these earbuds, a gesture is on or off on both earbuds together.</string>
+    <string name="sc_action_noise">Noise control mode</string>
+    <string name="sc_eq_custom">Custom</string>
+    <string name="sc_eq_presets">Presets</string>
+    <string name="sc_device_forget">Forget</string>
+    <string name="sc_eq_acoustic">Acoustic</string>
+    <string name="sc_eq_bass_booster">Bass Booster</string>
+    <string name="sc_eq_bass_reducer">Bass Reducer</string>
+    <string name="sc_eq_classical">Classical</string>
+    <string name="sc_eq_podcast">Podcast</string>
+    <string name="sc_eq_dance">Dance</string>
+    <string name="sc_eq_deep">Deep</string>
+    <string name="sc_eq_electronic">Electronic</string>
+    <string name="sc_eq_flat">Flat</string>
+    <string name="sc_eq_hip_hop">Hip-Hop</string>
+    <string name="sc_eq_jazz">Jazz</string>
+    <string name="sc_eq_latin">Latin</string>
+    <string name="sc_eq_lounge">Lounge</string>
+    <string name="sc_eq_piano">Piano</string>
+    <string name="sc_eq_pop">Pop</string>
+    <string name="sc_eq_rnb">R&amp;B</string>
+    <string name="sc_eq_rock">Rock</string>
+    <string name="sc_eq_small_speakers">Small Speakers</string>
+    <string name="sc_eq_spoken_word">Spoken Word</string>
+    <string name="sc_eq_treble_booster">Treble Booster</string>
+    <string name="sc_eq_treble_reducer">Treble Reducer</string>
 </resources>

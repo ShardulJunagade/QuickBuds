@@ -130,7 +130,7 @@ class DevToolsActivity : Activity() {
 
         // Driver mode of the Rust core (protocol/RustDriver.kt). The next connect reads it.
         val prefs = getSharedPreferences(ThemeRes.PREFS_NAME, MODE_PRIVATE)
-        val rustSwitch = SettingRowFactory.buildSwitch(this, prefs.getBoolean(com.spizganed.quickbuds.protocol.RustDriver.PREF, false))
+        val rustSwitch = SettingRowFactory.buildSwitch(this, prefs.getBoolean(com.spizganed.quickbuds.protocol.RustDriver.PREF, com.spizganed.quickbuds.protocol.RustDriver.DEFAULT))
         rustSwitch.setOnCheckedChangeListener { _, on ->
             prefs.edit().putBoolean(com.spizganed.quickbuds.protocol.RustDriver.PREF, on).apply()
             showInLog("Rust engine ${if (on) "on" else "off"}: applies on the next connect (Disconnect, then Reconnect)")

@@ -98,6 +98,8 @@ class AncModes private constructor(
             {"mode":10,"slot":11},{"mode":2,"slot":2,"variants":[{"mode":2,"slot":8}]},
             {"mode":1,"slot":0,"variants":[{"mode":1,"slot":3}]}]"""))
         private val NONE = AncModes(emptyMap(), emptyMap())
+        /** Soundcore: Off, Transparency and plain noise cancelling (one level). The core maps the names. */
+        private val SOUNDCORE = parse(JSONArray(Soundcore.ANC_MODES))
 
         @Volatile private var cached: Pair<String, AncModes>? = null
 
@@ -108,6 +110,7 @@ class AncModes private constructor(
          * mode silently.
          */
         fun of(context: Context): AncModes {
+            if (Soundcore.active(context)) return SOUNDCORE
             val model = ModelCatalog.current(context) ?: return if (Capabilities.productId(context) == null) BUDS4 else NONE
             cached?.let { if (it.first == model.id) return it.second }
             val modes = runCatching { model.profile.ancModes?.let { parse(it) } }.getOrNull() ?: NONE

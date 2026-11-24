@@ -20,6 +20,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.core.content.IntentCompat
 import com.spizganed.quickbuds.R
+import com.spizganed.quickbuds.protocol.Soundcore
 import com.spizganed.quickbuds.protocol.AncEventParser
 import com.spizganed.quickbuds.protocol.AncModes
 import com.spizganed.quickbuds.protocol.BatteryParser
@@ -189,6 +190,9 @@ class BudsConnectionManager(private val context: Context) {
         fun onCapabilities() {}
         /** The firmware version, as HeyMelody shows it (`0x8105`). */
         fun onFirmware(version: String) {}
+
+        /** Soundcore buds: every setting, as the core's Soundcore driver gives it ([Soundcore]). */
+        fun onSoundcore(state: org.json.JSONObject) {}
     }
 
     private val listeners = CopyOnWriteArrayList<Listener>()
@@ -394,6 +398,7 @@ class BudsConnectionManager(private val context: Context) {
                 val offered = device.uuids?.map { it.uuid.toString() }.orEmpty()
                 log("Cached service UUIDs: ${ConnectDiagnostics.formatUuids(offered)}")
                 linkBrand = ConnectPolicy.brand(offered, deviceName(device))
+                Soundcore.setActive(context, linkBrand == ConnectPolicy.Brand.SOUNDCORE)
                 rustLink = linkBrand == ConnectPolicy.Brand.SOUNDCORE ||
                     com.spizganed.quickbuds.protocol.RustDriver.enabled(context)
                 log("BRAND: $linkBrand, engine: ${if (rustLink) "Rust" else "Kotlin"}")
@@ -2354,8 +2359,28 @@ class BudsConnectionManager(private val context: Context) {
                 3 -> calls += { it.onPersonalNoiseResult(v) }
             }
         }
+        if (changed("sc")) st.optJSONObject("sc")?.takeIf { it.length() > 0 }?.let { sc ->
+            Soundcore.save(context, sc)
+            // The home rows read the shared switch map: game mode and LDAC (the Hi-Res row) come from Soundcore.
+            val map = mapOf(Capabilities.gameModeId(context) to if (sc.optBoolean("gaming")) 1 else 0,
+                Feature.HIRES_CODEC to if (sc.optBoolean("ldac")) 1 else 0)
+            featureStates = map
+            calls += { l -> l.onSoundcore(sc); l.onFeatureStates(map); l.onGameModeState(sc.optBoolean("gaming")) }
+        }
         if (calls.isNotEmpty()) handler.post { listeners.forEach { l -> calls.forEach { it(l) } } }
     }
+
+    /** The last Soundcore state on this link, or null on an OPPO link. */
+    val soundcore: org.json.JSONObject? get() = rustLast?.optJSONObject("sc")?.takeIf { linkBrand == ConnectPolicy.Brand.SOUNDCORE }
+
+    /** One Soundcore setting by its state key (docs/SOUNDCORE-PROTOCOL.md). [value]: a Boolean, a number or a JSON object. */
+    fun soundcoreSet(key: String, value: Any) { rust?.command("sc", "k" to key, "v" to value) }
+
+    /** Soundcore: the buttons go back to the factory actions. */
+    fun soundcoreResetButtons() { rust?.command("scResetButtons") }
+
+    /** Soundcore dual connection: [action] `connect`, `disconnect` or `forget` for the device [mac]. */
+    fun soundcoreDevice(action: String, mac: String) { rust?.command("scDevice", "a" to action, "mac" to mac) }
 
     private fun log(msg: String) {
         Log.d("BudsConn", msg)

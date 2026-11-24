@@ -1063,7 +1063,7 @@ class MainActivity : Activity(), BudsConnectionManager.Listener {
             SettingRowFactory.build(
                 this, R.drawable.ic_equalizer, R.string.row_eq_title, R.string.row_eq_sub,
                 SettingRowFactory.buildChevron(this)
-            ) { startActivity(Intent(this, EqActivity::class.java)) }
+            ) { startActivity(Intent(this, if (soundcore()) SoundcoreEqActivity::class.java else EqActivity::class.java)) }
         )
 
         // --- 5. Dual connection, on the home screen too ---
@@ -1072,7 +1072,7 @@ class MainActivity : Activity(), BudsConnectionManager.Listener {
             SettingRowFactory.build(
                 this, R.drawable.ic_devices, R.string.row_dual_title, R.string.row_dual_sub,
                 SettingRowFactory.buildChevron(this)
-            ) { startActivity(Intent(this, DualDeviceActivity::class.java)) }
+            ) { startActivity(Intent(this, if (soundcore()) SoundcoreDualActivity::class.java else DualDeviceActivity::class.java)) }
         )
 
         // --- 6. Earbud settings: gestures, wear detection, find, alert volume (option A) ---
@@ -1081,12 +1081,15 @@ class MainActivity : Activity(), BudsConnectionManager.Listener {
             SettingRowFactory.build(
                 this, R.drawable.ic_settings_cog, R.string.row_earbuds_title, R.string.row_earbuds_sub,
                 SettingRowFactory.buildChevron(this)
-            ) { startActivity(Intent(this, EarbudSettingsActivity::class.java)) }
+            ) { startActivity(Intent(this, if (soundcore()) SoundcoreSettingsActivity::class.java else EarbudSettingsActivity::class.java)) }
         )
 
         if (::manager.isInitialized) onFeatureStates(manager.featureStates)
         layoutFeatureRows()
     }
+
+    /** The current or last link is Soundcore: the rows open the Soundcore screens. */
+    private fun soundcore() = com.spizganed.quickbuds.protocol.Soundcore.active(this)
 
     /** True while a switch is being set from code, so its listener does not send a write. */
     private var syncingFeatures = false
@@ -1262,7 +1265,7 @@ class MainActivity : Activity(), BudsConnectionManager.Listener {
 
     /** The model's name from the model list; its Bluetooth name if the list has no match. */
     private fun showModelName() {
-        deviceNameText.text = ModelCatalog.current(this)?.name
+        deviceNameText.text = ModelCatalog.current(this)?.name ?: com.spizganed.quickbuds.protocol.Soundcore.name(this)
             ?: getSharedPreferences(ThemeRes.PREFS_NAME, MODE_PRIVATE).getString(ModelCatalog.KEY_DEVICE_NAME, null)
             ?: getString(R.string.default_device_name)
     }

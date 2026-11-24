@@ -38,6 +38,19 @@ object ModelCatalog {
         return list
     }
 
+    /** The Soundcore models (`soundcore` in models.json): id and name. The Soundcore driver in `core/` drives them. */
+    fun soundcore(context: Context): List<Pair<String, String>> = runCatching {
+        val a = JSONObject(context.assets.open("models.json").bufferedReader().use { it.readText() }).getJSONArray("soundcore")
+        (0 until a.length()).map { a.getJSONObject(it).let { m -> m.getString("id") to m.getString("name") } }
+    }.getOrDefault(emptyList())
+
+    /** The connected model as reports and the model test name it (id, name): the OPPO model, else the Soundcore one. */
+    fun reportModel(context: Context): Pair<String, String>? = current(context)?.let { it.id to it.name }
+        ?: Soundcore.state(context)?.let { s -> s.optString("model").takeIf { it.isNotEmpty() }?.let { it to s.optString("name") } }
+
+    /** Every model name a report can carry: the report Worker accepts the same list. */
+    fun reportNames(context: Context): List<String> = all(context).map { it.name } + soundcore(context).map { it.second }
+
     /** The high-quality codecs, best first, with the names the UI shows. */
     private val HIRES_CODECS = listOf(
         "lhdc5" to "LHDC 5.0",
@@ -118,7 +131,8 @@ object ModelCatalog {
     fun tripleDevice(context: Context): Boolean = profile(context).tripleDevice
 
     /** The manual pick if there is one, else [detected]. */
-    fun current(context: Context): Model? =
+    /** The connected OPPO, OnePlus or realme model. None on a Soundcore link: [Soundcore] has that state. */
+    fun current(context: Context): Model? = if (Soundcore.active(context)) null else
         manual(context)?.let { id -> all(context).firstOrNull { it.id == id } } ?: detected(context)
 
     /**

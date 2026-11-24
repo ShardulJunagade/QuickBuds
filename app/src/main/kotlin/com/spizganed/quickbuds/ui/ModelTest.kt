@@ -3,6 +3,7 @@ package com.spizganed.quickbuds.ui
 import android.content.Context
 import com.spizganed.quickbuds.R
 import com.spizganed.quickbuds.bluetooth.BudsConnectionManager
+import com.spizganed.quickbuds.protocol.Soundcore
 import com.spizganed.quickbuds.protocol.AncModes
 import com.spizganed.quickbuds.protocol.Capabilities
 import com.spizganed.quickbuds.protocol.Feature as ProtoFeature
@@ -28,7 +29,7 @@ object ModelTest {
     val FEATURES = listOf(
         Feature("battery", R.string.problem_cat_battery, "Battery") { true },
         Feature("anc", R.string.anc_section, "Noise control") {
-            Capabilities.supports(it, OpoProtocol.CMD_SET_ANC) && !AncModes.of(it).isEmpty
+            Soundcore.active(it) || Capabilities.supports(it, OpoProtocol.CMD_SET_ANC) && !AncModes.of(it).isEmpty
         },
         Feature("wind", R.string.row_wind_noise_title, "Wind noise reduction") { MainActivity.rowSupported(it, "wind") },
         Feature("game", R.string.row_game_title, "Low latency") { MainActivity.rowSupported(it, "game") },
@@ -38,13 +39,15 @@ object ModelTest {
         Feature("eq", R.string.row_eq_title, "Equalizer") { MainActivity.rowSupported(it, "eq") },
         Feature("dual", R.string.row_dual_title, "Dual connection") { MainActivity.rowSupported(it, "dual") },
         Feature("gestures", R.string.row_gesture_title, "Gestures") {
-            Capabilities.supports(it, OpoProtocol.CMD_SET_KEY_FUNCTION) && !GestureModel.of(it).isEmpty
+            if (Soundcore.active(it)) Soundcore.state(it)?.has("buttons") == true
+            else Capabilities.supports(it, OpoProtocol.CMD_SET_KEY_FUNCTION) && !GestureModel.of(it).isEmpty
         },
         Feature("wear", R.string.row_wear_title, "Wear detection") {
-            Capabilities.hasFeature(it, com.spizganed.quickbuds.protocol.Feature.AUTO_PLAY_PAUSE)
+            if (Soundcore.active(it)) Soundcore.state(it)?.has("wearDetection") == true
+            else Capabilities.hasFeature(it, com.spizganed.quickbuds.protocol.Feature.AUTO_PLAY_PAUSE)
         },
         Feature("find", R.string.row_find_title, "Find my earbuds") {
-            Capabilities.supports(it, OpoProtocol.CMD_FIND_BUDS) && !ModelCatalog.profile(it).noFind
+            !Soundcore.active(it) && Capabilities.supports(it, OpoProtocol.CMD_FIND_BUDS) && !ModelCatalog.profile(it).noFind
         },
     )
 
@@ -73,8 +76,8 @@ object ModelTest {
      * and makes a row fixture from it.
      */
     fun jsonLine(c: Context, s: State, features: List<Feature>, log: String): String = jsonLine(
-        id = Capabilities.productId(c).orEmpty(),
-        name = ModelCatalog.current(c)?.name ?: "unknown model",
+        id = ModelCatalog.current(c)?.let { Capabilities.productId(c) } ?: ModelCatalog.reportModel(c)?.first.orEmpty(),
+        name = ModelCatalog.reportModel(c)?.second ?: "unknown model",
         firmware = Capabilities.firmware(c).orEmpty(),
         caps = Capabilities.commands(c).orEmpty(),
         status = Capabilities.reply(c).orEmpty(),
@@ -139,7 +142,8 @@ object ModelTest {
     }
 
     /** [diff] from the saved replies and the marks of the test in progress. */
-    fun diff(c: Context, s: State): Diff = diff(
+    /** Soundcore buds have no OPPO ask list or bitmap: their diff is empty. */
+    fun diff(c: Context, s: State): Diff = if (Soundcore.active(c)) Diff(emptyList(), emptyList(), emptyList()) else diff(
         ModelCatalog.current(c)?.json, Capabilities.reply(c), Capabilities.commands(c),
         AncModes.of(c).slots().takeIf { it.isNotEmpty() }, s.marks
     )
@@ -161,6 +165,14 @@ object ModelTest {
 
     /** The step for [key], or null for a key with no step. Every feature in [FEATURES] has one. */
     fun step(key: String): Step? = STEPS[key]
+
+    /** The Soundcore screen of a step, where it differs from the OPPO one ([step]). Null: the step's own screen. */
+    fun screen(c: Context, key: String): Class<*>? = if (!Soundcore.active(c)) null else when (key) {
+        "eq" -> SoundcoreEqActivity::class.java
+        "gestures" -> SoundcoreButtonsActivity::class.java
+        "wear" -> SoundcoreSettingsActivity::class.java
+        else -> null
+    }
 
     private val STEPS = mapOf(
         "battery" to Step(MainActivity::class.java, R.string.test_step_battery),

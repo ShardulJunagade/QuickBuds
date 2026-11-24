@@ -34,12 +34,12 @@ A new difference goes to the log as one `RUST DIFF:` line. 10 s after the link c
 commands of the init sequence: the core's would-be frames against its own (`RUST TX DIFF:`).
 Why: 90 % of the users are on Android, and the Kotlin layer knows more than the core. The report logs show each gap
 on real buds before the core takes over, and users see no change. A panic in the core is caught in the bridge.
-Driver mode (Dev tools › Rust engine, default off, read on each connect): the core drives the link
+Driver mode (the default; Dev tools › Rust engine turns it off, read on each connect): the core drives the link
 (`protocol/RustDriver.kt`). `BudsConnectionManager` stays the shell: it owns the socket, gives the core the bytes and
 the UI commands (JSON), writes the core's frames and maps the core's state JSON to its fields and listeners
 (`applyRust`). All core calls run on one thread. The core reads the battery every 5 min, reads it on the lid-close
 push, and gives find phone as an effect. Shadow mode is off while driver mode runs.
-Why a switch: the developer tests driver mode on real buds before it becomes the default.
+Why a switch: the Kotlin layer stays as the fallback while beta users test the core on their buds.
 The connect picks the brand first (`ConnectPolicy.brand`: the service list, then the name). Soundcore buds always
 run in driver mode, with the Soundcore driver (`core/src/soundcore/driver.rs`), because no Kotlin copy exists.
 The desktop app calls the core directly (`desktop-tauri/src/main.rs` re-exports `cmd`, `msg`, `wire` and the OPPO model data in `core/src/oppo/`).

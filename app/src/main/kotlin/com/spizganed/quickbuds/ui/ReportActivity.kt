@@ -70,12 +70,12 @@ class ReportActivity : Activity() {
 
         root.addView(SettingRowFactory.sectionLabel(this, R.string.problem_model))
         model = field(AutoCompleteTextView(this), false) as AutoCompleteTextView
-        model.setText(ModelCatalog.current(this)?.name.orEmpty())
-        model.setAdapter(ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, ModelCatalog.all(this).map { it.name }))
+        model.setText(ModelCatalog.reportModel(this)?.second.orEmpty())
+        model.setAdapter(ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, ModelCatalog.reportNames(this)))
         model.threshold = 1
         model.addTextChangedListener(watcher)
         root.addView(model)
-        models = ModelCatalog.all(this).map { it.name.lowercase() }.toSet()
+        models = ModelCatalog.reportNames(this).map { it.lowercase() }.toSet()
         fun note(text: Int, color: Int) = TextView(this).apply {
             setText(text)
             setTextColor(color)

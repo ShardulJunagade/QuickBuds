@@ -5,7 +5,7 @@ import catalog from "../../app/src/main/assets/models.json" with { type: "json" 
 import { latest } from "./update.js";
 import { scheduled as digestScheduled, queue as digestQueue } from "./digest.js";
 
-const MODELS = new Set(catalog.whiteList.map((m) => m.name.toLowerCase()));
+const MODELS = new Set([...catalog.whiteList, ...(catalog.soundcore ?? [])].map((m) => m.name.toLowerCase()));
 // "Test": a model test (Test my earbuds). It always carries the log.
 const CATEGORIES = new Set(["UI", "Lag", "Connection", "Feature not working", "Battery", "Other", "Test"]);
 const MAX_LOG = 1_000_000; // characters; a D1 value holds up to 2 MB
@@ -57,7 +57,7 @@ async function report(req, env) {
   const log = typeof r.log === "string" ? r.log.slice(-MAX_LOG) : null;
 
   if (!crash && !MODELS.has(model.toLowerCase()))
-    return answer(422, "QuickBuds supports OnePlus, OPPO and realme earbuds only. Pick your model from the list.");
+    return answer(422, "QuickBuds supports OnePlus, OPPO, realme and Soundcore earbuds only. Pick your model from the list.");
   if (categories.includes("Test") && log === null)
     return answer(422, "A model test needs the log. Run the test again.");
   if (!crash && log !== null && !RX_FRAME.test(log))

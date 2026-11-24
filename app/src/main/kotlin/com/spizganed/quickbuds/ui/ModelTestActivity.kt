@@ -147,7 +147,7 @@ class ModelTestActivity : Activity(), BudsConnectionManager.Listener {
         val st = ModelTest.step(f.key) ?: return
         PacketLogger.log(ModelTest.stepLine(f.key, end = false, observed = false))
         ModelTest.saveStep(this, f.key)
-        startActivity(Intent(this, st.screen))
+        startActivity(Intent(this, ModelTest.screen(this, f.key) ?: st.screen))
     }
 
     override fun onDestroy() {
@@ -175,7 +175,7 @@ class ModelTestActivity : Activity(), BudsConnectionManager.Listener {
         results.visibility = View.GONE
         showStatus(R.string.test_reconnecting)
         PacketLogger.clear()
-        PacketLogger.log("MODEL TEST: start, ${ModelCatalog.current(this)?.name ?: "unknown model"}")
+        PacketLogger.log("MODEL TEST: start, ${ModelCatalog.reportModel(this)?.second ?: "unknown model"}")
         m.disconnect()
         main.postDelayed({ m.connect(device) }, RECONNECT_GAP_MS)
         main.postDelayed({ if (running && "connected" !in answered) fail() }, CONNECT_TIMEOUT_MS)
@@ -199,6 +199,11 @@ class ModelTestActivity : Activity(), BudsConnectionManager.Listener {
         if (running && states.isNotEmpty()) answered += "states"
     }
 
+    /** Soundcore buds answer the state packet: it is their feature list. */
+    override fun onSoundcore(state: org.json.JSONObject) {
+        if (running) answered += "features"
+    }
+
     private fun fail() {
         running = false
         start.isEnabled = true
@@ -209,10 +214,10 @@ class ModelTestActivity : Activity(), BudsConnectionManager.Listener {
     private fun finishCheck() {
         if (!running) return
         running = false
-        val model = ModelCatalog.current(this) ?: return fail()
+        val model = ModelCatalog.reportModel(this) ?: return fail()
         val checks = ModelTest.CHECKS.associate { it.first to (it.first in answered) }
         PacketLogger.log("MODEL TEST: check ${checks.entries.joinToString { "${it.key}=${it.value}" }}")
-        ModelTest.save(this, ModelTest.State(model.id, checks, mutableMapOf(), mutableMapOf()))
+        ModelTest.save(this, ModelTest.State(model.first, checks, mutableMapOf(), mutableMapOf()))
         start.isEnabled = true
         start.alpha = 1f
         status.visibility = View.GONE
@@ -338,8 +343,8 @@ class ModelTestActivity : Activity(), BudsConnectionManager.Listener {
 
     private fun report(): ProblemReport.Report? {
         val s = state ?: return null
-        val model = ModelCatalog.current(this) ?: return null
-        return ProblemReport.Report(model.name, listOf(ModelTest.CATEGORY),
+        val model = ModelCatalog.reportModel(this) ?: return null
+        return ProblemReport.Report(model.second, listOf(ModelTest.CATEGORY),
             ModelTest.description(s, features, "Android", ModelTest.diff(this, s)), ProblemReport.log(this), false)
     }
 
@@ -355,7 +360,7 @@ class ModelTestActivity : Activity(), BudsConnectionManager.Listener {
     private fun submit() {
         if (!ready()) return
         val s = state ?: return
-        if (ModelCatalog.current(this) == null) return
+        if (ModelCatalog.reportModel(this) == null) return
         // The machine-readable line goes in first, so the log this report sends carries it.
         PacketLogger.log(ModelTest.jsonLine(this, s, features, PacketLogger.getFileContent()))
         val r = report() ?: return

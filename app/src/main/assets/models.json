@@ -1,4 +1,8 @@
-{"whiteList":[
+{"soundcore":[
+{"id":"A3936","name":"Soundcore Space A40"},
+{"id":"A3957","name":"Soundcore Liberty 5"}
+],
+"whiteList":[
 {"id":"050010","name":"OPPO Enco Quiet"},
 {"id":"050410","name":"OPPO Enco M31","statusQuery":"05","codecs":["ldac","aac","sbc"]},
 {"id":"050412","name":"realme Buds Wireless 2S","codecs":["aac"]},

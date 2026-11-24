@@ -31,7 +31,7 @@ object ProblemReport {
     /** The log's first line: phone, Android, QuickBuds, buds model and firmware. Exported logs start with it too. */
     fun header(c: Context): String {
         val p = c.getSharedPreferences(ThemeRes.PREFS_NAME, Context.MODE_PRIVATE)
-        val model = ModelCatalog.current(c)?.name ?: p.getString(ModelCatalog.KEY_DEVICE_NAME, null) ?: "unknown buds"
+        val model = ModelCatalog.reportModel(c)?.second ?: p.getString(ModelCatalog.KEY_DEVICE_NAME, null) ?: "unknown buds"
         val id = Capabilities.productId(c) ?: "?"
         val fw = Capabilities.firmware(c) ?: "?"
         return "QuickBuds ${UpdateChecker.installed(c)} | ${Build.MANUFACTURER} ${Build.MODEL} | " +
