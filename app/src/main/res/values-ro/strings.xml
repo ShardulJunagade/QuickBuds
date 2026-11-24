@@ -863,4 +863,6 @@
     <string name="sc_color_white">Alb</string>
     <string name="settings_engine_title">Motor nou</string>
     <string name="settings_engine_sub">Motorul nou controlează căștile. Opriți-l dacă ceva merge mai rău; aplicația folosește atunci motorul vechi. Se aplică la următoarea conectare. Căștile Soundcore îl folosesc mereu.</string>
+    <string name="sc_find_sub">Redă un ton pe o cască</string>
+    <string name="sc_find_hint">Telefonul redă un bip pe casca aleasă. Scoate mai întâi căștile din urechi.</string>
 </resources>

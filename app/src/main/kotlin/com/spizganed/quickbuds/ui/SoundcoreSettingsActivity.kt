@@ -126,6 +126,8 @@ class SoundcoreSettingsActivity : SoundcoreScreen() {
 
         section(R.string.sc_section_earbuds)
         budsCard = card()
+        SettingRowFactory.addRow(budsCard, SettingRowFactory.build(this, 0, R.string.row_find_title, R.string.sc_find_sub,
+            SettingRowFactory.buildChevron(this)) { SoundcoreFindSheet(this).show() })
         for ((key, title, sub) in switchKeys) switches[key] = switchRow(budsCard, title, sub, key)
         for ((key, title) in choiceKeys) choices[key] = choiceRow(budsCard, title) { pickChoice(key, title) }
         autoOff = choiceRow(budsCard, R.string.sc_auto_off_title) { pickAutoOff() }

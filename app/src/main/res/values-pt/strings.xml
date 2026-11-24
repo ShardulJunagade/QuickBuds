@@ -863,4 +863,6 @@
     <string name="sc_color_white">Branco</string>
     <string name="settings_engine_title">Novo motor</string>
     <string name="settings_engine_sub">O novo motor controla os auriculares. Desligue-o se algo funcionar pior; a app usa então o antigo. Aplica-se na próxima ligação. Os auriculares Soundcore usam-no sempre.</string>
+    <string name="sc_find_sub">Reproduzir um som num auricular</string>
+    <string name="sc_find_hint">O telemóvel reproduz um bip no auricular escolhido. Retire primeiro os auriculares.</string>
 </resources>

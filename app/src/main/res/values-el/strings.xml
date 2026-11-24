@@ -863,4 +863,6 @@
     <string name="sc_color_white">Λευκό</string>
     <string name="settings_engine_title">Νέα μηχανή</string>
     <string name="settings_engine_sub">Η νέα μηχανή ελέγχει τα ακουστικά. Απενεργοποιήστε τη αν κάτι λειτουργεί χειρότερα· τότε η εφαρμογή χρησιμοποιεί την παλιά. Ισχύει από την επόμενη σύνδεση. Τα ακουστικά Soundcore τη χρησιμοποιούν πάντα.</string>
+    <string name="sc_find_sub">Αναπαραγωγή ήχου σε ένα ακουστικό</string>
+    <string name="sc_find_hint">Το τηλέφωνο παίζει ένα μπιπ στο ακουστικό που επιλέγετε. Βγάλτε πρώτα τα ακουστικά.</string>
 </resources>

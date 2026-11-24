@@ -863,4 +863,6 @@
     <string name="sc_color_white">Blanco</string>
     <string name="settings_engine_title">Motor nuevo</string>
     <string name="settings_engine_sub">El motor nuevo controla los auriculares. Desactívalo si algo funciona peor; la app usará el anterior. Se aplica en la próxima conexión. Los auriculares Soundcore siempre lo usan.</string>
+    <string name="sc_find_sub">Reproducir un tono en un auricular</string>
+    <string name="sc_find_hint">El teléfono reproduce un pitido en el auricular que elijas. Quítate primero los auriculares.</string>
 </resources>

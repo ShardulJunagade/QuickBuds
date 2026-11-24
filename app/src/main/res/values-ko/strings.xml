@@ -863,4 +863,6 @@
     <string name="sc_color_white">흰색</string>
     <string name="settings_engine_title">새 엔진</string>
     <string name="settings_engine_sub">새 엔진이 이어버드를 제어합니다. 문제가 생기면 끄세요. 앱이 이전 엔진을 사용합니다. 다음 연결부터 적용됩니다. Soundcore 이어버드는 항상 이 엔진을 사용합니다.</string>
+    <string name="sc_find_sub">한쪽 이어버드에서 소리 재생</string>
+    <string name="sc_find_hint">선택한 이어버드에서 휴대폰이 비프음을 재생합니다. 먼저 이어버드를 빼세요.</string>
 </resources>

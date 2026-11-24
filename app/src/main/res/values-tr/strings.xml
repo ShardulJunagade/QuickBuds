@@ -863,4 +863,6 @@
     <string name="sc_color_white">Beyaz</string>
     <string name="settings_engine_title">Yeni motor</string>
     <string name="settings_engine_sub">Yeni motor kulaklıkları yönetir. Bir şey daha kötü çalışırsa kapatın; uygulama eskisini kullanır. Bir sonraki bağlantıda geçerli olur. Soundcore kulaklıklar hep bunu kullanır.</string>
+    <string name="sc_find_sub">Tek kulaklıkta ses çal</string>
+    <string name="sc_find_hint">Telefon seçtiğiniz kulaklıkta bip sesi çalar. Önce kulaklıkları çıkarın.</string>
 </resources>

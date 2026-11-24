@@ -865,4 +865,6 @@
     <string name="sc_color_white">सफ़ेद</string>
     <string name="settings_engine_title">नया इंजन</string>
     <string name="settings_engine_sub">नया इंजन ईयरबड चलाता है। कुछ खराब चले तो इसे बंद करें; ऐप तब पुराना इस्तेमाल करता है। अगले कनेक्शन पर लागू। Soundcore ईयरबड हमेशा इसे इस्तेमाल करते हैं।</string>
+    <string name="sc_find_sub">एक ईयरबड पर आवाज़ बजाएँ</string>
+    <string name="sc_find_hint">फ़ोन आपके चुने ईयरबड पर बीप बजाता है। पहले ईयरबड्स निकाल लें।</string>
 </resources>

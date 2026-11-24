@@ -863,4 +863,6 @@
     <string name="sc_color_white">Puti</string>
     <string name="settings_engine_title">Bagong engine</string>
     <string name="settings_engine_sub">Ang bagong engine ang kumokontrol sa earbuds. I-off ito kung may gumagana nang mas malala; gagamitin ng app ang luma. Epektibo sa susunod na connect. Laging ginagamit ito ng Soundcore earbuds.</string>
+    <string name="sc_find_sub">Magpatugtog ng tono sa isang earbud</string>
+    <string name="sc_find_hint">Ang phone ay nagpapatugtog ng beep sa earbud na pipiliin mo. Alisin muna ang earbuds.</string>
 </resources>

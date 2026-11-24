@@ -865,4 +865,6 @@
     <string name="sc_color_white">白色</string>
     <string name="settings_engine_title">新引擎</string>
     <string name="settings_engine_sub">新引擎控制耳機。如有功能變差，請關閉，應用程式將改用舊引擎。下次連線時生效。Soundcore 耳機一律使用新引擎。</string>
+    <string name="sc_find_sub">在一隻耳機上播放提示音</string>
+    <string name="sc_find_hint">手機會在你選擇的耳機上播放提示音。請先取下耳機。</string>
 </resources>

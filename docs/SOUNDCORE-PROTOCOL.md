@@ -236,6 +236,20 @@ connection, earbud settings) show when the model has the key, and four screens: 
 lists, so they hold no model table. Dev tools › Soundcore demo shows each model's recorded state without buds.
 The desktop app does not connect to Soundcore buds yet.
 
+### Find device, fit test, HearID test
+
+A Soundcore app capture of the A3936 (2026-11-24) shows these flows `[CAPTURE]`:
+
+- Find device sends no command. The phone plays the sound over A2DP, on the left or the right channel.
+  `SoundcoreFindSheet` does the same with a beep at the media volume.
+- Fit test: `09 01` with no body. The phone sets the volume to 0x5F and plays a test sound. After 10 s the buds
+  answer `09 01` with 14 bytes; all 0 came with "Excellent seal" on both sides. Not ported.
+- HearID test: `03 83 01` turns the test mode on, and the buds switch ANC on (`06 01` push). The phone sets the
+  volume to 0x7F and plays the tones over A2DP. `03 87` writes the result, the buds go back to their mode,
+  and `03 83 00` ends the test mode. The app's `03 87` has 1 in the byte after the age. The time is a
+  big-endian Unix time. Not ported.
+- The app reads `05 01` on the fit test page (116 bytes back). Its meaning is unknown.
+
 ### Groups
 
 A group is a setting of several parts, or one with its own write body (`models.rs` `Group`). `state_json` gives

@@ -863,4 +863,6 @@
     <string name="sc_color_white">Белый</string>
     <string name="settings_engine_title">Новый движок</string>
     <string name="settings_engine_sub">Новый движок управляет наушниками. Выключите его, если что-то работает хуже; тогда приложение использует старый. Действует со следующего подключения. Наушники Soundcore используют его всегда.</string>
+    <string name="sc_find_sub">Сигнал на одном наушнике</string>
+    <string name="sc_find_hint">Телефон воспроизводит сигнал на выбранном наушнике. Сначала выньте наушники из ушей.</string>
 </resources>

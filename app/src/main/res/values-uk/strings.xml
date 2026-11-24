@@ -863,4 +863,6 @@
     <string name="sc_color_white">Білий</string>
     <string name="settings_engine_title">Новий рушій</string>
     <string name="settings_engine_sub">Новий рушій керує навушниками. Вимкніть його, якщо щось працює гірше; тоді застосунок використає старий. Діє з наступного підключення. Навушники Soundcore завжди його використовують.</string>
+    <string name="sc_find_sub">Сигнал на одному навушнику</string>
+    <string name="sc_find_hint">Телефон відтворює сигнал на вибраному навушнику. Спершу вийміть навушники з вух.</string>
 </resources>

@@ -863,4 +863,6 @@
     <string name="sc_color_white">Blanc</string>
     <string name="settings_engine_title">Nouveau moteur</string>
     <string name="settings_engine_sub">Le nouveau moteur pilote les écouteurs. Désactivez-le si quelque chose marche moins bien ; l\'app utilise alors l\'ancien. S\'applique à la prochaine connexion. Les écouteurs Soundcore l\'utilisent toujours.</string>
+    <string name="sc_find_sub">Émettre un son sur un écouteur</string>
+    <string name="sc_find_hint">Le téléphone émet un bip sur l’écouteur choisi. Retirez d’abord les écouteurs.</string>
 </resources>

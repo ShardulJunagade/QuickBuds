@@ -863,4 +863,6 @@
     <string name="sc_color_white">Putih</string>
     <string name="settings_engine_title">Enjin baharu</string>
     <string name="settings_engine_sub">Enjin baharu mengawal fon telinga. Matikan jika ada yang kurang baik; aplikasi akan guna yang lama. Berkuat kuasa pada sambungan seterusnya. Fon telinga Soundcore sentiasa menggunakannya.</string>
+    <string name="sc_find_sub">Mainkan nada pada satu fon telinga</string>
+    <string name="sc_find_hint">Telefon memainkan bunyi bip pada fon telinga yang anda pilih. Tanggalkan fon telinga dahulu.</string>
 </resources>

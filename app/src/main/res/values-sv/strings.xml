@@ -863,4 +863,6 @@
     <string name="sc_color_white">Vit</string>
     <string name="settings_engine_title">Ny motor</string>
     <string name="settings_engine_sub">Den nya motorn styr öronsnäckorna. Stäng av den om något fungerar sämre; appen använder då den gamla. Gäller från nästa anslutning. Soundcore-öronsnäckor använder den alltid.</string>
+    <string name="sc_find_sub">Spela en ton i en hörlur</string>
+    <string name="sc_find_hint">Telefonen spelar ett pip i den hörlur du väljer. Ta ut hörlurarna först.</string>
 </resources>

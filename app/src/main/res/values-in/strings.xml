@@ -865,4 +865,6 @@
     <string name="sc_color_white">Putih</string>
     <string name="settings_engine_title">Mesin baru</string>
     <string name="settings_engine_sub">Mesin baru mengendalikan earbud. Matikan jika ada yang bekerja lebih buruk; aplikasi lalu memakai yang lama. Berlaku pada koneksi berikutnya. Earbud Soundcore selalu memakainya.</string>
+    <string name="sc_find_sub">Putar nada di satu earbud</string>
+    <string name="sc_find_hint">Ponsel memutar bunyi bip di earbud yang Anda pilih. Lepaskan earbud terlebih dahulu.</string>
 </resources>

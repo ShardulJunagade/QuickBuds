@@ -863,4 +863,6 @@
     <string name="sc_color_white">Bílá</string>
     <string name="settings_engine_title">Nový engine</string>
     <string name="settings_engine_sub">Nový engine ovládá sluchátka. Pokud něco funguje hůř, vypněte ho; aplikace pak použije starý. Platí od příštího připojení. Sluchátka Soundcore ho používají vždy.</string>
+    <string name="sc_find_sub">Přehrát tón na jednom sluchátku</string>
+    <string name="sc_find_hint">Telefon přehraje pípání na zvoleném sluchátku. Nejdřív sluchátka vyndejte z uší.</string>
 </resources>

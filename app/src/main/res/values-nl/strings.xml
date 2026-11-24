@@ -863,4 +863,6 @@
     <string name="sc_color_white">Wit</string>
     <string name="settings_engine_title">Nieuwe engine</string>
     <string name="settings_engine_sub">De nieuwe engine bestuurt de oordopjes. Zet hem uit als iets slechter werkt; de app gebruikt dan de oude. Geldt vanaf de volgende verbinding. Soundcore-oordopjes gebruiken hem altijd.</string>
+    <string name="sc_find_sub">Toon afspelen op één oordopje</string>
+    <string name="sc_find_hint">De telefoon speelt een piep af op het gekozen oordopje. Haal de oordopjes eerst uit je oren.</string>
 </resources>

@@ -863,4 +863,6 @@
     <string name="sc_color_white">Weiß</string>
     <string name="settings_engine_title">Neue Engine</string>
     <string name="settings_engine_sub">Die neue Engine steuert die Ohrhörer. Schalten Sie sie aus, wenn etwas schlechter läuft; die App nutzt dann die alte. Gilt ab der nächsten Verbindung. Soundcore-Ohrhörer nutzen sie immer.</string>
+    <string name="sc_find_sub">Ton auf einem Earbud abspielen</string>
+    <string name="sc_find_hint">Das Telefon spielt einen Piepton auf dem gewählten Earbud. Nimm die Earbuds vorher heraus.</string>
 </resources>

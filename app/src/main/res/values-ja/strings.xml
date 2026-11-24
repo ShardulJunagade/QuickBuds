@@ -863,4 +863,6 @@
     <string name="sc_color_white">白</string>
     <string name="settings_engine_title">新しいエンジン</string>
     <string name="settings_engine_sub">新しいエンジンがイヤホンを制御します。動作が悪くなった場合はオフにすると、以前のエンジンを使います。次の接続から適用されます。Soundcoreのイヤホンは常にこれを使います。</string>
+    <string name="sc_find_sub">片方のイヤホンで音を鳴らす</string>
+    <string name="sc_find_hint">選んだイヤホンでスマートフォンがビープ音を鳴らします。先にイヤホンを外してください。</string>
 </resources>

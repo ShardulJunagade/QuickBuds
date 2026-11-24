@@ -865,4 +865,6 @@
     <string name="sc_color_white">Trắng</string>
     <string name="settings_engine_title">Engine mới</string>
     <string name="settings_engine_sub">Engine mới điều khiển tai nghe. Tắt nếu có gì hoạt động kém hơn; ứng dụng sẽ dùng engine cũ. Áp dụng từ lần kết nối tiếp theo. Tai nghe Soundcore luôn dùng engine này.</string>
+    <string name="sc_find_sub">Phát âm thanh trên một bên tai nghe</string>
+    <string name="sc_find_hint">Điện thoại phát tiếng bíp trên bên tai nghe bạn chọn. Hãy tháo tai nghe ra trước.</string>
 </resources>

@@ -962,4 +962,6 @@
     <string name="sc_color_white">White</string>
     <string name="settings_engine_title">New engine</string>
     <string name="settings_engine_sub">The new engine drives the earbuds. Turn it off if something works worse; the app then uses the old one. Applies on the next connect. Soundcore earbuds always use it.</string>
+    <string name="sc_find_sub">Play a tone on one earbud</string>
+    <string name="sc_find_hint">The phone plays a beep on the earbud you pick. Take the earbuds out first.</string>
 </resources>

@@ -863,4 +863,6 @@
     <string name="sc_color_white">Biały</string>
     <string name="settings_engine_title">Nowy silnik</string>
     <string name="settings_engine_sub">Nowy silnik steruje słuchawkami. Wyłącz go, jeśli coś działa gorzej; aplikacja użyje wtedy starego. Działa od następnego połączenia. Słuchawki Soundcore zawsze go używają.</string>
+    <string name="sc_find_sub">Odtwórz dźwięk w jednej słuchawce</string>
+    <string name="sc_find_hint">Telefon odtwarza sygnał w wybranej słuchawce. Najpierw wyjmij słuchawki z uszu.</string>
 </resources>

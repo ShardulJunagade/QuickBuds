@@ -865,4 +865,6 @@
     <string name="sc_color_white">ขาว</string>
     <string name="settings_engine_title">เอนจินใหม่</string>
     <string name="settings_engine_sub">เอนจินใหม่ควบคุมหูฟัง ปิดหากมีบางอย่างทำงานแย่ลง แอปจะใช้เอนจินเดิม มีผลเมื่อเชื่อมต่อครั้งถัดไป หูฟัง Soundcore ใช้เอนจินนี้เสมอ</string>
+    <string name="sc_find_sub">เล่นเสียงที่หูฟังข้างเดียว</string>
+    <string name="sc_find_hint">โทรศัพท์จะเล่นเสียงบี๊บที่หูฟังข้างที่คุณเลือก ถอดหูฟังออกก่อน</string>
 </resources>
