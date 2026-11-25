@@ -292,7 +292,8 @@ fn hide_later(app: &AppHandle, label: &'static str, slot: &'static Slot) {
     let app = app.clone();
     std::thread::spawn(move || {
         std::thread::sleep(std::time::Duration::from_secs(45));
-        if slot.gen.load(SeqCst) == gen { if let Some(w) = app.get_webview_window(label) { let _ = w.close(); } }
+        // `destroy`, not `close`: `close` emits CloseRequested, and the main window's handler turns that back into a hide.
+        if slot.gen.load(SeqCst) == gen { if let Some(w) = app.get_webview_window(label) { let _ = w.destroy(); } }
     });
 }
 
